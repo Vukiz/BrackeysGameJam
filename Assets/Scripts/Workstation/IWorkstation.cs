@@ -4,6 +4,6 @@ namespace Workstation
 {
     public interface IWorkstation : IWaypoint
     {
-        System.Action NoSlotsLeft { get; set; }
+        event System.Action NoSlotsLeft;
     }
 }

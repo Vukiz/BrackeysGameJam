@@ -1,11 +1,14 @@
+using Factories;
+using Rails;
+
 namespace Workstation
 {
-    public interface ISlot
+    public interface ISlot : IWaypoint
     {
         bool IsOccupied { get; }
         
-        event System.Action Occupied;
+        IRobot OccupiedBy { get; }
         
-        void Occupy();
+        event System.Action Occupied;
     }
 }

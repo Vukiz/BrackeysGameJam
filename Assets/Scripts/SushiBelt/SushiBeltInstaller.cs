@@ -6,7 +6,6 @@ namespace SushiBelt
     {
         public override void InstallBindings()
         {
-            
         }
     }
 }

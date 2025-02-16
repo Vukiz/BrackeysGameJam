@@ -6,7 +6,11 @@ namespace Orders
     {
         List<WorkType> NeededTypes { get; }
         Status Status { get; }
+        
+        void ReceiveWork(WorkType workType);
 
         event System.Action TimerExpired;
+        event System.Action OrderCompleted;
+        event System.Action OrderPartiallyCompleted;
     }
 }

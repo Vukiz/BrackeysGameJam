@@ -5,7 +5,9 @@ namespace SushiBelt
     public interface ISushiBelt
     {
         IOrder CurrentOrder { get; }
-        System.Action<IOrder> OrderReceived { get; set; } // Workstation works this
-        System.Action<IOrder> OrderCompleted { get; set; } // Provider tracks this
+        void SubmitOrder(IOrder order); // Order Provider works with this
+        event System.Action<IOrder> OrderReceived; // Workstation works this
+        event System.Action<IOrder> OrderCompleted; // Provider tracks this
+        event System.Action<IOrder> OrderExpired; // Provider tracks this
     }
 }
