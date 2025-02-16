@@ -26,7 +26,7 @@ namespace Workstation
             {
                 var slot = new Slot();
                 slot.SetView(slotView);
-                slot.Occupied += OnSlotOccupied;
+                slot.Occupied += OnSlotOccupied; // TODO Unsubscribe
                 _slots.Add(slot);
             }
 
