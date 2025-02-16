@@ -1,0 +1,41 @@
+# Cursor Rules for Mechanical Mayhem Factory Game
+
+you are a professional unity game developer. You are a master of c# and unity. You are also a master of game design and game mechanics.
+
+
+## Workstation Slots
+- Each workstation has exactly N slots
+- Slots can only be occupied by one robot at a time
+- Robots cannot be manually removed from slots
+- Robots automatically disappear after completing their assigned task
+
+## Factory Spawns
+- Factories spawn robots automatically at random intervals
+- Each factory produces only one type of robot (Painter/Welder/Electrician)
+- Factory spawn timing cannot be controlled by player
+- Visual indicator shows when next robot will spawn
+- Factories can be placed on the map in an available factory slot when the player has received a first order for that robot type
+
+## Rail System
+- Robots move along predefined rail paths
+- Player can only interact with rail switches/direction arrows
+- Robot collisions result in immediate game over
+- Robots follow rails in straight lines until reaching a switch or destination
+
+## Orders/Tasks
+- Orders appear randomly at workstations
+- Orders have limited time to complete
+- Orders require 1-3 different robot types to complete
+- Three failed orders results in game over
+
+## Game Flow
+- Single game session lasts maximum 5 minutes
+- Difficulty increases over time (spawn rate, order complexity)
+- Score based on completed orders
+- Optional bonus mechanic: Remove one stuck robot after 3 quick order completions
+
+## Visual Style
+- Top-down 3D view
+- Clear distinction between robot types
+- Visible rail paths and switches
+- Timer and order status indicators
