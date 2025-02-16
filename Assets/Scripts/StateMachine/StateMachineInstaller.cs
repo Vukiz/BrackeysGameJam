@@ -2,7 +2,7 @@ using Zenject;
 
 namespace StateMachine
 {
-    public class StateMachineInstaller : MonoInstaller
+    public class StateMachineInstaller : Installer<StateMachineInstaller>
     {
         public override void InstallBindings()
         {

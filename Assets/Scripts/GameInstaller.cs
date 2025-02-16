@@ -2,6 +2,7 @@ using Factories;
 using Level;
 using Orders;
 using Rails;
+using StateMachine;
 using SushiBelt;
 using Workstation;
 using Zenject;
@@ -16,5 +17,6 @@ public class GameInstaller : MonoInstaller
         WorkstationInstaller.Install(Container);
         SushiBeltInstaller.Install(Container);
         LevelInstaller.Install(Container);
+        StateMachineInstaller.Install(Container);
     }
 }        

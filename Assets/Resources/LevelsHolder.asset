@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc74975deef854675ab2681fd7027e2c, type: 3}
-  m_Name: Level1
+  m_Script: {fileID: 11500000, guid: cb2d14cf75454f6d99e96e2883317a66, type: 3}
+  m_Name: LevelsHolder
   m_EditorClassIdentifier: 
-  LevelViewPrefab: {fileID: 6665435657315364018, guid: b4adb66dec8684b42904bcbbaf5142e8, type: 3}
+  _levels:
+  - {fileID: 11400000, guid: 742eccb9ecfae4dea8504842e5301604, type: 2}
