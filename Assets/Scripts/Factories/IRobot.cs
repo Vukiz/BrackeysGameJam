@@ -10,7 +10,7 @@ namespace Factories
         void SetNextWaypoint(IWaypoint waypoint);
         
         void CompleteOrder(IOrder order);
-        
-        System.Action CollisionDetected { get; set; }
+
+        event System.Action CollisionDetected;
     }
 }

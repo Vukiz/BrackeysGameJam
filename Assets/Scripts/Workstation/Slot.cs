@@ -33,5 +33,10 @@ namespace Workstation
             Occupy(robot);
             // TODO VFX for robot reaching the slot
         }
+
+        public void AddNeighbour(IWaypoint waypoint)
+        {
+            
+        }
     }
 }

@@ -86,5 +86,10 @@ namespace Workstation
         public void Reach(IRobot robot)
         {
         }
+
+        public void AddNeighbour(IWaypoint waypoint)
+        {
+            
+        }
     }
 }

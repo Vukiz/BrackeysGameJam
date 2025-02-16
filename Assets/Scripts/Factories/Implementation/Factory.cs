@@ -1,0 +1,101 @@
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Factories.Data;
+using Factories.View;
+using Orders;
+using Rails;
+using UnityEngine;
+
+namespace Factories.Implementation
+{
+    public class Factory : IFactory
+    {
+        private readonly RobotProvider _robotProvider;
+
+        private FactoryView _view;
+        private FactoryModel _model;
+        private CancellationTokenSource _cancellationTokenSource;
+        private bool _isPaused;
+        
+        public Factory(RobotProvider robotProvider)
+        {
+            _robotProvider = robotProvider;
+        }
+        
+        public IWaypoint Next { get; private set; }
+        public Vector3 Position => _view.WaypointTransform.position;
+        public WorkType WorkType => _model.WorkType;
+
+        public event Action<IRobot> RobotSpawned;
+        
+        public void Initialize(FactoryView view, FactoryModel model, IWaypoint next)
+        {
+            _view = view;
+            _model = model;
+            Next = next;
+            StartCycle().Forget();
+        }
+        
+        public void Reach(IRobot robot)
+        {
+            // TODO: Explode robot and finish the game
+        }
+
+        public void AddNeighbour(IWaypoint waypoint)
+        {
+            
+        }
+
+        public void PauseCycle()
+        {
+            _isPaused = true;
+        }
+
+        public void ResumeCycle()
+        {
+            _isPaused = false;
+        }
+
+        private async UniTask StartCycle()
+        {
+            try
+            {
+                _cancellationTokenSource = new CancellationTokenSource();
+                var token = _cancellationTokenSource.Token;
+                await UniTask.Delay(TimeSpan.FromSeconds(_model.InitialDelay), cancellationToken: token);
+                while (!token.IsCancellationRequested)
+                {
+                    SpawnRobot();
+                    await StartCooldown(token);
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                Debug.Log(e);
+            }
+        }
+
+        private async UniTask StartCooldown(CancellationToken token)
+        {
+            var duration = 0f;
+            while (duration <= _model.SpawnCooldown)
+            {
+                token.ThrowIfCancellationRequested();
+                if (!_isPaused)
+                {
+                    duration += Time.deltaTime;
+                }
+                
+                await UniTask.Yield();
+            }
+        }
+
+        private void SpawnRobot()
+        {
+            var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position);
+            robot.SetNextWaypoint(Next);
+            RobotSpawned?.Invoke(robot);
+        }
+    }
+}
