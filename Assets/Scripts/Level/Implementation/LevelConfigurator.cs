@@ -1,9 +1,7 @@
-using Factories;
 using Factories.Infrastructure;
 using Level.Data;
 using Level.Infrastructure;
 using Level.Views;
-using Rails;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
 using Workstation.Infrastructure;
@@ -15,13 +13,13 @@ namespace Level.Implementation
     {
         private readonly DiContainer _container;
         private readonly LevelsHolder _levelsHolder;
-        private readonly WaypointProvider _waypointProvider;
+        private readonly IWaypointProvider _waypointProvider;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
 
         public LevelConfigurator(
             DiContainer container,
             LevelsHolder levelsHolder,
-            WaypointProvider waypointProvider,
+            IWaypointProvider waypointProvider,
             IFactoryAvailabilityTracker factoryAvailabilityTracker
         )
         {
@@ -33,8 +31,8 @@ namespace Level.Implementation
 
         public void SpawnLevel(int number)
         {
-            var prefab = _levelsHolder.Levels[number];
-            var levelView = _container.InstantiatePrefabForComponent<LevelView>(prefab);
+            var levelData = _levelsHolder.Levels[number];
+            var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
             SetupFactoryAvailabilityTracker(levelView);
             SetupSushiBelts(levelView);
             SetupWorkstations(levelView);

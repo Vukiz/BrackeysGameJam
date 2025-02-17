@@ -14,7 +14,7 @@ namespace Level
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<LevelConfigurator>().AsSingle();
+            Container.BindInterfacesTo<LevelConfigurator>().AsSingle();
         }
     }
 }

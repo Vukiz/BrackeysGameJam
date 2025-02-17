@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using Rails;
+using Level.Infrastructure;
 using Rails.Infrastructure;
 using UnityEngine;
 
 namespace Level.Implementation
 {
-    public class WaypointProvider
+    public class WaypointProvider : IWaypointProvider
     {
         private readonly Dictionary<IWaypointView, IWaypoint> _waypoints = new();
 

@@ -4,22 +4,19 @@ using StateMachine.Views;
 
 namespace StateMachine.Implementation
 {
-    public class GameEndedStateHandler : IGameStateHandler
+    public class GameEndedStateHandler : GameStateHandlerBase
     {
         private readonly CanvasView _canvasView;
-        private readonly IGameStateMachine _gameStateMachine;
-        public GameState State => GameState.GameEnded;
+        public override GameState State => GameState.GameEnded;
 
         public GameEndedStateHandler(
-            CanvasView canvasView,
-            IGameStateMachine gameStateMachine
+            CanvasView canvasView
         )
         {
             _canvasView = canvasView;
-            _gameStateMachine = gameStateMachine;
         }
 
-        public async void OnStateEnter()
+        public override async void OnStateEnter()
         {
             // TODO If game is lost  setup for a restart or exit
             // TODO if game is won setup for next level or exit
@@ -33,10 +30,10 @@ namespace StateMachine.Implementation
         private void OnNextLevelButtonClicked()
         {
             _canvasView.GameEndView.NextLevelButton.onClick.RemoveListener(OnNextLevelButtonClicked);
-            _gameStateMachine.ChangeState(GameState.GameThanksForPlaying);
+            RequestStateChange(GameState.GameActive);
         }
 
-        public void OnStateExit()
+        public override void OnStateExit()
         {
             _canvasView.GameEndView.Hide();
         }

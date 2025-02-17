@@ -10,14 +10,19 @@ namespace Level.Infrastructure
     public class InputTracker : IInitializable, IDisposable
     {
         private readonly CameraProvider _cameraProvider;
-        
+
         private CancellationTokenSource _cancellationTokenSource;
-        
+
+        public InputTracker(CameraProvider cameraProvider)
+        {
+            _cameraProvider = cameraProvider;
+        }
+
         public void Initialize()
         {
             TrackInput().Forget();
         }
-        
+
         public void Dispose()
         {
             _cancellationTokenSource?.Cancel();
@@ -33,7 +38,7 @@ namespace Level.Infrastructure
                 {
                     HandleInput();
                 }
-                
+
                 await UniTask.Yield();
             }
         }
@@ -41,11 +46,16 @@ namespace Level.Infrastructure
         private void HandleInput()
         {
             var ray = _cameraProvider.MainCamera.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out var hit) || hit.collider.TryGetComponent<IInteractable>(out var interactable))
+            if (!Physics.Raycast(ray, out var hit))
             {
                 return;
             }
-            
+
+            if (!hit.collider.TryGetComponent<IInteractable>(out var interactable))
+            {
+                return;
+            }
+
             interactable.Interact();
         }
     }

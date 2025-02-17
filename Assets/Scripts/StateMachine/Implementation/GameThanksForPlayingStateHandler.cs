@@ -5,22 +5,19 @@ using StateMachine.Views;
 
 namespace StateMachine.Implementation
 {
-    public class GameThanksForPlayingStateHandler : IGameStateHandler
+    public class GameThanksForPlayingStateHandler : GameStateHandlerBase
     {
         private readonly CanvasView _canvasView;
-        private readonly IGameStateMachine _gameStateMachine;
-        public GameState State => GameState.GameThanksForPlaying;
+        public override GameState State => GameState.GameThanksForPlaying;
 
         public GameThanksForPlayingStateHandler(
-            CanvasView canvasView,
-            IGameStateMachine gameStateMachine
+            CanvasView canvasView
         )
         {
             _canvasView = canvasView;
-            _gameStateMachine = gameStateMachine;
         }
 
-        public async void OnStateEnter()
+        public override async void OnStateEnter()
         {
             await _canvasView.ThanksForPlayingView.Show();
             await UniTask.Delay(3000);
@@ -30,10 +27,10 @@ namespace StateMachine.Implementation
         private void OnExitButtonClicked()
         {
             _canvasView.ThanksForPlayingView.ExitButton.onClick.RemoveListener(OnExitButtonClicked);
-            _gameStateMachine.ChangeState(GameState.GameStart);
+            RequestStateChange(GameState.GameStart);
         }
 
-        public async void OnStateExit()
+        public override async void OnStateExit()
         {
             await _canvasView.ThanksForPlayingView.Hide();
         }

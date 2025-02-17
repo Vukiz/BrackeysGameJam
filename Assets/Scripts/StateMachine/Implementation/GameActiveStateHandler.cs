@@ -1,30 +1,25 @@
-using Level;
 using Level.Infrastructure;
 using StateMachine.Data;
-using StateMachine.Infrastructure;
 using StateMachine.Views;
 
 namespace StateMachine.Implementation
 {
-    public class GameActiveStateHandler : IGameStateHandler
+    public class GameActiveStateHandler : GameStateHandlerBase
     {
         private readonly CanvasView _canvasView;
         private readonly ILevelConfigurator _levelConfigurator;
-        private readonly IGameStateMachine _gameStateMachine;
-        public GameState State => GameState.GameActive;
+        public override GameState State => GameState.GameActive;
 
         public GameActiveStateHandler(
             CanvasView canvasView,
-            ILevelConfigurator levelConfigurator,
-            IGameStateMachine gameStateMachine
+            ILevelConfigurator levelConfigurator
         )
         {
             _canvasView = canvasView;
             _levelConfigurator = levelConfigurator;
-            _gameStateMachine = gameStateMachine;
         }
 
-        public async void OnStateEnter()
+        public override async void OnStateEnter()
         {
             _canvasView.GameActiveView.ExitButton.onClick.AddListener(OnExitButtonClicked);
             await _canvasView.GameActiveView.Show();
@@ -36,10 +31,10 @@ namespace StateMachine.Implementation
         private void OnExitButtonClicked()
         {
             _canvasView.GameActiveView.ExitButton.onClick.RemoveListener(OnExitButtonClicked);
-            _gameStateMachine.ChangeState(GameState.GameStart);
+            RequestStateChange(GameState.GameStart);
         }
 
-        public void OnStateExit()
+        public override void OnStateExit()
         {
             _canvasView.GameActiveView.Hide();
         }

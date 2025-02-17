@@ -2,6 +2,7 @@ using Factories.Data;
 using Factories.View;
 using Level;
 using Level.Implementation;
+using Level.Infrastructure;
 using Orders;
 using Rails;
 using Rails.Infrastructure;
@@ -15,10 +16,12 @@ namespace Factories.Implementation
     {
         private readonly DiContainer _container;
         private readonly FactoriesConfiguration _factoriesConfiguration;
-        private readonly WaypointProvider _waypointProvider;
+        private readonly IWaypointProvider _waypointProvider;
 
-        public FactoryProvider(DiContainer container, FactoriesConfiguration factoriesConfiguration,
-            WaypointProvider waypointProvider)
+        public FactoryProvider(
+            DiContainer container, 
+            FactoriesConfiguration factoriesConfiguration,
+            IWaypointProvider waypointProvider)
         {
             _container = container;
             _factoriesConfiguration = factoriesConfiguration;

@@ -6,9 +6,9 @@ namespace Level.Implementation
     {
         public Camera MainCamera { get; private set; }
 
-        public void SetMainCamera(Camera mainCamera)
+        public CameraProvider(Camera camera)
         {
-            MainCamera = mainCamera;
+            MainCamera = camera;
         }
     }
 }

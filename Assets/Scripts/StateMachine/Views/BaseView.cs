@@ -13,7 +13,10 @@ namespace StateMachine.Views
         
         public virtual UniTask Hide()
         {
-            gameObject.SetActive(false);
+            if (gameObject != null)
+            {
+                gameObject.SetActive(false);
+            }
             return UniTask.CompletedTask;
         }
     }

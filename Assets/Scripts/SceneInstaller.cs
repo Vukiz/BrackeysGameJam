@@ -17,6 +17,9 @@ public class SceneInstaller : MonoInstaller
     [SerializeField] private CanvasView _canvas;
     public override void InstallBindings()
     {
+        Container.Bind<Camera>().FromInstance(_mainCamera).AsSingle();
+        Container.Bind<CanvasView>().FromInstance(_canvas);
+
         FactoriesInstaller.Install(Container);
         OrdersInstaller.Install(Container);
         RailsInstaller.Install(Container);
@@ -25,9 +28,6 @@ public class SceneInstaller : MonoInstaller
         LevelInstaller.Install(Container);
         StateMachineInstaller.Install(Container);
         
-        var cameraProvider = Container.Resolve<CameraProvider>(); // TODO: Maybe move camera initialization somewhere else
-        cameraProvider.SetMainCamera(_mainCamera);
         
-        Container.Bind<CanvasView>().FromInstance(_canvas);
     }
 }        
