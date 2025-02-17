@@ -21,7 +21,6 @@ namespace Factories.Implementation
 
         public event Action CollisionDetected;
 
-
         public void Initialize(RobotView view, RobotData data)
         {
             _view = view;

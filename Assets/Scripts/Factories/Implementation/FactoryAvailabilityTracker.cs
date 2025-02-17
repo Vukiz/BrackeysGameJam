@@ -89,6 +89,7 @@ namespace Factories.Implementation
         private async UniTask RequestFactoryPlacement()
         {
             // TODO: Add factory placement of a required types from queue 
+            await UniTask.CompletedTask;
         }
 
         private void Unsubscribe()
