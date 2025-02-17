@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Factories;
+using Factories.Infrastructure;
+using Rails.Infrastructure;
 using Rails.View;
 using UnityEngine;
 

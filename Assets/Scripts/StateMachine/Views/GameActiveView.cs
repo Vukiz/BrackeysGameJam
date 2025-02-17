@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace StateMachine.Views
 {
-    public class GameActiveView : MonoBehaviour
+    public class GameActiveView : BaseView
     {
         [SerializeField] private Button _exitButton;
         [SerializeField] private Button _muteButton;

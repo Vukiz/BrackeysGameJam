@@ -1,3 +1,4 @@
+using Rails.Infrastructure;
 using UnityEngine;
 
 namespace Rails.Implementation

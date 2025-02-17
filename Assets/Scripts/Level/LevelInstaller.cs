@@ -1,3 +1,5 @@
+using Level.Implementation;
+using Level.Infrastructure;
 using Zenject;
 
 namespace Level
@@ -6,9 +8,9 @@ namespace Level
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<WaypointProvider>().AsSingle();
+            Container.BindInterfacesTo<WaypointProvider>().AsSingle();
             Container.Bind<CameraProvider>().AsSingle();
-            Container.BindInterfacesAndSelfTo<InputTracker>()
+            Container.BindInterfacesTo<InputTracker>()
                 .AsSingle()
                 .NonLazy();
 

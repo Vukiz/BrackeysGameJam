@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace StateMachine.Views
 {
-    public class GameStartView : MonoBehaviour
+    public class GameStartView : BaseView
     {
         [SerializeField] Button _startButton;
 

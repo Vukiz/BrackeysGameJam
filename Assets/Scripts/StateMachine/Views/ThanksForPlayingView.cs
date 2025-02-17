@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace StateMachine.Views
 {
-    public class ThanksForPlayingView : MonoBehaviour
+    public class ThanksForPlayingView : BaseView
     {
-        [SerializeField] private GameObject _exitButton;
+        [SerializeField] private Button _exitButton;
 
-        public GameObject ExitButton => _exitButton;
+        public Button ExitButton => _exitButton;
     }
 }

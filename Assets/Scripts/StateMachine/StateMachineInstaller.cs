@@ -1,3 +1,4 @@
+using StateMachine.Implementation;
 using Zenject;
 
 namespace StateMachine
@@ -6,11 +7,11 @@ namespace StateMachine
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<GameStateMachine>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameMenuStateHandler>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameActiveStateHandler>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameEndedStateHandler>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameThanksForPlayingStateHandler>().AsSingle();
+            Container.BindInterfacesTo<GameStateMachine>().AsSingle();
+            Container.BindInterfacesTo<GameStartHandler>().AsSingle();
+            Container.BindInterfacesTo<GameActiveStateHandler>().AsSingle();
+            Container.BindInterfacesTo<GameEndedStateHandler>().AsSingle();
+            Container.BindInterfacesTo<GameThanksForPlayingStateHandler>().AsSingle();
         }
     }
 }
