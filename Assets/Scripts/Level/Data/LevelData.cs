@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Level.Views;
 using Orders;
@@ -13,10 +14,10 @@ namespace Level.Data
         public LevelView LevelViewPrefab;
     }
 
+    [Serializable]
     public class OrderData
     {
         public float TimeLimitSeconds;
-        public WorkType[] RequiredWorkTypes;
-        
+        public List<WorkType> RequiredWorkTypes;
     }
 }

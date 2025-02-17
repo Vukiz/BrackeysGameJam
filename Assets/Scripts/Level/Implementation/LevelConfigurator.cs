@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using Factories.Infrastructure;
 using Level.Data;
 using Level.Infrastructure;
 using Level.Views;
+using Orders;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
 using Workstation.Infrastructure;
@@ -15,21 +18,24 @@ namespace Level.Implementation
         private readonly LevelsHolder _levelsHolder;
         private readonly IWaypointProvider _waypointProvider;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
+        private readonly IOrderProvider _orderProvider;
 
         public LevelConfigurator(
             DiContainer container,
             LevelsHolder levelsHolder,
             IWaypointProvider waypointProvider,
-            IFactoryAvailabilityTracker factoryAvailabilityTracker
+            IFactoryAvailabilityTracker factoryAvailabilityTracker,
+            IOrderProvider orderProvider
         )
         {
             _container = container;
             _levelsHolder = levelsHolder;
             _waypointProvider = waypointProvider;
             _factoryAvailabilityTracker = factoryAvailabilityTracker;
+            _orderProvider = orderProvider;
         }
 
-        public void SpawnLevel(int number)
+        public LevelView SpawnLevel(int number)
         {
             var levelData = _levelsHolder.Levels[number];
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
@@ -37,6 +43,20 @@ namespace Level.Implementation
             SetupSushiBelts(levelView);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
+            SetupOrders(levelData.Orders);
+            
+            return levelView;
+        }
+
+        private void SetupOrders(List<OrderData> levelDataOrders)
+        {
+            var orders = levelDataOrders
+                .Select(orderData => new Order(orderData.RequiredWorkTypes, orderData.TimeLimitSeconds))
+                .Cast<IOrder>()
+                .ToList();
+            
+            _orderProvider.Initialize(orders);
+            _orderProvider.StartProcessingOrders().Forget();
         }
 
         private void SetupFactoryAvailabilityTracker(LevelView levelView)
@@ -51,6 +71,7 @@ namespace Level.Implementation
                 var sushiBelt = _container.Resolve<ISushiBelt>();
                 sushiBelt.SetView(sushiBeltView);
                 _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
+                _orderProvider.RegisterSushiBelt(sushiBelt);
             }
         }
 

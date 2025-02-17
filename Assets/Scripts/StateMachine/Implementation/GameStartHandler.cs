@@ -18,8 +18,10 @@ namespace StateMachine.Implementation
 
         public override void OnStateEnter()
         {
-            _canvasView.GameStartView.StartButton.onClick.AddListener(OnStartButtonClick);
-            _canvasView.GameStartView.Show();
+            var canvasViewGameStartView = _canvasView.GameStartView;
+            canvasViewGameStartView.gameObject.SetActive(true);
+            canvasViewGameStartView.StartButton.onClick.AddListener(OnStartButtonClick);
+            canvasViewGameStartView.Show();
         }
 
         private async void OnStartButtonClick()
@@ -31,7 +33,9 @@ namespace StateMachine.Implementation
 
         public override void OnStateExit()
         {
-            _canvasView.GameStartView.Hide();
+            var canvasViewGameStartView = _canvasView.GameStartView;
+            canvasViewGameStartView.Hide();
+            canvasViewGameStartView.gameObject.SetActive(false);
         }
     }
 }

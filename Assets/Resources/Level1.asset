@@ -12,4 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc74975deef854675ab2681fd7027e2c, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: 
+  Orders:
+  - TimeLimitSeconds: 60
+    RequiredWorkTypes: 00000000
+  - TimeLimitSeconds: 60
+    RequiredWorkTypes: 01000000
+  - TimeLimitSeconds: 60
+    RequiredWorkTypes: 02000000
   LevelViewPrefab: {fileID: 6665435657315364018, guid: b4adb66dec8684b42904bcbbaf5142e8, type: 3}

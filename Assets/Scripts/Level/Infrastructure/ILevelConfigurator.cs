@@ -1,7 +1,9 @@
+using Level.Views;
+
 namespace Level.Infrastructure
 {
     public interface ILevelConfigurator
     {
-        void SpawnLevel(int number);
+        LevelView SpawnLevel(int number);
     }
 }
