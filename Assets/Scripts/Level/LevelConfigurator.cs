@@ -51,6 +51,7 @@ namespace Level
             {
                 var workstation = _container.Resolve<Workstation.Workstation>(); // TODO: Maybe create manually if DI is not required
                 workstation.SetView(workstationView);
+                _waypointProvider.RegisterWaypoint(workstationView, workstation);
             }
         }
         

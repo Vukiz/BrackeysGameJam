@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using Rails;
 using SushiBelt;
 using UnityEngine;
 
 namespace Workstation
 {
-    public class WorkstationView : MonoBehaviour
+    public class WorkstationView : MonoBehaviour, IWaypointView
     {
         [SerializeField] private List<SlotView> _slotViews;
         [SerializeField] private SushiBeltView _sushiBeltView;
