@@ -7,7 +7,7 @@ namespace Factories
     public interface IFactoryAvailabilityTracker
     {
         void Initialize(List<FactorySlot> factorySlots);
-        void AddSushiBelt(ISushiBelt sushiBelt);
+        void RegisterSushiBeltForTracking(ISushiBelt sushiBelt);
         // subscribe to all sushibelts  and allow user to place a factory into an empty factory slot
     }
 }

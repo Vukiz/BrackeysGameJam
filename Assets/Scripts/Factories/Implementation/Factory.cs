@@ -23,7 +23,7 @@ namespace Factories.Implementation
             _robotProvider = robotProvider;
         }
         
-        public IWaypoint Next { get; private set; }
+        private IWaypoint _next;
         public Vector3 Position => _view.WaypointTransform.position;
         public WorkType WorkType => _data.WorkType;
 
@@ -33,7 +33,7 @@ namespace Factories.Implementation
         {
             _view = view;
             _data = data;
-            Next = next;
+            _next = next;
             StartCycle().Forget();
         }
         
@@ -94,7 +94,7 @@ namespace Factories.Implementation
         private void SpawnRobot()
         {
             var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position);
-            robot.SetNextWaypoint(Next);
+            robot.SetNextWaypoint(_next);
             RobotSpawned?.Invoke(robot);
         }
     }

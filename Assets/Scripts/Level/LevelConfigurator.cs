@@ -1,5 +1,5 @@
 using Factories;
-using Rails.Implementation;
+using Rails;
 using Zenject;
 
 namespace Level
@@ -11,8 +11,12 @@ namespace Level
         private readonly WaypointProvider _waypointProvider;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
 
-        public LevelConfigurator(DiContainer container, LevelsHolder levelsHolder, WaypointProvider waypointProvider,
-            IFactoryAvailabilityTracker factoryAvailabilityTracker)
+        public LevelConfigurator(
+            DiContainer container,
+            LevelsHolder levelsHolder,
+            WaypointProvider waypointProvider,
+            IFactoryAvailabilityTracker factoryAvailabilityTracker
+        )
         {
             _container = container;
             _levelsHolder = levelsHolder;
@@ -29,7 +33,7 @@ namespace Level
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
         }
-        
+
         private void SetupFactoryAvailabilityTracker(LevelView levelView)
         {
             _factoryAvailabilityTracker.Initialize(levelView.FactorySlots);
@@ -39,9 +43,9 @@ namespace Level
         {
             foreach (var sushiBeltView in levelView.SushiBeltViews)
             {
-                var sushiBelt = _container.Resolve<SushiBelt.SushiBelt>(); // TODO: Maybe create manually if DI is not required
+                var sushiBelt = _container.Resolve<SushiBelt.ISushiBelt>();
                 sushiBelt.SetView(sushiBeltView);
-                _factoryAvailabilityTracker.AddSushiBelt(sushiBelt);
+                _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
             }
         }
 
@@ -49,17 +53,17 @@ namespace Level
         {
             foreach (var workstationView in levelView.WorkstationViews)
             {
-                var workstation = _container.Resolve<Workstation.Workstation>(); // TODO: Maybe create manually if DI is not required
+                var workstation = _container.Resolve<Workstation.IWorkstation>();
                 workstation.SetView(workstationView);
                 _waypointProvider.RegisterWaypoint(workstationView, workstation);
             }
         }
-        
+
         private void SetupRailSwitches(LevelView levelView)
         {
             foreach (var railSwitchView in levelView.RailSwitchViews)
             {
-                var railSwitch = _container.Resolve<RailSwitch>(); // TODO: Maybe create manually if DI is not required
+                var railSwitch = _container.Resolve<IRailSwitch>();
                 _waypointProvider.RegisterWaypoint(railSwitchView, railSwitch);
             }
 

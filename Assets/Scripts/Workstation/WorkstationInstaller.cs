@@ -4,7 +4,7 @@ namespace Workstation
     {
         public override void InstallBindings()
         {
-            
+            Container.Bind<IWorkstation>().To<Workstation>().AsTransient();
         }
     }
 }

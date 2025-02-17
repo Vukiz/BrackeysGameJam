@@ -12,10 +12,10 @@ namespace Factories.Implementation
     public class FactoryAvailabilityTracker : IFactoryAvailabilityTracker, IDisposable
     {
         private readonly FactoryProvider _factoryProvider;
-        
-        private readonly List<ISushiBelt> _sushiBelts = new List<ISushiBelt>();
-        private readonly Dictionary<WorkType, IFactory> _factories = new Dictionary<WorkType, IFactory>();
-        private readonly Queue<WorkType> _requiredFactoriesQueue = new Queue<WorkType>();
+
+        private readonly List<ISushiBelt> _sushiBelts = new();
+        private readonly Dictionary<WorkType, IFactory> _factories = new();
+        private readonly Queue<WorkType> _requiredFactoriesQueue = new();
         private List<FactorySlot> _factorySlots;
 
         public FactoryAvailabilityTracker(FactoryProvider factoryProvider)
@@ -32,7 +32,7 @@ namespace Factories.Implementation
             _requiredFactoriesQueue.Clear();
         }
 
-        public void AddSushiBelt(ISushiBelt sushiBelt)
+        public void RegisterSushiBeltForTracking(ISushiBelt sushiBelt)
         {
             _sushiBelts.Add(sushiBelt);
             sushiBelt.OrderReceived += OnOrderReceived;
@@ -42,7 +42,7 @@ namespace Factories.Implementation
         {
             Unsubscribe();
         }
-        
+
         private async void OnOrderReceived(IOrder order)
         {
             try
@@ -61,23 +61,18 @@ namespace Factories.Implementation
                 {
                     return;
                 }
-            
-                foreach (var (_, factory) in _factories)
-                {
-                    factory.PauseCycle();
-                }
+
+                SetFactoriesPaused(true); // EA: I don't think it is needed to pause factories here
 
                 foreach (var slot in _factorySlots)
                 {
                     slot.SetSlotButtonEnabled(true);
                 }
-            
+
                 await RequestFactoryPlacement();
-                foreach (var (_, factory) in _factories)
-                {
-                    factory.ResumeCycle();
-                }
                 
+                SetFactoriesPaused(false);
+
                 foreach (var slot in _factorySlots)
                 {
                     slot.SetSlotButtonEnabled(false);
@@ -99,6 +94,21 @@ namespace Factories.Implementation
             foreach (var sushiBelt in _sushiBelts)
             {
                 sushiBelt.OrderReceived -= OnOrderReceived;
+            }
+        }
+
+        private void SetFactoriesPaused(bool isPaused)
+        {
+            foreach (var (_, factory) in _factories)
+            {
+                if (isPaused)
+                {
+                    factory.PauseCycle();
+                }
+                else
+                {
+                    factory.ResumeCycle();
+                }
             }
         }
     }

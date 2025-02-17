@@ -6,6 +6,7 @@ namespace SushiBelt
     {
         public override void InstallBindings()
         {
+            Container.Bind<ISushiBelt>().To<SushiBelt>().AsTransient();
         }
     }
 }

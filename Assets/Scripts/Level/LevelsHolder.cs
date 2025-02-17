@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 namespace Level
 {
     [CreateAssetMenu(fileName = "LevelsHolder", menuName = "Levels/LevelsHolder")]
-    public class LevelsHolder : ScriptableObjectInstaller
+    public class LevelsHolder : ScriptableObject
     {
         [SerializeField] private List<LevelData> _levels;
 

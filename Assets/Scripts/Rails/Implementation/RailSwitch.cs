@@ -7,12 +7,13 @@ namespace Rails.Implementation
 {
     public class RailSwitch : IWaypoint
     {
-        private readonly List<IWaypoint> _neighbourWaypoints = new List<IWaypoint>();
+        private readonly List<IWaypoint> _neighbourWaypoints = new();
         private RailSwitchView _view;
-        public IWaypoint Next { get; }
+        private int _currentNeighbourIndex;
+        private IWaypoint Next => _neighbourWaypoints[_currentNeighbourIndex];
         public Vector3 Position => _view.transform.position;
 
-        public void Initialize(RailSwitchView view)
+        public void SetView(RailSwitchView view)
         {
             _view = view;
             _view.InteractionRequired += OnInteractionRequired;
@@ -31,6 +32,7 @@ namespace Rails.Implementation
         private void OnInteractionRequired()
         {
             // TODO: Add rotation logic
+            _currentNeighbourIndex = (_currentNeighbourIndex + 1) % _neighbourWaypoints.Count;
         }
     }
 }
