@@ -4,6 +4,7 @@ using Factories.Infrastructure;
 using Level.Data;
 using Level.Infrastructure;
 using Level.Views;
+using Rails.Implementation;
 using Orders;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
@@ -89,7 +90,8 @@ namespace Level.Implementation
         {
             foreach (var railSwitchView in levelView.RailSwitchViews)
             {
-                var railSwitch = _container.Resolve<IRailSwitch>();
+                var railSwitch = _container.Resolve<RailSwitch>();
+                railSwitch.SetView(railSwitchView);
                 _waypointProvider.RegisterWaypoint(railSwitchView, railSwitch);
             }
 

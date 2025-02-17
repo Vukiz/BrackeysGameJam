@@ -1,6 +1,4 @@
-using Level;
 using Level.Infrastructure;
-using Rails;
 using Rails.Implementation;
 using Rails.Infrastructure;
 using UnityEngine;
@@ -11,7 +9,7 @@ namespace Factories.View
     {
         [SerializeField] private WaypointView _nextWaypointView;
 
-        private bool _isEnabled;
+        private bool _isInteractable;
 
         public IWaypointView NextWaypointView => _nextWaypointView;
 
@@ -19,7 +17,7 @@ namespace Factories.View
 
         public void Interact()
         {
-            if (!_isEnabled)
+            if (!_isInteractable)
             {
                 return;
             }
@@ -27,9 +25,9 @@ namespace Factories.View
             SlotSelected?.Invoke(this);
         }
 
-        public void SetSlotButtonEnabled(bool isEnabled)
+        public void SetInteractable(bool isInteractable)
         {
-            _isEnabled = isEnabled;
+            _isInteractable = isInteractable;
         }
     }
 }

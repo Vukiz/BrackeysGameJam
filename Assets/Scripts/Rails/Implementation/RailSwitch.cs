@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Factories;
 using Factories.Infrastructure;
 using Rails.Infrastructure;
 using Rails.View;
@@ -28,13 +27,24 @@ namespace Rails.Implementation
 
         public void AddNeighbour(IWaypoint waypoint)
         {
-            _neighbourWaypoints.Add(waypoint); // TODO: Sort by angle from Vector3.forward
+            _neighbourWaypoints.Add(waypoint);
+            SortWaypoints();
         }
 
         private void OnInteractionRequired()
         {
-            // TODO: Add rotation logic
             _currentNeighbourIndex = (_currentNeighbourIndex + 1) % _neighbourWaypoints.Count;
+            _view.transform.rotation = Quaternion.LookRotation(Next.Position, Vector3.up);
+        }
+
+        private void SortWaypoints()
+        {
+            _neighbourWaypoints.Sort((left, right) => GetAngle(left) < GetAngle(right) ? 1 : -1);
+        }
+
+        private float GetAngle(IWaypoint waypoint)
+        {
+            return Vector3.Angle(Vector3.forward, waypoint.Position);
         }
     }
 }

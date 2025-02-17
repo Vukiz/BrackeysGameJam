@@ -26,11 +26,13 @@ namespace Level.Infrastructure
         public void Dispose()
         {
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
         }
 
         private async UniTask TrackInput()
         {
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
@@ -46,6 +48,7 @@ namespace Level.Infrastructure
         private void HandleInput()
         {
             var ray = _cameraProvider.MainCamera.ScreenPointToRay(Input.mousePosition);
+            // if (!Physics.Raycast(ray, out var hit, 100f, 1 << 12)) // TODO: use layers
             if (!Physics.Raycast(ray, out var hit))
             {
                 return;

@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: FactoriesConfiguration
   m_EditorClassIdentifier: 
   _robotViews: []
-  _robotModels: []
-  _factoryViews: []
-  _factoryModels: []
+  _robotData: []
+  _factoryViews:
+  - {fileID: 7233871982271836972, guid: 361b61c4fd44c5242984769eefdccae3, type: 3}
+  - {fileID: 7233871982271836972, guid: e77276428f6294a4d8b9f0580a3931af, type: 3}
+  - {fileID: 7233871982271836972, guid: 61f21497f5e13fc48b198e244a37246a, type: 3}
+  _factoryData: []

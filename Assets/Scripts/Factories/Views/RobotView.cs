@@ -20,8 +20,7 @@ namespace Factories.View
 
         private void LookAt(Vector3 position)
         {
-            var rotation = Vector3.RotateTowards(transform.forward, position, 0.1f, 0f);
-            transform.rotation = Quaternion.LookRotation(rotation);
+            transform.rotation = Quaternion.LookRotation(position, Vector3.up);
         }
     }
 }
