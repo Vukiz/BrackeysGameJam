@@ -7,7 +7,7 @@ namespace Factories
     {
         WorkType WorkType { get; }
         
-        void SetNextWaypoint(IWaypoint waypoint);
+        void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);
         
         void CompleteOrder(IOrder order);
 

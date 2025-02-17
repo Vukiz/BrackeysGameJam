@@ -22,10 +22,10 @@ namespace Factories.Implementation
             var prefab = _factoriesConfiguration.GetRobotView(workType);
             var view = _container.InstantiatePrefabForComponent<RobotView>(prefab);
             view.transform.position = position;
-            var model = _factoriesConfiguration.GetRobotModel(workType);
-            var viewModel = _container.Resolve<Robot>();
-            viewModel.Initialize(view, model);
-            return viewModel;
+            var data = _factoriesConfiguration.GetRobotData(workType);
+            var robot = _container.Resolve<Robot>(); // TODO: Maybe create manually if DI is not required
+            robot.Initialize(view, data);
+            return robot;
         }
     }
 }

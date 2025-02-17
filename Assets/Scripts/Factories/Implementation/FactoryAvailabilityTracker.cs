@@ -2,41 +2,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Factories.View;
 using Orders;
 using SushiBelt;
 using UnityEngine;
 
 namespace Factories.Implementation
 {
-    public class FactoryAvailabilityTracker : IDisposable
+    public class FactoryAvailabilityTracker : IFactoryAvailabilityTracker, IDisposable
     {
         private readonly FactoryProvider _factoryProvider;
-        private readonly List<ISushiBelt> _sushiBelts;
         
+        private readonly List<ISushiBelt> _sushiBelts = new List<ISushiBelt>();
         private readonly Dictionary<WorkType, IFactory> _factories = new Dictionary<WorkType, IFactory>();
         private readonly Queue<WorkType> _requiredFactoriesQueue = new Queue<WorkType>();
+        private List<FactorySlot> _factorySlots;
 
-        public FactoryAvailabilityTracker(FactoryProvider factoryProvider, List<ISushiBelt> sushiBelts)
+        public FactoryAvailabilityTracker(FactoryProvider factoryProvider)
         {
             _factoryProvider = factoryProvider;
-            _sushiBelts = sushiBelts;
         }
 
-        public void Initialize()
+        public void Initialize(List<FactorySlot> factorySlots)
         {
-            // TODO: Pass factory slots
-            foreach (var sushiBelt in _sushiBelts)
-            {
-                sushiBelt.OrderReceived += OnOrderReceived;
-            }
+            Unsubscribe();
+            _factorySlots = factorySlots;
+            _sushiBelts.Clear();
+            _factories.Clear();
+            _requiredFactoriesQueue.Clear();
+        }
+
+        public void AddSushiBelt(ISushiBelt sushiBelt)
+        {
+            _sushiBelts.Add(sushiBelt);
+            sushiBelt.OrderReceived += OnOrderReceived;
         }
 
         public void Dispose()
         {
-            foreach (var sushiBelt in _sushiBelts)
-            {
-                sushiBelt.OrderReceived -= OnOrderReceived;
-            }
+            Unsubscribe();
         }
         
         private async void OnOrderReceived(IOrder order)
@@ -62,11 +66,21 @@ namespace Factories.Implementation
                 {
                     factory.PauseCycle();
                 }
+
+                foreach (var slot in _factorySlots)
+                {
+                    slot.SetSlotButtonEnabled(true);
+                }
             
                 await RequestFactoryPlacement();
                 foreach (var (_, factory) in _factories)
                 {
                     factory.ResumeCycle();
+                }
+                
+                foreach (var slot in _factorySlots)
+                {
+                    slot.SetSlotButtonEnabled(false);
                 }
             }
             catch (Exception e)
@@ -78,6 +92,14 @@ namespace Factories.Implementation
         private async UniTask RequestFactoryPlacement()
         {
             // TODO: Add factory placement of a required types from queue 
+        }
+
+        private void Unsubscribe()
+        {
+            foreach (var sushiBelt in _sushiBelts)
+            {
+                sushiBelt.OrderReceived -= OnOrderReceived;
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Factories.Data
 {
     [Serializable]
-    public class FactoryModel
+    public class FactoryData
     {
         [SerializeField] private WorkType _workType;
         [SerializeField] private float _spawnCooldown;

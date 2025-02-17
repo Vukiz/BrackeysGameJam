@@ -14,7 +14,7 @@ namespace Factories.Implementation
         private readonly RobotProvider _robotProvider;
 
         private FactoryView _view;
-        private FactoryModel _model;
+        private FactoryData _data;
         private CancellationTokenSource _cancellationTokenSource;
         private bool _isPaused;
         
@@ -25,14 +25,14 @@ namespace Factories.Implementation
         
         public IWaypoint Next { get; private set; }
         public Vector3 Position => _view.WaypointTransform.position;
-        public WorkType WorkType => _model.WorkType;
+        public WorkType WorkType => _data.WorkType;
 
         public event Action<IRobot> RobotSpawned;
         
-        public void Initialize(FactoryView view, FactoryModel model, IWaypoint next)
+        public void Initialize(FactoryView view, FactoryData data, IWaypoint next)
         {
             _view = view;
-            _model = model;
+            _data = data;
             Next = next;
             StartCycle().Forget();
         }
@@ -63,7 +63,7 @@ namespace Factories.Implementation
             {
                 _cancellationTokenSource = new CancellationTokenSource();
                 var token = _cancellationTokenSource.Token;
-                await UniTask.Delay(TimeSpan.FromSeconds(_model.InitialDelay), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(_data.InitialDelay), cancellationToken: token);
                 while (!token.IsCancellationRequested)
                 {
                     SpawnRobot();
@@ -79,7 +79,7 @@ namespace Factories.Implementation
         private async UniTask StartCooldown(CancellationToken token)
         {
             var duration = 0f;
-            while (duration <= _model.SpawnCooldown)
+            while (duration <= _data.SpawnCooldown)
             {
                 token.ThrowIfCancellationRequested();
                 if (!_isPaused)

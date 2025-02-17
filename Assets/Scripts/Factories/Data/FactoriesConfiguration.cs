@@ -11,18 +11,18 @@ namespace Factories.Data
     public class FactoriesConfiguration : ScriptableObject
     {
         [SerializeField] private List<RobotView> _robotViews;
-        [SerializeField] private List<RobotModel> _robotModels;
+        [SerializeField] private List<RobotData> _robotData;
         [SerializeField] private List<FactoryView> _factoryViews;
-        [SerializeField] private List<FactoryModel> _factoryModels;
+        [SerializeField] private List<FactoryData> _factoryData;
 
         public RobotView GetRobotView(WorkType workType)
         {
             return _robotViews.FirstOrDefault(x => x.WorkType == workType);
         }
 
-        public RobotModel GetRobotModel(WorkType workType)
+        public RobotData GetRobotData(WorkType workType)
         {
-            return _robotModels.FirstOrDefault(x => x.WorkType == workType);
+            return _robotData.FirstOrDefault(x => x.WorkType == workType);
         }
 
         public FactoryView GetFactoryView(WorkType workType)
@@ -30,9 +30,9 @@ namespace Factories.Data
             return _factoryViews.FirstOrDefault(x => x.WorkType == workType);
         }
 
-        public FactoryModel GetFactoryModel(WorkType workType)
+        public FactoryData GetFactoryData(WorkType workType)
         {
-            return _factoryModels.FirstOrDefault(x => x.WorkType == workType);
+            return _factoryData.FirstOrDefault(x => x.WorkType == workType);
         }
     }
 }

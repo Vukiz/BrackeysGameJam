@@ -27,12 +27,12 @@ namespace Factories.Implementation
             var prefab = _factoriesConfiguration.GetFactoryView(workType);
             var view = _container.InstantiatePrefabForComponent<FactoryView>(prefab);
             view.transform.position = position;
-            var model = _factoriesConfiguration.GetFactoryModel(workType);
+            var data = _factoriesConfiguration.GetFactoryData(workType);
             var nextWaypoint = _waypointProvider.GetWaypoint(nextWaypointView);
-            var viewModel = _container.Resolve<Factory>();
-            viewModel.Initialize(view, model, nextWaypoint);
-            _waypointProvider.RegisterWaypoint(view, viewModel);
-            return viewModel;
+            var factory = _container.Resolve<Factory>(); // TODO: Maybe create manually if DI is not required
+            factory.Initialize(view, data, nextWaypoint);
+            _waypointProvider.RegisterWaypoint(view, factory);
+            return factory;
         }
     }
 }
