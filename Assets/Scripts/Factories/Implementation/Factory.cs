@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Factories.Implementation
 {
-    public class Factory : IFactory
+    public class Factory : IFactory, IDisposable
     {
         private readonly RobotProvider _robotProvider;
 
@@ -88,6 +88,12 @@ namespace Factories.Implementation
             var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position, _robotsParent);
             robot.SetNextWaypoint(_next);
             RobotSpawned?.Invoke(robot);
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
         }
     }
 }

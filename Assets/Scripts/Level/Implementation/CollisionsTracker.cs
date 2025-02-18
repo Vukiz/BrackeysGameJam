@@ -33,6 +33,7 @@ namespace Level.Implementation
         public void Dispose()
         {
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
         }
 
         public void RegisterFactorySlot(FactorySlot factorySlot)
