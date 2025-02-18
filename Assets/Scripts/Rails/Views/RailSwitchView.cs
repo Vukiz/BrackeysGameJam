@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Level;
 using Level.Infrastructure;
 using Rails.Implementation;
 using UnityEngine;
 
-namespace Rails.View
+namespace Rails.Views
 {
     public class RailSwitchView : WaypointView, IInteractable
     {
@@ -18,6 +17,20 @@ namespace Rails.View
         public void Interact()
         {
             InteractionRequired?.Invoke();
+        }
+
+        private void OnDrawGizmos()
+        {
+            foreach (var neighbourWaypoint in NeighbourWaypoints)
+            {
+                if (neighbourWaypoint == null)
+                {
+                    continue;
+                }
+
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(transform.position, neighbourWaypoint.transform.position);
+            }
         }
     }
 }

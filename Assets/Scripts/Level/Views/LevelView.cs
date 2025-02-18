@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Factories.Views;
-using Rails.View;
+using Rails.Views;
 using UnityEngine;
 using Workstation.Views;
 

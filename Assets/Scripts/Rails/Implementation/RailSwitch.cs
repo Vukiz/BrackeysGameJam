@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Factories.Infrastructure;
 using Rails.Infrastructure;
-using Rails.View;
+using Rails.Views;
 using UnityEngine;
 
 namespace Rails.Implementation

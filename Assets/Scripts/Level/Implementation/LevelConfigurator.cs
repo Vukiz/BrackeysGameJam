@@ -58,7 +58,7 @@ namespace Level.Implementation
         private void SetupOrders(List<OrderData> levelDataOrders)
         {
             var orders = levelDataOrders
-                .Select(orderData => new Order(orderData.RequiredWorkTypes, orderData.TimeLimitSeconds))
+                .Select(orderData => new Order(orderData.RequiredWorkTypes.ToList(), orderData.TimeLimitSeconds))
                 .Cast<IOrder>()
                 .ToList();
 
