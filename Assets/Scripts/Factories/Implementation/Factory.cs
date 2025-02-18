@@ -16,6 +16,7 @@ namespace Factories.Implementation
 
         private FactoryView _view;
         private FactoryData _data;
+        private Transform _robotsParent;
         private CancellationTokenSource _cancellationTokenSource;
         private bool _isPaused;
         
@@ -25,27 +26,17 @@ namespace Factories.Implementation
         }
         
         private IWaypoint _next;
-        public Vector3 Position => _view.WaypointTransform.position;
         public WorkType WorkType => _data.WorkType;
 
         public event Action<IRobot> RobotSpawned;
         
-        public void Initialize(FactoryView view, FactoryData data, IWaypoint next)
+        public void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent)
         {
             _view = view;
             _data = data;
             _next = next;
+            _robotsParent = robotsParent;
             StartCycle().Forget();
-        }
-        
-        public void Reach(IRobot robot)
-        {
-            // TODO: Explode robot and finish the game
-        }
-
-        public void AddNeighbour(IWaypoint waypoint)
-        {
-            
         }
 
         public void PauseCycle()
@@ -94,7 +85,7 @@ namespace Factories.Implementation
 
         private void SpawnRobot()
         {
-            var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position);
+            var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position, _robotsParent);
             robot.SetNextWaypoint(_next);
             RobotSpawned?.Invoke(robot);
         }

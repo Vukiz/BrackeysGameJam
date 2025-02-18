@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6075ad738f4f40ecb46d254bfecb6a3e, type: 3}
   m_Name: FactoriesConfiguration
   m_EditorClassIdentifier: 
-  _robotViews: []
-  _robotData: []
+  _robotViews:
+  - {fileID: 864247122306395324, guid: 07d75d574675a4a839876a9e4f911506, type: 3}
+  - {fileID: 864247122306395324, guid: ea2eefa718e7d4eb2a16d70adccefd90, type: 3}
+  - {fileID: 864247122306395324, guid: c61d3030b7926974b88255214700e62b, type: 3}
+  _robotData:
+  - _workType: 0
+    _speed: 1
+  - _workType: 1
+    _speed: 2
+  - _workType: 2
+    _speed: 3
   _factoryViews:
-  - {fileID: 7233871982271836972, guid: 361b61c4fd44c5242984769eefdccae3, type: 3}
-  - {fileID: 7233871982271836972, guid: e77276428f6294a4d8b9f0580a3931af, type: 3}
-  - {fileID: 7233871982271836972, guid: 61f21497f5e13fc48b198e244a37246a, type: 3}
-  _factoryData: []
+  - {fileID: 8269816598120195602, guid: 547d957f7d74f411d8dc5a69e029efd7, type: 3}
+  - {fileID: 8269816598120195602, guid: 67d37f6198ab99b4f98f5afa8c1d75ae, type: 3}
+  - {fileID: 8269816598120195602, guid: 38dadd6c365b40c4f8906152029dd5ce, type: 3}
+  _factoryData:
+  - _workType: 0
+    _spawnCooldown: 1
+    _initialDelay: 2
+  - _workType: 1
+    _spawnCooldown: 2
+    _initialDelay: 3
+  - _workType: 2
+    _spawnCooldown: 4
+    _initialDelay: 5

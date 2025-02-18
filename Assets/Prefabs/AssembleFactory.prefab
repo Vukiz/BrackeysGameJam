@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3790766145355015137}
   - component: {fileID: 8269816598120195602}
   m_Layer: 0
-  m_Name: Factory
+  m_Name: AssembleFactory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1831482e7f640338df52e2d8af82184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _workType: 0
+  _workType: 2
   _waypointTransform: {fileID: 0}
-  _robotSpawnPoint: {fileID: 0}
+  _robotSpawnPoint: {fileID: 3790766145355015137}
 --- !u!1001 &1185368387311932588
 PrefabInstance:
   m_ObjectHideFlags: 0

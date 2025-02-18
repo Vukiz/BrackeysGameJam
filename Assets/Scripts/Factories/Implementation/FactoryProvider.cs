@@ -1,10 +1,7 @@
 using Factories.Data;
 using Factories.View;
-using Level;
-using Level.Implementation;
 using Level.Infrastructure;
 using Orders;
-using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
 using Zenject;
@@ -28,16 +25,15 @@ namespace Factories.Implementation
             _waypointProvider = waypointProvider;
         }
 
-        public IFactory Create(WorkType workType, Vector3 position, IWaypointView nextWaypointView)
+        public IFactory Create(WorkType workType, Vector3 position, IWaypointView nextWaypointView, Transform factoryParent, Transform robotsParent)
         {
             var prefab = _factoriesConfiguration.GetFactoryView(workType);
-            var view = _container.InstantiatePrefabForComponent<FactoryView>(prefab);
+            var view = _container.InstantiatePrefabForComponent<FactoryView>(prefab, factoryParent);
             view.transform.position = position;
             var data = _factoriesConfiguration.GetFactoryData(workType);
             var nextWaypoint = _waypointProvider.GetWaypoint(nextWaypointView);
             var factory = _container.Resolve<Factory>(); // TODO: Maybe create manually if DI is not required
-            factory.Initialize(view, data, nextWaypoint);
-            _waypointProvider.RegisterWaypoint(view, factory);
+            factory.Initialize(view, data, nextWaypoint, robotsParent);
             return factory;
         }
     }

@@ -28,23 +28,13 @@ namespace Rails.Implementation
         public void AddNeighbour(IWaypoint waypoint)
         {
             _neighbourWaypoints.Add(waypoint);
-            SortWaypoints();
         }
 
         private void OnInteractionRequired()
         {
             _currentNeighbourIndex = (_currentNeighbourIndex + 1) % _neighbourWaypoints.Count;
-            _view.transform.rotation = Quaternion.LookRotation(Next.Position, Vector3.up);
-        }
-
-        private void SortWaypoints()
-        {
-            _neighbourWaypoints.Sort((left, right) => GetAngle(left) < GetAngle(right) ? 1 : -1);
-        }
-
-        private float GetAngle(IWaypoint waypoint)
-        {
-            return Vector3.Angle(Vector3.forward, waypoint.Position);
+            var position = Next.Position - _view.transform.position;
+            _view.transform.rotation = Quaternion.LookRotation(position, Vector3.up);
         }
     }
 }

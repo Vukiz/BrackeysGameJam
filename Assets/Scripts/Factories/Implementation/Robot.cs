@@ -18,6 +18,8 @@ namespace Factories.Implementation
         private IWaypoint _nextWaypoint;
         
         public WorkType WorkType => _data.WorkType;
+        public Vector3 Position => _view.transform.position;
+        public bool IsTrackingRequired { get; set; }
 
         public event Action CollisionDetected;
 

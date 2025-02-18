@@ -26,6 +26,7 @@ namespace Workstation.Implementation
 
         public void SetView(WorkstationView workstationView)
         {
+            _workstationView = workstationView;
             _slots = new List<ISlot>();
             foreach (var slotView in workstationView.SlotViews)
             {
@@ -90,6 +91,7 @@ namespace Workstation.Implementation
 
         public void Reach(IRobot robot)
         {
+            robot.SetNextWaypoint(Next);
         }
 
         public void AddNeighbour(IWaypoint waypoint)

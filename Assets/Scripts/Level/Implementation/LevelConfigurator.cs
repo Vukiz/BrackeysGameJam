@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Factories.Implementation;
 using Factories.Infrastructure;
 using Level.Data;
 using Level.Infrastructure;
@@ -20,20 +21,22 @@ namespace Level.Implementation
         private readonly IWaypointProvider _waypointProvider;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         private readonly IOrderProvider _orderProvider;
+        private readonly CollisionsTracker _collisionsTracker;
 
         public LevelConfigurator(
             DiContainer container,
             LevelsHolder levelsHolder,
             IWaypointProvider waypointProvider,
             IFactoryAvailabilityTracker factoryAvailabilityTracker,
-            IOrderProvider orderProvider
-        )
+            IOrderProvider orderProvider,
+            CollisionsTracker collisionsTracker)
         {
             _container = container;
             _levelsHolder = levelsHolder;
             _waypointProvider = waypointProvider;
             _factoryAvailabilityTracker = factoryAvailabilityTracker;
             _orderProvider = orderProvider;
+            _collisionsTracker = collisionsTracker;
         }
 
         public LevelView SpawnLevel(int number)
@@ -41,10 +44,11 @@ namespace Level.Implementation
             var levelData = _levelsHolder.Levels[number];
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
             SetupFactoryAvailabilityTracker(levelView);
+            SetupOrders(levelData.Orders);
             SetupSushiBelts(levelView);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
-            SetupOrders(levelData.Orders);
+            _orderProvider.StartProcessingOrders().Forget(); // Temp fix
             
             return levelView;
         }
@@ -57,12 +61,20 @@ namespace Level.Implementation
                 .ToList();
             
             _orderProvider.Initialize(orders);
-            _orderProvider.StartProcessingOrders().Forget();
+            // _orderProvider.StartProcessingOrders().Forget();
         }
 
         private void SetupFactoryAvailabilityTracker(LevelView levelView)
         {
-            _factoryAvailabilityTracker.Initialize(levelView.FactorySlots);
+            foreach (var factorySlotView in levelView.FactorySlots)
+            {
+                var factorySlot = _container.Resolve<FactorySlot>();
+                factorySlot.Initialize(factorySlotView);
+                _waypointProvider.RegisterWaypoint(factorySlotView, factorySlot);
+                _collisionsTracker.RegisterFactorySlot(factorySlot);
+            }
+            
+            _factoryAvailabilityTracker.Initialize(levelView.FactorySlots, levelView.FactoriesParent, levelView.RobotsParent);
         }
 
         private void SetupSushiBelts(LevelView levelView)

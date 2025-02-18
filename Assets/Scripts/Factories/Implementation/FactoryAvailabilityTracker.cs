@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Factories.Infrastructure;
 using Factories.View;
+using Level.Implementation;
 using Orders;
 using SushiBelt.Infrastructure;
 using UnityEngine;
@@ -14,21 +15,26 @@ namespace Factories.Implementation
     public class FactoryAvailabilityTracker : IFactoryAvailabilityTracker, IDisposable
     {
         private readonly FactoryProvider _factoryProvider;
+        private readonly CollisionsTracker _collisionsTracker;
 
         private readonly List<ISushiBelt> _sushiBelts = new();
         private readonly Dictionary<WorkType, IFactory> _factories = new();
         private readonly Queue<WorkType> _requiredFactoriesQueue = new();
-        private List<FactorySlot> _factorySlots;
+        private List<FactorySlotView> _factorySlots;
+        private Transform _factoriesParent;
+        private Transform _robotsParent;
         private CancellationTokenSource _cancellationTokenSource;
-        private FactorySlot _selectedFactorySlot;
+        private FactorySlotView _selectedFactorySlotView;
 
         public FactoryAvailabilityTracker(FactoryProvider factoryProvider)
         {
             _factoryProvider = factoryProvider;
         }
 
-        public void Initialize(List<FactorySlot> factorySlots)
+        public void Initialize(List<FactorySlotView> factorySlots, Transform factoriesParent, Transform robotsParent)
         {
+            _factoriesParent = factoriesParent;
+            _robotsParent = robotsParent;
             Unsubscribe();
             _factorySlots = factorySlots;
             _sushiBelts.Clear();
@@ -102,19 +108,19 @@ namespace Factories.Implementation
 
         private async UniTask HandleConcreteWorkType(WorkType workType, CancellationToken token)
         {
-            while (!_selectedFactorySlot)
+            while (!_selectedFactorySlotView)
             {
                 token.ThrowIfCancellationRequested();
                 await UniTask.Yield();
             }
             
-            _factorySlots.Remove(_selectedFactorySlot);
-            _selectedFactorySlot.SlotSelected -= OnSlotSelected;
-            var factory = _factoryProvider.Create(workType, _selectedFactorySlot.transform.position,
-                _selectedFactorySlot.NextWaypointView);
+            _factorySlots.Remove(_selectedFactorySlotView);
+            _selectedFactorySlotView.SlotSelected -= OnSlotSelected;
+            var factory = _factoryProvider.Create(workType, _selectedFactorySlotView.transform.position,
+                _selectedFactorySlotView.NextWaypointView, _factoriesParent, _robotsParent);
                     
             _factories.Add(workType, factory);
-            _selectedFactorySlot = null;
+            _selectedFactorySlotView = null;
         }
 
         private void Unsubscribe()
@@ -158,9 +164,9 @@ namespace Factories.Implementation
             }
         }
 
-        private void OnSlotSelected(FactorySlot factorySlot)
+        private void OnSlotSelected(FactorySlotView factorySlotView)
         {
-            _selectedFactorySlot = factorySlot;
+            _selectedFactorySlotView = factorySlotView;
         }
     }
 }

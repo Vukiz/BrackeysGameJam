@@ -4,7 +4,7 @@ using Rails.Infrastructure;
 
 namespace Factories.Infrastructure
 {
-    public interface IFactory : IWaypoint
+    public interface IFactory
     {
         WorkType WorkType { get; } // Type of the robot that factory spawns
         event System.Action<IRobot> RobotSpawned;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Factories.View
 {
-    public class FactorySlot : MonoBehaviour, IInteractable
+    public class FactorySlotView : WaypointView, IInteractable
     {
         [SerializeField] private WaypointView _nextWaypointView;
 
@@ -13,7 +13,7 @@ namespace Factories.View
 
         public IWaypointView NextWaypointView => _nextWaypointView;
 
-        public event System.Action<FactorySlot> SlotSelected;
+        public event System.Action<FactorySlotView> SlotSelected;
 
         public void Interact()
         {

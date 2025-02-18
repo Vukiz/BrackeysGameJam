@@ -15,7 +15,9 @@ namespace Factories.View
         public UniTask MoveTo(Vector3 position, float duration, CancellationToken token)
         {
             LookAt(position);
-            return transform.DOMove(position, duration).WithCancellation(token);
+            return transform.DOMove(position, duration)
+                .SetEase(Ease.Linear)
+                .WithCancellation(token);
         }
 
         private void LookAt(Vector3 position)

@@ -1,6 +1,7 @@
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.View;
+using Level.Implementation;
 using Orders;
 using UnityEngine;
 using Zenject;
@@ -11,21 +12,27 @@ namespace Factories.Implementation
     {
         private readonly DiContainer _container;
         private readonly FactoriesConfiguration _factoriesConfiguration;
+        private readonly CollisionsTracker _collisionsTracker;
 
-        public RobotProvider(DiContainer container, FactoriesConfiguration factoriesConfiguration)
+        public RobotProvider(
+            DiContainer container,
+            FactoriesConfiguration factoriesConfiguration,
+            CollisionsTracker collisionsTracker)
         {
             _container = container;
             _factoriesConfiguration = factoriesConfiguration;
+            _collisionsTracker = collisionsTracker;
         }
 
-        public IRobot Create(WorkType workType, Vector3 position)
+        public IRobot Create(WorkType workType, Vector3 position, Transform parent)
         {
             var prefab = _factoriesConfiguration.GetRobotView(workType);
-            var view = _container.InstantiatePrefabForComponent<RobotView>(prefab);
+            var view = _container.InstantiatePrefabForComponent<RobotView>(prefab, parent);
             view.transform.position = position;
             var data = _factoriesConfiguration.GetRobotData(workType);
             var robot = _container.Resolve<Robot>(); // TODO: Maybe create manually if DI is not required
             robot.Initialize(view, data);
+            _collisionsTracker.RegisterRobot(robot);
             return robot;
         }
     }

@@ -16,6 +16,7 @@ namespace Level
 
             Container.BindInterfacesTo<LevelConfigurator>().AsSingle();
             Container.BindInterfacesTo<OrderProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CollisionsTracker>().AsSingle();
         }
     }
 }

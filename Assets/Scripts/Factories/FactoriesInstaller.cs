@@ -7,6 +7,7 @@ namespace Factories
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<FactorySlot>().AsTransient();
             Container.BindInterfacesTo<FactoryAvailabilityTracker>()
                 .AsSingle()
                 .NonLazy();
