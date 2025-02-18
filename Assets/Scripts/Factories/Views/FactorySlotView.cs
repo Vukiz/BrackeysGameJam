@@ -3,7 +3,7 @@ using Rails.Implementation;
 using Rails.Infrastructure;
 using UnityEngine;
 
-namespace Factories.View
+namespace Factories.Views
 {
     public class FactorySlotView : WaypointView, IInteractable
     {

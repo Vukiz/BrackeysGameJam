@@ -4,15 +4,19 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Factories.Implementation;
 using Factories.Infrastructure;
+using Level.Infrastructure;
+using StateMachine.Data;
+using StateMachine.Infrastructure;
+using UnityEngine;
 
 namespace Level.Implementation
 {
-    public class CollisionsTracker : IDisposable
+    public class CollisionsTracker : ICollisionsTracker, IDisposable
     {
         private const float CollisionRadius = 0.1f;
         
-        private readonly List<FactorySlot> _factorySlots = new List<FactorySlot>();
-        private readonly List<IRobot> _robots = new List<IRobot>();
+        private readonly List<FactorySlot> _factorySlots = new();
+        private readonly List<IRobot> _robots = new();
         private CancellationTokenSource _cancellationTokenSource;
 
         public void TrackCollisions()
@@ -45,6 +49,14 @@ namespace Level.Implementation
             robot.IsTrackingRequired = true;
             _robots.Add(robot);
         }
+        
+        public void RemoveRobot(IRobot robot)
+        {
+            robot.IsTrackingRequired = false;
+            _robots.Remove(robot);
+        }
+
+        public event Action RobotCollisionDetected;
 
         private async UniTask CheckForCollisions()
         {
@@ -84,6 +96,8 @@ namespace Level.Implementation
         private void FinishGame()
         {
             // TODO: End game
+            Debug.Log("Game ended because of robot collisions");
+            RobotCollisionDetected?.Invoke();
         }
     }
 }

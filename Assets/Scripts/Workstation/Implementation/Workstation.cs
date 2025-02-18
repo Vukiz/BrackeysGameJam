@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Factories;
 using Factories.Infrastructure;
 using Orders;
-using Rails;
 using Rails.Infrastructure;
-using SushiBelt;
 using SushiBelt.Infrastructure;
 using UnityEngine;
 using Workstation.Infrastructure;
@@ -20,9 +16,7 @@ namespace Workstation.Implementation
         private ISushiBelt _sushiBelt;
         private WorkstationView _workstationView;
 
-        public event Action NoSlotsLeft;
-
-        public IWaypoint Next => TryGetNextSlot();
+        private IWaypoint Next => TryGetNextSlot();
 
         public void SetView(WorkstationView workstationView)
         {
@@ -83,7 +77,7 @@ namespace Workstation.Implementation
                 return slot;
             }
 
-            NoSlotsLeft?.Invoke();
+            // NoSlotsLeft?.Invoke();
             return null;
         }
 

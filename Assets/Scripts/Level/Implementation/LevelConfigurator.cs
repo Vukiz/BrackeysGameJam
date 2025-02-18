@@ -21,7 +21,7 @@ namespace Level.Implementation
         private readonly IWaypointProvider _waypointProvider;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         private readonly IOrderProvider _orderProvider;
-        private readonly CollisionsTracker _collisionsTracker;
+        private readonly ICollisionsTracker _collisionsTracker;
 
         public LevelConfigurator(
             DiContainer container,
@@ -29,7 +29,8 @@ namespace Level.Implementation
             IWaypointProvider waypointProvider,
             IFactoryAvailabilityTracker factoryAvailabilityTracker,
             IOrderProvider orderProvider,
-            CollisionsTracker collisionsTracker)
+            ICollisionsTracker collisionsTracker
+        )
         {
             _container = container;
             _levelsHolder = levelsHolder;
@@ -43,13 +44,16 @@ namespace Level.Implementation
         {
             var levelData = _levelsHolder.Levels[number];
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
+            _collisionsTracker.Reset();
             SetupFactoryAvailabilityTracker(levelView);
             SetupOrders(levelData.Orders);
             SetupSushiBelts(levelView);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
-            _orderProvider.StartProcessingOrders().Forget(); // Temp fix
             
+            _collisionsTracker.TrackCollisions();
+            _orderProvider.StartProcessingOrders().Forget();
+
             return levelView;
         }
 
@@ -59,9 +63,8 @@ namespace Level.Implementation
                 .Select(orderData => new Order(orderData.RequiredWorkTypes, orderData.TimeLimitSeconds))
                 .Cast<IOrder>()
                 .ToList();
-            
+
             _orderProvider.Initialize(orders);
-            // _orderProvider.StartProcessingOrders().Forget();
         }
 
         private void SetupFactoryAvailabilityTracker(LevelView levelView)
@@ -73,8 +76,9 @@ namespace Level.Implementation
                 _waypointProvider.RegisterWaypoint(factorySlotView, factorySlot);
                 _collisionsTracker.RegisterFactorySlot(factorySlot);
             }
-            
-            _factoryAvailabilityTracker.Initialize(levelView.FactorySlots, levelView.FactoriesParent, levelView.RobotsParent);
+
+            _factoryAvailabilityTracker.Initialize(levelView.FactorySlots, levelView.FactoriesParent,
+                levelView.RobotsParent);
         }
 
         private void SetupSushiBelts(LevelView levelView)

@@ -7,6 +7,7 @@ using Orders;
 using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Factories.Implementation
 {
@@ -22,6 +23,8 @@ namespace Factories.Implementation
         public bool IsTrackingRequired { get; set; }
 
         public event Action CollisionDetected;
+
+        public event Action<IRobot> RobotDestroyRequested;
 
         public void Initialize(RobotView view, RobotData data)
         {
@@ -59,7 +62,14 @@ namespace Factories.Implementation
 
         public void CompleteOrder(IOrder order)
         {
-            
+            order.ReceiveWork(WorkType);
+            Debug.Log($"Robot {this} completed order {order}");
+            RobotDestroyRequested?.Invoke(this);
+        }
+
+        public void Destroy()
+        {
+            Object.Destroy(_view.gameObject);
         }
     }
 }

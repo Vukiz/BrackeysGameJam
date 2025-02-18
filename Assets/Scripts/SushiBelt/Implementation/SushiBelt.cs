@@ -1,7 +1,11 @@
 using System;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Orders;
 using SushiBelt.Infrastructure;
 using SushiBelt.Views;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SushiBelt.Implementation
 {
@@ -11,15 +15,30 @@ namespace SushiBelt.Implementation
         public event Action<IOrder> OrderCompleted;
         public event Action<IOrder> OrderExpired;
         public IOrder CurrentOrder { get; private set; }
+        private GameObject _currentOrderGameObject;
 
         private SushiBeltView _sushiBeltView;
 
         public void SubmitOrder(IOrder order)
         {
             CurrentOrder = order;
+            CreateOrder(order);
             order.OrderCompleted += OnOrderCompleted;
             order.TimerExpired += OnOrderExpired;
             OrderReceived?.Invoke(order);
+            
+            MoveOrderToTarget();
+        }
+
+        private void CreateOrder(IOrder order)
+        {
+            _currentOrderGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _currentOrderGameObject.transform.position = _sushiBeltView.StartPoint.position;
+            _currentOrderGameObject.transform.localScale = new Vector3(1, 1, 1);
+        }
+        private void MoveOrderToTarget()
+        {
+            _currentOrderGameObject.transform.DOMove(_sushiBeltView.TargetPoint.position, 1f).SetEase(Ease.Linear);
         }
 
         public void SetView(SushiBeltView sushiBeltView)
@@ -32,16 +51,17 @@ namespace SushiBelt.Implementation
             var order = CurrentOrder;
             UnsubscribeOrder();
 
-            MoveAwayOrder();
+            MoveAwayOrder().Forget();
             OrderCompleted?.Invoke(order);
         }
+        
 
         private void OnOrderExpired()
         {
             var order = CurrentOrder;
             UnsubscribeOrder();
 
-            MoveAwayOrder();
+            MoveAwayOrder().Forget();
             OrderExpired?.Invoke(order);
         }
 
@@ -52,9 +72,12 @@ namespace SushiBelt.Implementation
             order.TimerExpired -= OnOrderExpired;
         }
         
-        private void MoveAwayOrder()
+        private async UniTaskVoid MoveAwayOrder()
         {
-            // TODO Move away the order
+            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+               Object.Destroy(_currentOrderGameObject);
+            });
             CurrentOrder = null;
         }
     }

@@ -1,5 +1,5 @@
+using System;
 using Orders;
-using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
 
@@ -15,6 +15,8 @@ namespace Factories.Infrastructure
         
         void CompleteOrder(IOrder order);
 
-        event System.Action CollisionDetected;
+        event Action CollisionDetected;
+        event Action<IRobot> RobotDestroyRequested;
+        void Destroy();
     }
 }
