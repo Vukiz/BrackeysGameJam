@@ -5,9 +5,8 @@ using Cysharp.Threading.Tasks;
 using Factories.Implementation;
 using Factories.Infrastructure;
 using Level.Infrastructure;
-using StateMachine.Data;
-using StateMachine.Infrastructure;
 using UnityEngine;
+using System.Linq;
 
 namespace Level.Implementation
 {
@@ -27,7 +26,6 @@ namespace Level.Implementation
         public void Reset()
         {
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
             _factorySlots.Clear();
             _robots.Clear();
         }
@@ -35,7 +33,6 @@ namespace Level.Implementation
         public void Dispose()
         {
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
         }
 
         public void RegisterFactorySlot(FactorySlot factorySlot)
@@ -61,36 +58,54 @@ namespace Level.Implementation
         private async UniTask CheckForCollisions()
         {
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
+
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                for (var i = 0; i < _factorySlots.Count; i++)
+                // Get a snapshot of active robots to avoid collection modification issues
+                var activeRobots = _robots.Where(r => r.IsTrackingRequired).ToList();
+                
+                // Check robot-to-robot collisions
+                for (var i = 0; i < activeRobots.Count; i++)
                 {
-                    var left = _robots[i];
-                    if (!left.IsTrackingRequired)
-                    {
-                        continue;
-                    }
+                    var robot = activeRobots[i];
                     
-                    for (var j = i; j < _factorySlots.Count; j++)
+                    // Check collisions with other robots
+                    for (var j = i + 1; j < activeRobots.Count; j++)
                     {
-                        var right = _robots[j];
-                        if (i == j || !right.IsTrackingRequired)
+                        var otherRobot = activeRobots[j];
+                        if (!IsColliding(robot.Position, otherRobot.Position))
                         {
                             continue;
                         }
-                        
-                        if ((left.Position - right.Position).magnitude <= CollisionRadius)
-                        {
-                            FinishGame();
-                            return;
-                        }
+
+                        await HandleCollision(robot, otherRobot);
+                        return;
                     }
+                    //
+                    // // Check collisions with factories
+                    // foreach (var factory in _factorySlots.Where(factory => IsColliding(robot.Position, factory.Position)))
+                    // {
+                    //     await HandleCollision(robot, factory);
+                    //     return;
+                    // }
+                    // TODO It doesn't work because robot immediately collides with a factory on spawn
                 }
 
                 await UniTask.Yield();
             }
+        }
+
+        private bool IsColliding(Vector3 pos1, Vector3 pos2)
+        {
+            return (pos1 - pos2).magnitude <= CollisionRadius;
+        }
+
+        private UniTask HandleCollision(object entity1, object entity2)
+        {
+            Debug.LogWarning($"Collision detected between {entity1} and {entity2}");
+            FinishGame();
+            return UniTask.CompletedTask;
         }
 
         private void FinishGame()

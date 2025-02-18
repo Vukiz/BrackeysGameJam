@@ -18,7 +18,6 @@ namespace StateMachine.Views
         public override async UniTask Show()
         {
             gameObject.SetActive(true);
-            Debug.Log("LoaderView.Show");
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
             _loaderImage.fillAmount = 0;
@@ -31,7 +30,6 @@ namespace StateMachine.Views
 
         public override async UniTask Hide()
         {
-            Debug.Log("LoaderView.Hide");
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
             await _loaderImage.DOFillAmount(0, _animationDuration)

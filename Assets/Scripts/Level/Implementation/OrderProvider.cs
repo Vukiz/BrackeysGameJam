@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Level.Infrastructure;
 using Orders;
 using SushiBelt.Infrastructure;
+using UnityEngine;
 
 namespace Level.Implementation
 {
@@ -17,6 +18,7 @@ namespace Level.Implementation
         private readonly Queue<IOrder> _ordersToComplete = new();
         private readonly List<IOrder> _completedOrders = new();
         private readonly List<IOrder> _expiredOrders = new();
+        private int totalOrdersCount;
         
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -39,6 +41,9 @@ namespace Level.Implementation
             {
                 _ordersToComplete.Enqueue(order);
             }
+            
+            Debug.Log($"Initialized with {_ordersToComplete.Count} orders");
+            totalOrdersCount = _ordersToComplete.Count;
         }
 
         public void RegisterSushiBelt(ISushiBelt sushiBelt)
@@ -50,7 +55,7 @@ namespace Level.Implementation
 
         public async UniTaskVoid StartProcessingOrders()
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (!_cancellationTokenSource.IsCancellationRequested && _ordersToComplete.Count > 0)
             {
                 await UniTask.Delay(GetNextOrderDelay(), cancellationToken: _cancellationTokenSource.Token); 
                 var sushiBelt = GetRandomEmptySushiBelt();
@@ -112,11 +117,12 @@ namespace Level.Implementation
 
         private bool IsLevelCompleted()
         {
-            return _ordersToComplete.Count == 0;
+            return _ordersToComplete.Count == 0 && _expiredOrders.Count + _completedOrders.Count == totalOrdersCount;
         }
 
         private void CompleteLevel()
         {
+            Debug.Log("Level completed, no more orders");
             LevelCompleted?.Invoke();
         }
     }

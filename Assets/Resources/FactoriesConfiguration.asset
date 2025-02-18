@@ -18,9 +18,9 @@ MonoBehaviour:
   - {fileID: 864247122306395324, guid: c61d3030b7926974b88255214700e62b, type: 3}
   _robotData:
   - _workType: 0
-    _speed: 1
+    _speed: 3
   - _workType: 1
-    _speed: 2
+    _speed: 3
   - _workType: 2
     _speed: 3
   _factoryViews:
@@ -29,11 +29,11 @@ MonoBehaviour:
   - {fileID: 8269816598120195602, guid: 38dadd6c365b40c4f8906152029dd5ce, type: 3}
   _factoryData:
   - _workType: 0
-    _spawnCooldown: 1
-    _initialDelay: 2
+    _spawnCooldown: 4
+    _initialDelay: 3
   - _workType: 1
-    _spawnCooldown: 2
+    _spawnCooldown: 4
     _initialDelay: 3
   - _workType: 2
     _spawnCooldown: 4
-    _initialDelay: 5
+    _initialDelay: 3

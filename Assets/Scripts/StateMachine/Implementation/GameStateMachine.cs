@@ -14,8 +14,6 @@ namespace StateMachine.Implementation
         
         public GameState CurrentState => _currentHandler?.State ?? GameState.GameStart;
         
-        public event Action<GameState> StateChanged;
-
         public GameStateMachine(IEnumerable<IGameStateHandler> handlers)
         {
             _handlers = new Dictionary<GameState, IGameStateHandler>();
@@ -26,7 +24,6 @@ namespace StateMachine.Implementation
             }
         }
         
-
         public void Initialize()
         {
             ChangeState(GameState.GameStart);
@@ -51,7 +48,6 @@ namespace StateMachine.Implementation
             {
                 _currentHandler = handler;
                 _currentHandler.OnStateEnter();
-                StateChanged?.Invoke(newState);
             }
             else
             {

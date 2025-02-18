@@ -21,6 +21,7 @@ namespace SushiBelt.Implementation
 
         public void SubmitOrder(IOrder order)
         {
+            Debug.Log($"Order received on the sushi belt. {order.NeededTypes.Count} types needed.");
             CurrentOrder = order;
             CreateOrder(order);
             order.OrderCompleted += OnOrderCompleted;
@@ -78,6 +79,7 @@ namespace SushiBelt.Implementation
             {
                Object.Destroy(_currentOrderGameObject);
             });
+            Debug.Log("Order Completed and moved away from the sushi belt.");
             CurrentOrder = null;
         }
     }

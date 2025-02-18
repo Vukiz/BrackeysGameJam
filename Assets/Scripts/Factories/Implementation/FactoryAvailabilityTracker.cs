@@ -21,11 +21,13 @@ namespace Factories.Implementation
         private readonly List<ISushiBelt> _sushiBelts = new();
         private readonly Dictionary<WorkType, IFactory> _factories = new();
         private readonly Queue<WorkType> _requiredFactoriesQueue = new();
-        private List<FactorySlotView> _factorySlots;
+        private List<FactorySlotView> _availableFactorySlots;
         private Transform _factoriesParent;
         private Transform _robotsParent;
         private CancellationTokenSource _cancellationTokenSource;
         private FactorySlotView _selectedFactorySlotView;
+
+        private readonly HashSet<WorkType> _coveredWorkTypes = new();
 
         public FactoryAvailabilityTracker(
             FactoryProvider factoryProvider
@@ -36,14 +38,17 @@ namespace Factories.Implementation
 
         public void Initialize(List<FactorySlotView> factorySlots, Transform factoriesParent, Transform robotsParent)
         {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
             _factoriesParent = factoriesParent;
             _robotsParent = robotsParent;
             Unsubscribe();
-            _factorySlots = factorySlots;
+            _availableFactorySlots = factorySlots;
             _sushiBelts.Clear();
             _factories.Clear();
+            _coveredWorkTypes.Clear();
             _requiredFactoriesQueue.Clear();
-            foreach (var factorySlot in _factorySlots)
+            foreach (var factorySlot in _availableFactorySlots)
             {
                 factorySlot.SlotSelected += OnSlotSelected;
             }
@@ -59,31 +64,27 @@ namespace Factories.Implementation
         {
             Unsubscribe();
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
         }
 
         private async void OnOrderReceived(IOrder order)
         {
+            foreach (var workType in order.NeededTypes)
+            {
+                if (_coveredWorkTypes.Contains(workType))
+                {
+                    continue;
+                }
+
+                _requiredFactoriesQueue.Enqueue(workType);
+            }
+
+            if (!_requiredFactoriesQueue.Any())
+            {
+                return;
+            }
+
             try
             {
-                foreach (var workType in order.NeededTypes)
-                {
-                    var hashset = new HashSet<WorkType>();
-                    if (!_factories.TryGetValue(workType, out _) && !hashset.Contains(workType))
-                    {
-                        _requiredFactoriesQueue.Enqueue(workType);
-                        hashset.Add(workType);
-                    }
-                }
-
-                if (!_requiredFactoriesQueue.Any())
-                {
-                    return;
-                }
-
-                _cancellationTokenSource?.Cancel();
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = new CancellationTokenSource();
                 var token = _cancellationTokenSource.Token;
                 SetFactoriesPaused(true); // EA: I don't think it is needed to pause factories here
                 SetFactorySlotsInteractable(true);
@@ -106,23 +107,32 @@ namespace Factories.Implementation
             while (_requiredFactoriesQueue.TryDequeue(out var workType))
             {
                 await HandleConcreteWorkType(workType, token);
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
             }
         }
 
         private async UniTask HandleConcreteWorkType(WorkType workType, CancellationToken token)
         {
-            while (!_selectedFactorySlotView)
+            await UniTask.WaitUntil(() => _selectedFactorySlotView, cancellationToken: token);
+            if (token.IsCancellationRequested)
             {
-                token.ThrowIfCancellationRequested();
-                await UniTask.Yield();
+                return;
             }
 
-            _factorySlots.Remove(_selectedFactorySlotView);
+            _availableFactorySlots.Remove(_selectedFactorySlotView);
             _selectedFactorySlotView.SlotSelected -= OnSlotSelected;
-            var factory = _factoryProvider.Create(workType, _selectedFactorySlotView.transform.position,
-                _selectedFactorySlotView.NextWaypointView, _factoriesParent, _robotsParent);
+            var factory = _factoryProvider.Create(workType,
+                _selectedFactorySlotView.transform.position,
+                _selectedFactorySlotView.NextWaypointView,
+                _factoriesParent,
+                _robotsParent
+            );
 
             _factories.Add(workType, factory);
+            _coveredWorkTypes.Add(workType);
             _selectedFactorySlotView = null;
         }
 
@@ -133,12 +143,12 @@ namespace Factories.Implementation
                 sushiBelt.OrderReceived -= OnOrderReceived;
             }
 
-            if (_factorySlots == null)
+            if (_availableFactorySlots == null)
             {
                 return;
             }
 
-            foreach (var factorySlot in _factorySlots)
+            foreach (var factorySlot in _availableFactorySlots)
             {
                 factorySlot.SlotSelected -= OnSlotSelected;
             }
@@ -161,7 +171,7 @@ namespace Factories.Implementation
 
         private void SetFactorySlotsInteractable(bool isInteractable)
         {
-            foreach (var factorySlot in _factorySlots)
+            foreach (var factorySlot in _availableFactorySlots)
             {
                 factorySlot.SetInteractable(isInteractable);
             }

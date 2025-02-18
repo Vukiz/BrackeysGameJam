@@ -7,7 +7,6 @@ using Level.Infrastructure;
 using Level.Views;
 using Rails.Implementation;
 using Orders;
-using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
 using Workstation.Infrastructure;
 using Zenject;
@@ -47,7 +46,6 @@ namespace Level.Implementation
             _collisionsTracker.Reset();
             SetupFactoryAvailabilityTracker(levelView);
             SetupOrders(levelData.Orders);
-            SetupSushiBelts(levelView);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
             
@@ -81,23 +79,16 @@ namespace Level.Implementation
                 levelView.RobotsParent);
         }
 
-        private void SetupSushiBelts(LevelView levelView)
-        {
-            foreach (var sushiBeltView in levelView.SushiBeltViews)
-            {
-                var sushiBelt = _container.Resolve<ISushiBelt>();
-                sushiBelt.SetView(sushiBeltView);
-                _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
-                _orderProvider.RegisterSushiBelt(sushiBelt);
-            }
-        }
-
         private void SetupWorkstations(LevelView levelView)
         {
             foreach (var workstationView in levelView.WorkstationViews)
             {
+                var sushiBelt = _container.Resolve<ISushiBelt>();
+                sushiBelt.SetView(workstationView.SushiBeltView);
+                _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
+                _orderProvider.RegisterSushiBelt(sushiBelt);
                 var workstation = _container.Resolve<IWorkstation>();
-                workstation.SetView(workstationView);
+                workstation.SetView(workstationView, sushiBelt);
                 _waypointProvider.RegisterWaypoint(workstationView, workstation);
             }
         }

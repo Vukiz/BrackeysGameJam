@@ -16,9 +16,7 @@ namespace Workstation.Implementation
         private ISushiBelt _sushiBelt;
         private WorkstationView _workstationView;
 
-        private IWaypoint Next => TryGetNextSlot();
-
-        public void SetView(WorkstationView workstationView)
+        public void SetView(WorkstationView workstationView, ISushiBelt sushiBelt)
         {
             _workstationView = workstationView;
             _slots = new List<ISlot>();
@@ -30,7 +28,6 @@ namespace Workstation.Implementation
                 _slots.Add(slot);
             }
 
-            var sushiBelt = new SushiBelt.Implementation.SushiBelt();
             sushiBelt.SetView(workstationView.SushiBeltView);
             _sushiBelt = sushiBelt;
             _sushiBelt.OrderReceived += OnOrderReceived;
@@ -72,20 +69,16 @@ namespace Workstation.Implementation
 
         private IWaypoint TryGetNextSlot()
         {
-            foreach (var slot in _slots.Where(slot => !slot.IsOccupied))
-            {
-                return slot;
-            }
+            return _slots.FirstOrDefault(slot => !slot.IsOccupied);
 
             // NoSlotsLeft?.Invoke();
-            return null;
         }
 
         public Vector3 Position => _workstationView.Position;
 
         public void Reach(IRobot robot)
         {
-            robot.SetNextWaypoint(Next);
+            robot.SetNextWaypoint(TryGetNextSlot());
         }
 
         public void AddNeighbour(IWaypoint waypoint)

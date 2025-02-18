@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3790766145355015137}
   - component: {fileID: 8269816598120195602}
   m_Layer: 0
-  m_Name: PaintFactory
+  m_Name: FactoryPaint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

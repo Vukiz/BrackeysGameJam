@@ -17,7 +17,7 @@ namespace Factories.Implementation
         private RobotData _data;
         private CancellationTokenSource _cancellationTokenSource; // TODO: Cancel movement after collision
         private IWaypoint _nextWaypoint;
-        
+
         public WorkType WorkType => _data.WorkType;
         public Vector3 Position => _view.transform.position;
         public bool IsTrackingRequired { get; set; }
@@ -31,7 +31,7 @@ namespace Factories.Implementation
             _view = view;
             _data = data;
         }
-        
+
         public async void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null)
         {
             try
@@ -45,7 +45,7 @@ namespace Factories.Implementation
                     duration = (intermediateWaypoint.Position - _view.transform.position).magnitude / _data.Speed;
                     await _view.MoveTo(intermediateWaypoint.Position, duration, token);
                 }
-                
+
                 duration = (waypoint.Position - _view.transform.position).magnitude / _data.Speed;
                 await _view.MoveTo(waypoint.Position, duration, token);
                 waypoint.Reach(this);
@@ -69,6 +69,7 @@ namespace Factories.Implementation
 
         public void Destroy()
         {
+            _cancellationTokenSource?.Cancel();
             Object.Destroy(_view.gameObject);
         }
     }
