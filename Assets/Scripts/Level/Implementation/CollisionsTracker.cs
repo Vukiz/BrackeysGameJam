@@ -20,7 +20,7 @@ namespace Level.Implementation
         private readonly List<FactorySlot> _factorySlots = new();
         private readonly List<IRobot> _robots = new();
         private readonly List<IWorkstation> _workstations = new();
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource = new();
         public event Action<IRobot> RobotCollisionDetected;
 
         public void TrackCollisions()
@@ -116,7 +116,7 @@ namespace Level.Implementation
             }
         }
 
-        private bool IsColliding(Vector3 pos1, Vector3 pos2)
+        private static bool IsColliding(Vector3 pos1, Vector3 pos2)
         {
             return (pos1 - pos2).magnitude <= CollisionRadius;
         }

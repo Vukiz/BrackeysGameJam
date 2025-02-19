@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Factories.View;
 using Orders;
+using Orders.Data;
 using UnityEngine;
 
 namespace Factories.Data

@@ -1,7 +1,8 @@
 using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Orders;
+using Orders.Infrastructure;
+using Orders.Views;
 using SushiBelt.Infrastructure;
 using SushiBelt.Views;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace SushiBelt.Implementation
         public event Action<IOrder> OrderCompleted;
         public event Action<IOrder> OrderExpired;
         public IOrder CurrentOrder { get; private set; }
-        private GameObject _currentOrderGameObject;
+        private OrderView _currentOrderGameObject;
 
         private SushiBeltView _sushiBeltView;
 
@@ -33,10 +34,23 @@ namespace SushiBelt.Implementation
 
         private void CreateOrder(IOrder order)
         {
-            _currentOrderGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _currentOrderGameObject = Object.Instantiate(_sushiBeltView.OrderViewPrefab);
             _currentOrderGameObject.transform.position = _sushiBeltView.StartPoint.position;
             _currentOrderGameObject.transform.localScale = new Vector3(1, 1, 1);
+            SetupOrderView(_currentOrderGameObject, order);
         }
+        
+        private void SetupOrderView(OrderView orderView, IOrder order)
+        {
+            foreach (var workType in order.NeededTypes)
+            {
+                foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
+                {
+                    orderViewWorkTypeToObjectPair.Object.SetActive(orderViewWorkTypeToObjectPair.WorkType == workType);
+                }
+            }
+        }
+        
         private void MoveOrderToTarget()
         {
             _currentOrderGameObject.transform.DOMove(_sushiBeltView.TargetPoint.position, 1f).SetEase(Ease.Linear);
@@ -77,7 +91,7 @@ namespace SushiBelt.Implementation
         {
             await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear).OnComplete(() =>
             {
-               Object.Destroy(_currentOrderGameObject);
+               Object.Destroy(_currentOrderGameObject.gameObject);
             });
             Debug.Log("Order Completed and moved away from the sushi belt.");
             CurrentOrder = null;

@@ -1,4 +1,4 @@
-namespace Orders
+namespace Orders.Data
 {
     public enum Status
     {

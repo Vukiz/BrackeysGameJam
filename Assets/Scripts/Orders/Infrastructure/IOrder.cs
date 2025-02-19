@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Orders.Data;
 
-namespace Orders
+namespace Orders.Infrastructure
 {
     public interface IOrder
     {

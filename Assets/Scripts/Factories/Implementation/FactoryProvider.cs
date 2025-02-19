@@ -1,7 +1,7 @@
 using Factories.Data;
 using Factories.View;
 using Level.Infrastructure;
-using Orders;
+using Orders.Data;
 using Rails.Infrastructure;
 using UnityEngine;
 using Zenject;
@@ -32,7 +32,7 @@ namespace Factories.Implementation
             view.transform.position = position;
             var data = _factoriesConfiguration.GetFactoryData(workType);
             var nextWaypoint = _waypointProvider.GetWaypoint(nextWaypointView);
-            var factory = _container.Resolve<Factory>();
+            var factory = _container.Resolve<IFactory>();
             factory.Initialize(view, data, nextWaypoint, robotsParent);
             return factory;
         }

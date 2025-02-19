@@ -2,6 +2,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Orders;
+using Orders.Data;
 using UnityEngine;
 
 namespace Factories.View

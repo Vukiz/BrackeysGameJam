@@ -1,5 +1,6 @@
 using System;
 using Orders;
+using Orders.Data;
 using UnityEngine;
 
 namespace Factories.Data

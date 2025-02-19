@@ -18,6 +18,7 @@ namespace StateMachine.Implementation
         private readonly IOrderProvider _orderProvider;
         private readonly ICollisionsTracker _collisionsTracker;
         private readonly IVFXManager _vfxManager;
+        private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         public override GameState State => GameState.GameActive;
 
         private LevelView _levelView;
@@ -27,7 +28,8 @@ namespace StateMachine.Implementation
             ILevelConfigurator levelConfigurator,
             IOrderProvider orderProvider,
             ICollisionsTracker collisionsTracker,
-            IVFXManager vfxManager
+            IVFXManager vfxManager,
+            IFactoryAvailabilityTracker factoryAvailabilityTracker
         )
         {
             _canvasView = canvasView;
@@ -35,6 +37,7 @@ namespace StateMachine.Implementation
             _orderProvider = orderProvider;
             _collisionsTracker = collisionsTracker;
             _vfxManager = vfxManager;
+            _factoryAvailabilityTracker = factoryAvailabilityTracker;
         }
 
         public override async void OnStateEnter()
@@ -49,6 +52,7 @@ namespace StateMachine.Implementation
 
         private async void OnRobotCollisionDetected(IRobot robot)
         {
+            _factoryAvailabilityTracker.IsPaused = true;
             _vfxManager.SpawnVFX(VFXType.Explosion, robot.Position);
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
             RequestStateChange(GameState.GameEnded);

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Orders.Data;
+using Orders.Infrastructure;
 using UnityEngine;
 
-namespace Orders
+namespace Orders.Implementation
 {
     public class Order : IOrder
     {

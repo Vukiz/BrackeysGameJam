@@ -40,6 +40,8 @@ namespace Rails.Implementation
             _currentNeighbourIndex = (_currentNeighbourIndex + 1) % _neighbourWaypoints.Count;
             var position = Next.Position - _view.transform.position;
             _view.transform.rotation = Quaternion.LookRotation(position, Vector3.up);
+            _view.transform.rotation = Quaternion.Euler(0, _view.transform.rotation.eulerAngles.y, 0);
+            
         }
     }
 }

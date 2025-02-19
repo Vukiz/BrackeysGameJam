@@ -4,6 +4,8 @@ using Factories.Data;
 using Factories.Infrastructure;
 using Factories.View;
 using Orders;
+using Orders.Data;
+using Orders.Infrastructure;
 using Rails;
 using Rails.Infrastructure;
 using UnityEngine;

@@ -141,6 +141,7 @@ MonoBehaviour:
   _startPoint: {fileID: 3260679062654983641}
   _endPoint: {fileID: 1301996197239646147}
   _targetPoint: {fileID: 5537936596077977008}
+  _orderViewPrefab: {fileID: 870529055811511112, guid: f66eb25872580478d8810d820678d501, type: 3}
 --- !u!1001 &1446323798444256386
 PrefabInstance:
   m_ObjectHideFlags: 0

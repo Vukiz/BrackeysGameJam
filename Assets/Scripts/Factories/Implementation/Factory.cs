@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.View;
-using Orders;
+using Orders.Data;
 using Rails.Infrastructure;
 using UnityEngine;
 using IFactory = Factories.Infrastructure.IFactory;
@@ -51,6 +51,7 @@ namespace Factories.Implementation
             _cancellationTokenSource = new CancellationTokenSource();
             var token = _cancellationTokenSource.Token;
             await UniTask.Delay(TimeSpan.FromSeconds(_data.InitialDelay), cancellationToken: token);
+            _timeSinceLastSpawn = _data.SpawnCooldown;
             Debug.Log($"Factory {WorkType} started");
             while (!token.IsCancellationRequested)
             {
