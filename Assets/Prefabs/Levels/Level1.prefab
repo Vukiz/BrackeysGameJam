@@ -1840,6 +1840,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3956992319089816300, guid: 748129a39e9e74a06b1757d2efc0c488, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1886820026795636259, guid: 21fbd17eb2afa48069f1bbf57aa10c20, type: 3}
     - target: {fileID: 3967744596422393391, guid: 748129a39e9e74a06b1757d2efc0c488, type: 3}
       propertyPath: _nextWaypointView
       value: 

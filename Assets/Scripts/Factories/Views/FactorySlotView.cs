@@ -8,6 +8,7 @@ namespace Factories.Views
     public class FactorySlotView : WaypointView, IInteractable
     {
         [SerializeField] private WaypointView _nextWaypointView;
+        [SerializeField] private GameObject _slotActiveFX;
 
         private bool _isInteractable;
 
@@ -28,6 +29,7 @@ namespace Factories.Views
         public void SetInteractable(bool isInteractable)
         {
             _isInteractable = isInteractable;
+            _slotActiveFX.SetActive(isInteractable);
         }
     }
 }
