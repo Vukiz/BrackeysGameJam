@@ -14,6 +14,6 @@ namespace Level.Infrastructure
         void RegisterWorkstation(IWorkstation workstation);
         void RemoveRobot(IRobot robot);
         
-        event Action RobotCollisionDetected; 
+        event Action<IRobot> RobotCollisionDetected; 
     }
 }

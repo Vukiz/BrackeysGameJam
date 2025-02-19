@@ -1,8 +1,13 @@
+using System;
+using Cysharp.Threading.Tasks;
+using Factories.Infrastructure;
 using Level.Infrastructure;
 using Level.Views;
 using StateMachine.Data;
 using StateMachine.Views;
-using UnityEngine;
+using VFX.Data;
+using VFX.Infrastructure;
+using Object = UnityEngine.Object;
 
 namespace StateMachine.Implementation
 {
@@ -12,6 +17,7 @@ namespace StateMachine.Implementation
         private readonly ILevelConfigurator _levelConfigurator;
         private readonly IOrderProvider _orderProvider;
         private readonly ICollisionsTracker _collisionsTracker;
+        private readonly IVFXManager _vfxManager;
         public override GameState State => GameState.GameActive;
 
         private LevelView _levelView;
@@ -20,13 +26,15 @@ namespace StateMachine.Implementation
             CanvasView canvasView,
             ILevelConfigurator levelConfigurator,
             IOrderProvider orderProvider,
-            ICollisionsTracker collisionsTracker
+            ICollisionsTracker collisionsTracker,
+            IVFXManager vfxManager
         )
         {
             _canvasView = canvasView;
             _levelConfigurator = levelConfigurator;
             _orderProvider = orderProvider;
             _collisionsTracker = collisionsTracker;
+            _vfxManager = vfxManager;
         }
 
         public override async void OnStateEnter()
@@ -39,10 +47,11 @@ namespace StateMachine.Implementation
             _collisionsTracker.RobotCollisionDetected += OnRobotCollisionDetected;
         }
 
-        private void OnRobotCollisionDetected()
+        private async void OnRobotCollisionDetected(IRobot robot)
         {
+            _vfxManager.SpawnVFX(VFXType.Explosion, robot.Position);
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
             RequestStateChange(GameState.GameEnded);
-            // TODO VFX and SFX and play explosion feedback
         }
 
         private void OnLevelCompleted()

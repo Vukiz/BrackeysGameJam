@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: VFXHolder
+  m_EditorClassIdentifier: Assembly-CSharp:VFX.Data:VFXHolder
+  _vfxData:
+  - VFXType: 0
+    VFXPrefab: {fileID: 2433282508523890284, guid: 52062c70bd9fd42cbab4823b4b03c47a, type: 3}

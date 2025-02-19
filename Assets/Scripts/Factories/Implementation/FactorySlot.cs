@@ -11,7 +11,7 @@ namespace Factories.Implementation
     {
         private FactorySlotView _view;
 
-        public Action RobotReachedSlot;
+        public Action<IRobot> RobotReachedSlot;
 
         public void Initialize(FactorySlotView view)
         {
@@ -21,7 +21,7 @@ namespace Factories.Implementation
         public Vector3 Position => _view.transform.position;
         public void Reach(IRobot robot)
         {
-            RobotReachedSlot?.Invoke();
+            RobotReachedSlot?.Invoke(robot);
         }
 
         public void AddNeighbour(IWaypoint waypoint)

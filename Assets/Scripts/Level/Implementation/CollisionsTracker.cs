@@ -7,6 +7,8 @@ using Factories.Infrastructure;
 using Level.Infrastructure;
 using UnityEngine;
 using System.Linq;
+using VFX.Data;
+using VFX.Infrastructure;
 using Workstation.Infrastructure;
 
 namespace Level.Implementation
@@ -14,11 +16,12 @@ namespace Level.Implementation
     public class CollisionsTracker : ICollisionsTracker, IDisposable
     {
         private const float CollisionRadius = 0.1f;
-        
+
         private readonly List<FactorySlot> _factorySlots = new();
         private readonly List<IRobot> _robots = new();
         private readonly List<IWorkstation> _workstations = new();
         private CancellationTokenSource _cancellationTokenSource;
+        public event Action<IRobot> RobotCollisionDetected;
 
         public void TrackCollisions()
         {
@@ -28,6 +31,21 @@ namespace Level.Implementation
         public void Reset()
         {
             _cancellationTokenSource?.Cancel();
+            foreach (var robot in _robots)
+            {
+                robot.IsTrackingRequired = false;
+            }
+
+            foreach (var factorySlot in _factorySlots)
+            {
+                factorySlot.RobotReachedSlot -= FinishGame;
+            }
+
+            foreach (var workstation in _workstations)
+            {
+                workstation.RobotReachedStationWithNoEmptySlots -= FinishGame;
+            }
+
             _factorySlots.Clear();
             _robots.Clear();
             _workstations.Clear();
@@ -55,16 +73,15 @@ namespace Level.Implementation
         public void RegisterWorkstation(IWorkstation workstation)
         {
             _workstations.Add(workstation);
-            workstation.NoSlotsLeft += FinishGame;
+            workstation.RobotReachedStationWithNoEmptySlots += FinishGame;
         }
-        
+
         public void RemoveRobot(IRobot robot)
         {
             robot.IsTrackingRequired = false;
             _robots.Remove(robot);
         }
 
-        public event Action RobotCollisionDetected;
 
         private async UniTask CheckForCollisions()
         {
@@ -75,12 +92,12 @@ namespace Level.Implementation
             {
                 // Get a snapshot of active robots to avoid collection modification issues
                 var activeRobots = _robots.Where(r => r.IsTrackingRequired).ToList();
-                
+
                 // Check robot-to-robot collisions
                 for (var i = 0; i < activeRobots.Count; i++)
                 {
                     var robot = activeRobots[i];
-                    
+
                     // Check collisions with other robots
                     for (var j = i + 1; j < activeRobots.Count; j++)
                     {
@@ -93,14 +110,6 @@ namespace Level.Implementation
                         await HandleCollision(robot, otherRobot);
                         return;
                     }
-                    //
-                    // // Check collisions with factories
-                    // foreach (var factory in _factorySlots.Where(factory => IsColliding(robot.Position, factory.Position)))
-                    // {
-                    //     await HandleCollision(robot, factory);
-                    //     return;
-                    // }
-                    // TODO It doesn't work because robot immediately collides with a factory on spawn
                 }
 
                 await UniTask.Yield();
@@ -112,20 +121,17 @@ namespace Level.Implementation
             return (pos1 - pos2).magnitude <= CollisionRadius;
         }
 
-        private UniTask HandleCollision(object entity1, object entity2)
+        private UniTask HandleCollision(IRobot entity1, IRobot entity2)
         {
             Debug.LogWarning($"Collision detected between {entity1} and {entity2}");
-            FinishGame();
+            FinishGame(entity1); // Finish game on collision doesn't matter which robot collided
             return UniTask.CompletedTask;
         }
 
-        private void FinishGame()
+        private void FinishGame(IRobot robot)
         {
-            // TODO: End game
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            Debug.Log("Game ended because of robot collisions");
-            RobotCollisionDetected?.Invoke();
+            RobotCollisionDetected?.Invoke(robot);
         }
     }
 }

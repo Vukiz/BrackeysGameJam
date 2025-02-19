@@ -7,6 +7,8 @@ using Orders;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
 using UnityEngine;
+using VFX.Data;
+using VFX.Infrastructure;
 using Workstation.Infrastructure;
 using Workstation.Views;
 
@@ -15,16 +17,21 @@ namespace Workstation.Implementation
     public class Workstation : IWorkstation
     {
         private readonly CollisionsTracker _collisionsTracker;
-        
+        private readonly IVFXManager _vfxManager;
+
         private List<ISlot> _slots;
         private ISushiBelt _sushiBelt;
         private WorkstationView _workstationView;
 
-        public event Action NoSlotsLeft;
+        public event Action<IRobot> RobotReachedStationWithNoEmptySlots;
 
-        public Workstation(CollisionsTracker collisionsTracker)
+        public Workstation(
+            CollisionsTracker collisionsTracker,
+            IVFXManager vfxManager
+        )
         {
             _collisionsTracker = collisionsTracker;
+            _vfxManager = vfxManager;
         }
 
         public void SetView(WorkstationView workstationView, ISushiBelt sushiBelt)
@@ -52,7 +59,7 @@ namespace Workstation.Implementation
             {
                 return;
             }
-            
+
             TryCompleteOrder(_sushiBelt.CurrentOrder);
         }
 
@@ -93,10 +100,14 @@ namespace Workstation.Implementation
                 return emptySlot;
             }
 
+            if (!_slots.Any())
+            {
+                return null;
+            }
+
             var lastSlot = _slots.Last();
             _slots.Remove(lastSlot);
             return lastSlot;
-            // NoSlotsLeft?.Invoke();
         }
 
         public Vector3 Position => _workstationView.Position;
@@ -109,17 +120,22 @@ namespace Workstation.Implementation
 
         public void AddNeighbour(IWaypoint waypoint)
         {
-            
         }
 
         private void OnRobotsCollided(IRobot robot, IRobot otherRobot, ISlot slot)
         {
+            var position = robot.Position;
             _slots.Remove(slot);
             robot.Destroy();
             otherRobot.Destroy();
             if (_slots.Count == 0)
             {
-                NoSlotsLeft?.Invoke();
+                RobotReachedStationWithNoEmptySlots?.Invoke(robot);
+            }
+            else
+            {
+                _vfxManager.SpawnVFX(VFXType.Explosion,
+                    robot.Position); // since we are not ending the game when slot is destroyed but only if there are no slots
             }
         }
     }
