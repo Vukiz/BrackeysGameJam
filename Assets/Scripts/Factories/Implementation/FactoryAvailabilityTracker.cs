@@ -4,10 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Factories.Infrastructure;
-using Factories.View;
 using Factories.Views;
-using Level.Implementation;
-using Level.Infrastructure;
 using Orders;
 using SushiBelt.Infrastructure;
 using UnityEngine;
@@ -123,6 +120,7 @@ namespace Factories.Implementation
             }
 
             _availableFactorySlots.Remove(_selectedFactorySlotView);
+            _selectedFactorySlotView.SetInteractable(false);
             _selectedFactorySlotView.SlotSelected -= OnSlotSelected;
             var factory = _factoryProvider.Create(workType,
                 _selectedFactorySlotView.transform.position,
@@ -158,14 +156,7 @@ namespace Factories.Implementation
         {
             foreach (var (_, factory) in _factories)
             {
-                if (isPaused)
-                {
-                    factory.PauseCycle();
-                }
-                else
-                {
-                    factory.ResumeCycle();
-                }
+                factory.SetPaused(isPaused);
             }
         }
 

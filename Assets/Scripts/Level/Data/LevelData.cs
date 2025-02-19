@@ -11,7 +11,18 @@ namespace Level.Data
     {
         // If empty - orders will be randomized
         public List<OrderData> Orders;
+        // They will go one by one in queue
+        public List<RandomOrdersSettings> RandomOrdersSettings;
         public LevelView LevelViewPrefab;
+    }
+    
+    [Serializable]
+    public class RandomOrdersSettings
+    {
+        public int OrdersCount;
+        public float TimeLimitSecondsMin;
+        public float TimeLimitSecondsMax;
+        public List<WorkType> WorkTypes;
     }
 
     [Serializable]

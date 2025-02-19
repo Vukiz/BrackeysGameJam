@@ -32,7 +32,7 @@ namespace Factories.Implementation
             view.transform.position = position;
             var data = _factoriesConfiguration.GetFactoryData(workType);
             var nextWaypoint = _waypointProvider.GetWaypoint(nextWaypointView);
-            var factory = _container.Resolve<Factory>(); // TODO: Maybe create manually if DI is not required
+            var factory = _container.Resolve<Factory>();
             factory.Initialize(view, data, nextWaypoint, robotsParent);
             return factory;
         }

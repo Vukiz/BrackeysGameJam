@@ -1,14 +1,14 @@
-using Orders;
-using Rails;
+using Factories.Data;
+using Factories.View;
 using Rails.Infrastructure;
+using UnityEngine;
 
 namespace Factories.Infrastructure
 {
     public interface IFactory
     {
-        WorkType WorkType { get; } // Type of the robot that factory spawns
+        void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent);
         event System.Action<IRobot> RobotSpawned;
-        void PauseCycle();
-        void ResumeCycle();
+        void SetPaused(bool isPaused);
     }
 }

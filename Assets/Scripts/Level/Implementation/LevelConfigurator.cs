@@ -49,7 +49,7 @@ namespace Level.Implementation
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
             _collisionsTracker.Reset();
             SetupFactoryAvailabilityTracker(levelView);
-            SetupOrders(levelData.Orders);
+            SetupOrders(levelData.Orders, levelData.RandomOrdersSettings);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
             
@@ -59,14 +59,15 @@ namespace Level.Implementation
             return levelView;
         }
 
-        private void SetupOrders(List<OrderData> levelDataOrders)
+        private void SetupOrders(List<OrderData> levelDataOrders,
+            List<RandomOrdersSettings> levelDataRandomOrdersSettings)
         {
             var orders = levelDataOrders
                 .Select(orderData => new Order(orderData.RequiredWorkTypes.ToList(), orderData.TimeLimitSeconds))
                 .Cast<IOrder>()
                 .ToList();
 
-            _orderProvider.Initialize(orders);
+            _orderProvider.Initialize(orders, levelDataRandomOrdersSettings);
         }
 
         private void SetupFactoryAvailabilityTracker(LevelView levelView)

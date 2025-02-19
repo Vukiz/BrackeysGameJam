@@ -7,78 +7,63 @@ using Factories.View;
 using Orders;
 using Rails.Infrastructure;
 using UnityEngine;
+using IFactory = Factories.Infrastructure.IFactory;
 
 namespace Factories.Implementation
 {
     public class Factory : IFactory, IDisposable
     {
         private readonly RobotProvider _robotProvider;
+        private bool _isPaused;
+        private float _timeSinceLastSpawn;
 
         private FactoryView _view;
         private FactoryData _data;
         private Transform _robotsParent;
-        private CancellationTokenSource _cancellationTokenSource;
-        private bool _isPaused;
-        
+        private CancellationTokenSource _cancellationTokenSource = new();
+        private IWaypoint _next;
+        public event Action<IRobot> RobotSpawned;
+        public WorkType WorkType => _data.WorkType;
+
         public Factory(RobotProvider robotProvider)
         {
             _robotProvider = robotProvider;
         }
-        
-        private IWaypoint _next;
-        public WorkType WorkType => _data.WorkType;
 
-        public event Action<IRobot> RobotSpawned;
-        
         public void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent)
         {
             _view = view;
             _data = data;
             _next = next;
+            _isPaused = false;
             _robotsParent = robotsParent;
             StartCycle().Forget();
         }
 
-        public void PauseCycle()
+        public void SetPaused(bool isPaused)
         {
-            _isPaused = true;
-        }
-
-        public void ResumeCycle()
-        {
-            _isPaused = false;
+            _isPaused = isPaused;
         }
 
         private async UniTask StartCycle()
         {
-            try
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            var token = _cancellationTokenSource.Token;
+            await UniTask.Delay(TimeSpan.FromSeconds(_data.InitialDelay), cancellationToken: token);
+            Debug.Log($"Factory {WorkType} started");
+            while (!token.IsCancellationRequested)
             {
-                _cancellationTokenSource = new CancellationTokenSource();
-                var token = _cancellationTokenSource.Token;
-                await UniTask.Delay(TimeSpan.FromSeconds(_data.InitialDelay), cancellationToken: token);
-                while (!token.IsCancellationRequested)
-                {
-                    SpawnRobot();
-                    await StartCooldown(token);
-                }
-            }
-            catch (OperationCanceledException e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        private async UniTask StartCooldown(CancellationToken token)
-        {
-            var duration = 0f;
-            while (duration <= _data.SpawnCooldown)
-            {
-                token.ThrowIfCancellationRequested();
                 if (!_isPaused)
                 {
-                    duration += Time.deltaTime;
+                    _timeSinceLastSpawn += Time.deltaTime;
+                    if (_timeSinceLastSpawn >= _data.SpawnCooldown)
+                    {
+                        _timeSinceLastSpawn = 0;
+                        SpawnRobot();
+                    }
                 }
-                
+
                 await UniTask.Yield();
             }
         }

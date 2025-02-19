@@ -17,7 +17,7 @@ namespace Factories
                 .ByMethod(subContainer =>
                 {
                     subContainer.Bind<FactoryProvider>().AsSingle();
-                    subContainer.Bind<Factory>().AsTransient();
+                    subContainer.BindInterfacesAndSelfTo<Factory>().AsTransient();
                 }).AsSingle();
 
             Container.Bind<RobotProvider>()
