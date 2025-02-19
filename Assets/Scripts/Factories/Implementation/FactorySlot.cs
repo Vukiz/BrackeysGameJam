@@ -1,6 +1,5 @@
 using System;
 using Factories.Infrastructure;
-using Factories.View;
 using Factories.Views;
 using Rails.Infrastructure;
 using UnityEngine;

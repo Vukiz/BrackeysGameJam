@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Factories.View;
 using Factories.Views;
 using SushiBelt;
 using SushiBelt.Infrastructure;

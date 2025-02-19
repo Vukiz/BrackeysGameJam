@@ -82,7 +82,6 @@ namespace Level.Implementation
             _robots.Remove(robot);
         }
 
-
         private async UniTask CheckForCollisions()
         {
             _cancellationTokenSource?.Cancel();

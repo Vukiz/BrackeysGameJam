@@ -1,5 +1,5 @@
 using Factories.Data;
-using Factories.View;
+using Factories.Views;
 using Rails.Infrastructure;
 using UnityEngine;
 
@@ -9,6 +9,7 @@ namespace Factories.Infrastructure
     {
         void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent);
         event System.Action<IRobot> RobotSpawned;
+        float SpawnProgress { get; }
         void SetPaused(bool isPaused);
     }
 }

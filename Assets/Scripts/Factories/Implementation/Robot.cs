@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Factories.Data;
 using Factories.Infrastructure;
-using Factories.View;
+using Factories.Views;
 using Orders;
 using Orders.Data;
 using Orders.Infrastructure;

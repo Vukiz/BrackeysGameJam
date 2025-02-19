@@ -1,6 +1,6 @@
 using Factories.Data;
 using Factories.Infrastructure;
-using Factories.View;
+using Factories.Views;
 using Level.Infrastructure;
 using Orders;
 using Orders.Data;

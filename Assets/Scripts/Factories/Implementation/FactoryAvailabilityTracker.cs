@@ -78,7 +78,6 @@ namespace Factories.Implementation
             );
             factory.SetPaused(false);
 
-            _coveredWorkTypes.Add(workType);
             _selectedFactorySlotView = null;
             SetFactorySlotsInteractable(false);
         }
@@ -96,8 +95,13 @@ namespace Factories.Implementation
 
         private void OnOrderReceived(IOrder order)
         {
-            foreach (var workType in order.NeededTypes.Where(workType => !_coveredWorkTypes.Contains(workType)))
+            foreach (var workType in order.NeededTypes)
             {
+                if (!_coveredWorkTypes.Add(workType))
+                {
+                    continue;
+                }
+
                 _requiredFactoriesQueue.Enqueue(workType);
                 SetFactorySlotsInteractable(true);
             }

@@ -1,5 +1,5 @@
 using Factories.Data;
-using Factories.View;
+using Factories.Views;
 using Level.Infrastructure;
 using Orders.Data;
 using Rails.Infrastructure;

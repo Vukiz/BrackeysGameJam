@@ -3,7 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Factories.Data;
 using Factories.Infrastructure;
-using Factories.View;
+using Factories.Views;
 using Orders.Data;
 using Rails.Infrastructure;
 using UnityEngine;
@@ -24,7 +24,7 @@ namespace Factories.Implementation
         private IWaypoint _next;
         public event Action<IRobot> RobotSpawned;
         public WorkType WorkType => _data.WorkType;
-
+        public float SpawnProgress => _timeSinceLastSpawn / _data.SpawnCooldown;
         public Factory(RobotProvider robotProvider)
         {
             _robotProvider = robotProvider;
@@ -38,6 +38,7 @@ namespace Factories.Implementation
             _isPaused = false;
             _robotsParent = robotsParent;
             StartCycle().Forget();
+            _view.SignalGlow.Initialize(this);
         }
 
         public void SetPaused(bool isPaused)
