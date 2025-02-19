@@ -30,10 +30,10 @@ MonoBehaviour:
   _factoryData:
   - _workType: 0
     _spawnCooldown: 4
-    _initialDelay: 3
+    _initialDelay: 1
   - _workType: 1
     _spawnCooldown: 4
-    _initialDelay: 3
+    _initialDelay: 1
   - _workType: 2
     _spawnCooldown: 4
-    _initialDelay: 3
+    _initialDelay: 1
