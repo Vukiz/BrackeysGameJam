@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Factories.Infrastructure;
+using Level.Implementation;
 using Orders;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
@@ -12,9 +14,18 @@ namespace Workstation.Implementation
 {
     public class Workstation : IWorkstation
     {
+        private readonly CollisionsTracker _collisionsTracker;
+        
         private List<ISlot> _slots;
         private ISushiBelt _sushiBelt;
         private WorkstationView _workstationView;
+
+        public event Action NoSlotsLeft;
+
+        public Workstation(CollisionsTracker collisionsTracker)
+        {
+            _collisionsTracker = collisionsTracker;
+        }
 
         public void SetView(WorkstationView workstationView, ISushiBelt sushiBelt)
         {
@@ -25,6 +36,7 @@ namespace Workstation.Implementation
                 var slot = new Slot();
                 slot.SetView(slotView);
                 slot.Occupied += OnSlotOccupied; // TODO Unsubscribe
+                slot.RobotsCollided += OnRobotsCollided;
                 _slots.Add(slot);
             }
 
@@ -36,6 +48,11 @@ namespace Workstation.Implementation
 
         private void OnSlotOccupied()
         {
+            if (_sushiBelt.CurrentOrder == null)
+            {
+                return;
+            }
+            
             TryCompleteOrder(_sushiBelt.CurrentOrder);
         }
 
@@ -63,14 +80,22 @@ namespace Workstation.Implementation
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
                     occupiedBy.CompleteOrder(order);
+                    slot.Reset();
                 }
             }
         }
 
         private IWaypoint TryGetNextSlot()
         {
-            return _slots.FirstOrDefault(slot => !slot.IsOccupied);
+            var emptySlot = _slots.FirstOrDefault(slot => !slot.IsOccupied);
+            if (emptySlot != null)
+            {
+                return emptySlot;
+            }
 
+            var lastSlot = _slots.Last();
+            _slots.Remove(lastSlot);
+            return lastSlot;
             // NoSlotsLeft?.Invoke();
         }
 
@@ -78,12 +103,24 @@ namespace Workstation.Implementation
 
         public void Reach(IRobot robot)
         {
+            _collisionsTracker.RemoveRobot(robot);
             robot.SetNextWaypoint(TryGetNextSlot());
         }
 
         public void AddNeighbour(IWaypoint waypoint)
         {
             
+        }
+
+        private void OnRobotsCollided(IRobot robot, IRobot otherRobot, ISlot slot)
+        {
+            _slots.Remove(slot);
+            robot.Destroy();
+            otherRobot.Destroy();
+            if (_slots.Count == 0)
+            {
+                NoSlotsLeft?.Invoke();
+            }
         }
     }
 }

@@ -11,11 +11,11 @@ using Object = UnityEngine.Object;
 
 namespace Factories.Implementation
 {
-    public class Robot : IRobot
+    public class Robot : IRobot, IDisposable
     {
         private RobotView _view;
         private RobotData _data;
-        private CancellationTokenSource _cancellationTokenSource; // TODO: Cancel movement after collision
+        private CancellationTokenSource _cancellationTokenSource;
         private IWaypoint _nextWaypoint;
 
         public WorkType WorkType => _data.WorkType;
@@ -37,6 +37,7 @@ namespace Factories.Implementation
             try
             {
                 _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource?.Dispose();
                 float duration;
                 _cancellationTokenSource = new CancellationTokenSource();
                 var token = _cancellationTokenSource.Token;
@@ -69,8 +70,14 @@ namespace Factories.Implementation
 
         public void Destroy()
         {
-            _cancellationTokenSource?.Cancel();
             Object.Destroy(_view.gameObject);
+        }
+        
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
     }
 }

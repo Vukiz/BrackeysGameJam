@@ -7,7 +7,11 @@ using Level.Infrastructure;
 using Level.Views;
 using Rails.Implementation;
 using Orders;
+using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
+using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Splines;
 using Workstation.Infrastructure;
 using Zenject;
 
@@ -90,6 +94,7 @@ namespace Level.Implementation
                 var workstation = _container.Resolve<IWorkstation>();
                 workstation.SetView(workstationView, sushiBelt);
                 _waypointProvider.RegisterWaypoint(workstationView, workstation);
+                _collisionsTracker.RegisterWorkstation(workstation);
             }
         }
 
@@ -102,6 +107,7 @@ namespace Level.Implementation
                 _waypointProvider.RegisterWaypoint(railSwitchView, railSwitch);
             }
 
+            var rails = new List<(IWaypoint from, IWaypoint to)>();
             foreach (var railSwitchView in levelView.RailSwitchViews)
             {
                 var railSwitch = _waypointProvider.GetWaypoint(railSwitchView);
@@ -109,8 +115,42 @@ namespace Level.Implementation
                 {
                     var waypoint = _waypointProvider.GetWaypoint(waypointView);
                     railSwitch.AddNeighbour(waypoint);
+                    CreateRail(railSwitch, waypoint, levelView.RailPrefab, levelView.RailsParent, rails);
                 }
             }
+        }
+
+        private void CreateRail(IWaypoint from, IWaypoint to, GameObject railPrefab, Transform parent, List<(IWaypoint from, IWaypoint to)> existingRails)
+        {
+            var existingPair = existingRails.FirstOrDefault(rail =>
+                (rail.from == from && rail.to == to) || (rail.from == to && rail.to == from));
+
+            if (existingPair != default)
+            {
+                return;    
+            }
+            
+            var rail = new GameObject
+            {
+                name = "Rail",
+                transform =
+                {
+                    parent = parent
+                }
+            };
+
+            var spline = rail.AddComponent<SplineContainer>().Spline;
+            var fromPosition = new float3(from.Position.x, 0.01f, from.Position.z);
+            var toPosition = new float3(to.Position.x, 0.01f, to.Position.z);
+            var fromKnot = new BezierKnot(fromPosition);
+            var toKnot = new BezierKnot(toPosition);
+            spline.Add(fromKnot);
+            spline.Insert(1, toKnot);
+            existingRails.Add((from, to));
+            var splineInstantiate = rail.AddComponent<SplineInstantiate>();
+            splineInstantiate.itemsToInstantiate =
+                new[] { new SplineInstantiate.InstantiableItem { Prefab = railPrefab } };
+            splineInstantiate.UpdateInstances();
         }
     }
 }

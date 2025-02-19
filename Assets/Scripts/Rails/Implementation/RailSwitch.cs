@@ -22,6 +22,11 @@ namespace Rails.Implementation
         
         public void Reach(IRobot robot)
         {
+            if (!_view)
+            {
+                return;
+            }
+            
             robot.SetNextWaypoint(Next);
         }
 

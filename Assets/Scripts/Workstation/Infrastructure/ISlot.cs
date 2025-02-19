@@ -10,6 +10,8 @@ namespace Workstation.Infrastructure
         bool IsOccupied { get; }
         
         IRobot OccupiedBy { get; }
+
+        void Reset();
         
         event System.Action Occupied;
     }

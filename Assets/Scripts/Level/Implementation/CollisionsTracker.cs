@@ -7,6 +7,7 @@ using Factories.Infrastructure;
 using Level.Infrastructure;
 using UnityEngine;
 using System.Linq;
+using Workstation.Infrastructure;
 
 namespace Level.Implementation
 {
@@ -16,6 +17,7 @@ namespace Level.Implementation
         
         private readonly List<FactorySlot> _factorySlots = new();
         private readonly List<IRobot> _robots = new();
+        private readonly List<IWorkstation> _workstations = new();
         private CancellationTokenSource _cancellationTokenSource;
 
         public void TrackCollisions()
@@ -28,12 +30,14 @@ namespace Level.Implementation
             _cancellationTokenSource?.Cancel();
             _factorySlots.Clear();
             _robots.Clear();
+            _workstations.Clear();
         }
 
         public void Dispose()
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
 
         public void RegisterFactorySlot(FactorySlot factorySlot)
@@ -46,6 +50,12 @@ namespace Level.Implementation
         {
             robot.IsTrackingRequired = true;
             _robots.Add(robot);
+        }
+
+        public void RegisterWorkstation(IWorkstation workstation)
+        {
+            _workstations.Add(workstation);
+            workstation.NoSlotsLeft += FinishGame;
         }
         
         public void RemoveRobot(IRobot robot)
@@ -112,6 +122,8 @@ namespace Level.Implementation
         private void FinishGame()
         {
             // TODO: End game
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             Debug.Log("Game ended because of robot collisions");
             RobotCollisionDetected?.Invoke();
         }

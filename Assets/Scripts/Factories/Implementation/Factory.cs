@@ -94,6 +94,7 @@ namespace Factories.Implementation
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
     }
 }

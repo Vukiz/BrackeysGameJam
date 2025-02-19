@@ -408,8 +408,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _neighbourWaypoints:
-  - {fileID: 3452611861952994520}
   - {fileID: 8939550805061725701}
+  - {fileID: 3452611861952994520}
   - {fileID: 3208489515738831040}
 --- !u!1 &1542951159591982981
 GameObject:
@@ -476,6 +476,8 @@ MonoBehaviour:
   - {fileID: 3452611861952994520}
   _factoriesParent: {fileID: 6603935549609951113}
   _robotsParent: {fileID: 6603935549609951113}
+  _railsParent: {fileID: 3616702672804338096}
+  _railPrefab: {fileID: 797729584468643168, guid: f73728f4bff4b2044ad6b7943927f3f1, type: 3}
 --- !u!1 &1708208458079688403
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,7 +866,7 @@ Transform:
   m_GameObject: {fileID: 4212163513786535699}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.09, y: 0, z: 8.780001}
+  m_LocalPosition: {x: -9.18, y: 0, z: 8.780001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -958,8 +960,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _neighbourWaypoints:
-  - {fileID: 7078280231581254847}
   - {fileID: 3772806333816336905}
+  - {fileID: 7078280231581254847}
   - {fileID: 3208489515738831040}
 --- !u!1 &4319176031897079562
 GameObject:
@@ -1386,7 +1388,7 @@ Transform:
   m_GameObject: {fileID: 7884209222676092215}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -8.7, y: 0, z: 15.7}
+  m_LocalPosition: {x: -9.179999, y: 0, z: 15.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1915,6 +1917,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7815045600056136706}
     m_Modifications:
+    - target: {fileID: 1948464744402290186, guid: d4170a67d9160448087379dc2651671d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3856971458908867089, guid: d4170a67d9160448087379dc2651671d, type: 3}
       propertyPath: m_Name
       value: WorkStation
@@ -1994,7 +2000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6566595441626186739, guid: d4170a67d9160448087379dc2651671d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.12
+      value: -2.87
       objectReference: {fileID: 0}
     - target: {fileID: 6566595441626186739, guid: d4170a67d9160448087379dc2651671d, type: 3}
       propertyPath: m_LocalPosition.y
