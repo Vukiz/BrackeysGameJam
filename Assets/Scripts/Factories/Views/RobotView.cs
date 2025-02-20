@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -12,6 +13,8 @@ namespace Factories.Views
 
         public WorkType WorkType => _workType;
 
+        public event Action Destroyed;
+
         public UniTask MoveTo(Vector3 position, float duration, CancellationToken token)
         {
             LookAt(position);
@@ -23,6 +26,11 @@ namespace Factories.Views
         private void LookAt(Vector3 position)
         {
             transform.rotation = Quaternion.LookRotation(position, Vector3.up);
+        }
+
+        private void OnDestroy()
+        {
+            Destroyed?.Invoke();
         }
     }
 }

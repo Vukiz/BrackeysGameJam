@@ -39,6 +39,7 @@ namespace Factories.Implementation
             _robotsParent = robotsParent;
             StartCycle().Forget();
             _view.SignalGlow.Initialize(this);
+            _view.Destroyed += Dispose;
         }
 
         public void SetPaused(bool isPaused)
@@ -79,6 +80,7 @@ namespace Factories.Implementation
 
         public void Dispose()
         {
+            _view.Destroyed -= Dispose;
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;

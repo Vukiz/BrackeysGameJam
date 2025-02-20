@@ -32,6 +32,7 @@ namespace Factories.Implementation
         {
             _view = view;
             _data = data;
+            _view.Destroyed += Dispose;
         }
 
         public async void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null)
@@ -77,6 +78,7 @@ namespace Factories.Implementation
         
         public void Dispose()
         {
+            _view.Destroyed -= Dispose;
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
