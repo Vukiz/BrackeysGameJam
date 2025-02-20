@@ -10,6 +10,7 @@ namespace Workstation.Implementation
     public class Slot : ISlot
     {
         public bool IsOccupied { get; private set; }
+        public IRobot RobotAssigned { get; set; }
         public event Action<ISlot> Occupied;
         public event Action<IRobot, IRobot, ISlot> RobotsCollided;
         public void SetDestroyed(bool isDestroyed)
@@ -21,14 +22,13 @@ namespace Workstation.Implementation
         private SlotView _slotView;
         public IRobot OccupiedBy { get; private set; }
 
-
         public void SetView(SlotView slotView)
         {
             _slotView = slotView;
             slotView.SetDestroyed(false);
         }
 
-        private void Occupy(IRobot robot)
+        public void Occupy(IRobot robot)
         {
             OccupiedBy = robot;
             IsOccupied = true;
@@ -53,6 +53,7 @@ namespace Workstation.Implementation
 
         public void Reset()
         {
+            RobotAssigned = null;
             IsOccupied = false;
             OccupiedBy = null;
         }

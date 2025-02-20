@@ -117,6 +117,7 @@ namespace Factories.Implementation
             if (_isSelfDestructionTimerStarted && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 _vfxManager.SpawnVFX(VFXType.RobotSelfDestruct, Position);
+                Debug.Log($"Robot {this} self-destructed.");
                 RobotDestroyRequested?.Invoke(this);
             }
         }

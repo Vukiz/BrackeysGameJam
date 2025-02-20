@@ -25,7 +25,12 @@ namespace Factories.Views
 
         private void LookAt(Vector3 position)
         {
-            transform.rotation = Quaternion.LookRotation(position, Vector3.up);
+            position = new Vector3(position.x, transform.position.y, position.z);
+            var directionToTarget = (position - transform.position).normalized;
+            transform.rotation = Quaternion.LookRotation(
+                directionToTarget,
+                Vector3.up
+            );
         }
 
         private void OnDestroy()

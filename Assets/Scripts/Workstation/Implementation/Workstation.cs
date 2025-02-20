@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Factories.Infrastructure;
 using Level.Implementation;
 using Orders.Infrastructure;
@@ -99,9 +100,8 @@ namespace Workstation.Implementation
                 var occupiedBy = slot.OccupiedBy;
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
-                    occupiedBy.CompleteOrder(order);
                     occupiedBy.StopSelfDestructionTimer();
-                    slot.Reset();
+                    occupiedBy.CompleteOrder(order);
                     continue;
                 }
                 
@@ -109,9 +109,9 @@ namespace Workstation.Implementation
             }
         }
 
-        private IWaypoint TryGetNextSlot()
+        private ISlot TryGetNextSlot()
         {
-            var emptySlot = _slots.FirstOrDefault(slot => !slot.IsOccupied);
+            var emptySlot = _slots.FirstOrDefault(slot => !slot.IsOccupied && slot.RobotAssigned == null);
             if (emptySlot != null)
             {
                 return emptySlot;
@@ -122,6 +122,7 @@ namespace Workstation.Implementation
                 return null;
             }
 
+            Debug.Log("No empty slots, removing last slot because it is about to be destroyed.");
             var lastSlot = _slots.Last();
             _slots.Remove(lastSlot);
             return lastSlot;
@@ -133,8 +134,8 @@ namespace Workstation.Implementation
         {
             _collisionsTracker.RemoveRobot(robot);
             var nextSlot = TryGetNextSlot();
-            Debug.Log($"Robot {robot} reached workstation {this} with next slot {nextSlot}, with position {nextSlot.Position} and workstation position {Position}");
             robot.SetNextWaypoint(nextSlot);
+            nextSlot.RobotAssigned = robot;
         }
 
         public void AddNeighbour(IWaypoint waypoint)

@@ -27,16 +27,16 @@ namespace SushiBelt.Implementation
 
         private SushiBeltView _sushiBeltView;
 
-        public void SubmitOrder(IOrder order)
+        public async void SubmitOrder(IOrder order)
         {
             Debug.Log($"Order received on the sushi belt. {order.NeededTypes.Count} types needed.");
-            CurrentOrder = order;
             CreateOrder(order);
+
+            await MoveOrderToTarget();
+            CurrentOrder = order;
             order.OrderCompleted += OnOrderCompleted;
             order.TimerExpired += OnOrderExpired;
             OrderReceived?.Invoke(order);
-
-            MoveOrderToTarget();
         }
 
         private void CreateOrder(IOrder order)
@@ -58,9 +58,10 @@ namespace SushiBelt.Implementation
             }
         }
 
-        private void MoveOrderToTarget()
+        private async UniTask MoveOrderToTarget()
         {
-            _currentOrderGameObject.transform.DOMove(_sushiBeltView.TargetPoint.position, 1f).SetEase(Ease.Linear);
+            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.TargetPoint.position, 1f)
+                .SetEase(Ease.Linear);
         }
 
         public void SetView(SushiBeltView sushiBeltView)
@@ -111,7 +112,11 @@ namespace SushiBelt.Implementation
         public void Dispose()
         {
             UnsubscribeOrder();
-            _sushiBeltView.Destroyed -= Dispose;
+            if (_sushiBeltView != null)
+            {
+                _sushiBeltView.Destroyed -= Dispose;
+            }
+
             if (_currentOrderGameObject != null)
             {
                 Object.Destroy(_currentOrderGameObject.gameObject);
