@@ -54,7 +54,6 @@ namespace Factories.Implementation
             var token = _cancellationTokenSource.Token;
             await UniTask.Delay(TimeSpan.FromSeconds(_data.InitialDelay), cancellationToken: token);
             _timeSinceLastSpawn = _data.SpawnCooldown;
-            Debug.Log($"Factory {WorkType} started");
             while (!token.IsCancellationRequested)
             {
                 if (!_isPaused)

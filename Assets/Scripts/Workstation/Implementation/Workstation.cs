@@ -132,7 +132,9 @@ namespace Workstation.Implementation
         public void Reach(IRobot robot)
         {
             _collisionsTracker.RemoveRobot(robot);
-            robot.SetNextWaypoint(TryGetNextSlot());
+            var nextSlot = TryGetNextSlot();
+            Debug.Log($"Robot {robot} reached workstation {this} with next slot {nextSlot}, with position {nextSlot.Position} and workstation position {Position}");
+            robot.SetNextWaypoint(nextSlot);
         }
 
         public void AddNeighbour(IWaypoint waypoint)
@@ -141,8 +143,8 @@ namespace Workstation.Implementation
 
         private void OnRobotsCollided(IRobot robot, IRobot otherRobot, ISlot slot)
         {
-            var position = robot.Position;
             _slots.Remove(slot);
+            slot.SetDestroyed(true);
             robot.Destroy();
             otherRobot.Destroy();
             if (_slots.Count == 0)

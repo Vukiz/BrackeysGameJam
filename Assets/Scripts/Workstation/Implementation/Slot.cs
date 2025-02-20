@@ -1,7 +1,5 @@
 using System;
-using Factories;
 using Factories.Infrastructure;
-using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
 using Workstation.Infrastructure;
@@ -14,7 +12,12 @@ namespace Workstation.Implementation
         public bool IsOccupied { get; private set; }
         public event Action<ISlot> Occupied;
         public event Action<IRobot, IRobot, ISlot> RobotsCollided;
-        
+        public void SetDestroyed(bool isDestroyed)
+        {
+            var slotView = _slotView;
+            slotView.SetDestroyed(isDestroyed);
+        }
+
         private SlotView _slotView;
         public IRobot OccupiedBy { get; private set; }
 
@@ -22,6 +25,7 @@ namespace Workstation.Implementation
         public void SetView(SlotView slotView)
         {
             _slotView = slotView;
+            slotView.SetDestroyed(false);
         }
 
         private void Occupy(IRobot robot)

@@ -14,5 +14,6 @@ namespace Workstation.Infrastructure
 
         event Action<ISlot> Occupied;
         event Action<IRobot, IRobot, ISlot> RobotsCollided;
+        void SetDestroyed(bool b);
     }
 }

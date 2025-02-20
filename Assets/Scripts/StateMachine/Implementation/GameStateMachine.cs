@@ -36,7 +36,6 @@ namespace StateMachine.Implementation
 
         public void ChangeState(GameState newState)
         {
-            Debug.Log($"Changing state from {CurrentState} to {newState}");
             if (_currentHandler?.State == newState)
             {
                 return;
