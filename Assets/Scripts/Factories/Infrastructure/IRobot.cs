@@ -1,4 +1,5 @@
 using System;
+using Factories.Data;
 using Orders;
 using Orders.Data;
 using Orders.Infrastructure;
@@ -15,12 +16,12 @@ namespace Factories.Infrastructure
         
         void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);
         
-        void CompleteOrder(IOrder order);
+        void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition);
         void StartSelfDestructionTimer();
         void StopSelfDestructionTimer();
 
         event Action CollisionDetected;
-        event Action<IRobot> RobotDestroyRequested;
-        void Destroy();
+        event Action<IRobot, DestroyReason> RobotDestroyRequested;
+        void Destroy(DestroyReason destroyReason);
     }
 }

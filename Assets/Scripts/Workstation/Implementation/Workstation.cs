@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
+using Factories.Data;
 using Factories.Infrastructure;
 using Level.Implementation;
 using Orders.Infrastructure;
@@ -101,7 +101,7 @@ namespace Workstation.Implementation
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
                     occupiedBy.StopSelfDestructionTimer();
-                    occupiedBy.CompleteOrder(order);
+                    occupiedBy.CompleteOrder(order, _sushiBelt.OrderPosition);
                     continue;
                 }
                 
@@ -146,8 +146,8 @@ namespace Workstation.Implementation
         {
             _slots.Remove(slot);
             slot.SetDestroyed(true);
-            robot.Destroy();
-            otherRobot.Destroy();
+            robot.Destroy(DestroyReason.Collision);
+            otherRobot.Destroy(DestroyReason.Collision);
             if (_slots.Count == 0)
             {
                 RobotReachedStationWithNoEmptySlots?.Invoke(robot);

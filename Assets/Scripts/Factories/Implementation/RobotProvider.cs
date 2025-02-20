@@ -38,10 +38,10 @@ namespace Factories.Implementation
             return (robot, view);
         }
 
-        private void OnRobotDestroyRequested(IRobot robot)
+        private void OnRobotDestroyRequested(IRobot robot, DestroyReason destroyReason)
         {
             robot.RobotDestroyRequested -= OnRobotDestroyRequested;
-            robot.Destroy();
+            robot.Destroy(destroyReason);
             _collisionsTracker.RemoveRobot(robot);
         }
     }

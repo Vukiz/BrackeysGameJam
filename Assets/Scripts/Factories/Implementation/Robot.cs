@@ -32,7 +32,7 @@ namespace Factories.Implementation
 
         public event Action CollisionDetected;
 
-        public event Action<IRobot> RobotDestroyRequested;
+        public event Action<IRobot,DestroyReason> RobotDestroyRequested;
 
         public Robot(IVFXManager vfxManager)
         {
@@ -74,12 +74,18 @@ namespace Factories.Implementation
             }
         }
 
-        public void CompleteOrder(IOrder order)
+        public async void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition)
         {
+            // move closer to the order and jump
+            var sequence = DOTween.Sequence();
+            var halfwayToTarget = (sushiBeltOrderPosition - Position) / 2 + Position;
+            sequence.Append(_view.transform.DOMove(halfwayToTarget, 0.5f));
+            sequence.Append(_view.transform.DOJump(halfwayToTarget , 0.5f, 1, 0.5f));
+            await sequence.Play();
             order.ReceiveWork(WorkType);
             Debug.Log($"Robot {this} completed order {order}");
             _vfxManager.SpawnVFX(VFXType.RobotJobComplete, Position);
-            RobotDestroyRequested?.Invoke(this);
+            RobotDestroyRequested?.Invoke(this, DestroyReason.OrderCompleted);
         }
 
         public void StartSelfDestructionTimer()
@@ -101,13 +107,16 @@ namespace Factories.Implementation
             _cancellationTokenSource = null;
         }
 
-        public async void Destroy()
+        public async void Destroy(DestroyReason destroyReason)
         {
-            // Robot jumps off the ground a little bit and lays on its back
-            var sequence = DOTween.Sequence();
-            sequence.Append(_view.transform.DOLocalJump(_view.transform.localPosition, 0.5f, 1, 0.5f));
-            sequence.Join(_view.transform.DOLocalRotate(new Vector3(0, 0, 180), 0.5f));
-            await sequence.Play();
+            if (destroyReason != DestroyReason.OrderCompleted)
+            {
+                // Robot jumps off the ground a little bit and lays on its back
+                var sequence = DOTween.Sequence();
+                sequence.Append(_view.transform.DOLocalJump(_view.transform.localPosition, 0.5f, 1, 0.5f));
+                sequence.Join(_view.transform.DOLocalRotate(new Vector3(0, 0, 180), 0.5f));
+                await sequence.Play();
+            }
             Object.Destroy(_view.gameObject);
         }
 
@@ -118,7 +127,7 @@ namespace Factories.Implementation
             {
                 _vfxManager.SpawnVFX(VFXType.RobotSelfDestruct, Position);
                 Debug.Log($"Robot {this} self-destructed.");
-                RobotDestroyRequested?.Invoke(this);
+                RobotDestroyRequested?.Invoke(this, DestroyReason.SelfDestruction);
             }
         }
         

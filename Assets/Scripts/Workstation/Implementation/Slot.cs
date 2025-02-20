@@ -1,4 +1,5 @@
 using System;
+using Factories.Data;
 using Factories.Infrastructure;
 using Rails.Infrastructure;
 using UnityEngine;
@@ -63,7 +64,7 @@ namespace Workstation.Implementation
             
         }
 
-        private void OnRobotDestroyed(IRobot robot)
+        private void OnRobotDestroyed(IRobot robot, DestroyReason destroyReason)
         {
             robot.RobotDestroyRequested -= OnRobotDestroyed;
             Reset();
