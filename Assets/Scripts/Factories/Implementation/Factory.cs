@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Factories.Data;
-using Factories.Infrastructure;
 using Factories.Views;
 using Orders.Data;
 using Rails.Infrastructure;
@@ -22,7 +22,7 @@ namespace Factories.Implementation
         private Transform _robotsParent;
         private CancellationTokenSource _cancellationTokenSource = new();
         private IWaypoint _next;
-        public event Action<IRobot> RobotSpawned;
+        private static readonly int OpenDoors = Animator.StringToHash("OpenDoors");
         public WorkType WorkType => _data.WorkType;
         public float SpawnProgress => _timeSinceLastSpawn / _data.SpawnCooldown;
         public Factory(RobotProvider robotProvider)
@@ -63,7 +63,7 @@ namespace Factories.Implementation
                     if (_timeSinceLastSpawn >= _data.SpawnCooldown)
                     {
                         _timeSinceLastSpawn = 0;
-                        SpawnRobot();
+                        SpawnRobot().Forget();
                     }
                 }
 
@@ -71,11 +71,14 @@ namespace Factories.Implementation
             }
         }
 
-        private void SpawnRobot()
+        private async UniTaskVoid SpawnRobot()
         {
-            var robot = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position, _robotsParent);
+            var (robot, robotView) = _robotProvider.Create(WorkType, _view.RobotSpawnPoint.position, _robotsParent);
+            _view.DoorsAnimator.SetTrigger(OpenDoors);
+            await robotView.transform.DOJump(_view.RobotLaunchPoint.position, 2, 1, 1)
+                .SetEase(_view.LaunchCurve)
+                .WithCancellation(_cancellationTokenSource.Token);
             robot.SetNextWaypoint(_next);
-            RobotSpawned?.Invoke(robot);
         }
 
         public void Dispose()

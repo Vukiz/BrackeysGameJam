@@ -12,10 +12,16 @@ namespace Factories.Views
         [SerializeField] private WorkType _workType;
         [SerializeField] private Transform _waypointTransform;
         [SerializeField] private Transform _robotSpawnPoint;
+        [SerializeField] private Transform _robotLaunchPoint;
+        [SerializeField] private Animator _doorsAnimator;
+        [SerializeField] private AnimationCurve _launchCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
         public WorkType WorkType => _workType;
         public Transform RobotSpawnPoint => _robotSpawnPoint;
         public SignalGlow SignalGlow => _signalGlow;
+        public Animator DoorsAnimator => _doorsAnimator;
+        public AnimationCurve LaunchCurve => _launchCurve;
+        public Transform RobotLaunchPoint => _robotLaunchPoint;
 
         public event Action Destroyed;
 

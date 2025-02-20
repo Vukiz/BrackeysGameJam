@@ -25,7 +25,7 @@ namespace Factories.Implementation
             _collisionsTracker = collisionsTracker;
         }
 
-        public IRobot Create(WorkType workType, Vector3 position, Transform parent)
+        public (IRobot, RobotView) Create(WorkType workType, Vector3 position, Transform parent)
         {
             var prefab = _factoriesConfiguration.GetRobotView(workType);
             var view = _container.InstantiatePrefabForComponent<RobotView>(prefab, parent);
@@ -35,7 +35,7 @@ namespace Factories.Implementation
             robot.Initialize(view, data);
             robot.RobotDestroyRequested += OnRobotDestroyRequested;
             _collisionsTracker.RegisterRobot(robot);
-            return robot;
+            return (robot, view);
         }
 
         private void OnRobotDestroyRequested(IRobot robot)

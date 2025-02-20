@@ -22,14 +22,14 @@ namespace Factories.Views
             {
                 return;
             }
-            
+
             SlotSelected?.Invoke(this);
         }
 
         public void SetInteractable(bool isInteractable)
         {
             _isInteractable = isInteractable;
-            if(_slotActiveFX != null)
+            if (_slotActiveFX != null)
             {
                 _slotActiveFX.SetActive(isInteractable);
             }

@@ -8,7 +8,6 @@ namespace Factories.Infrastructure
     public interface IFactory
     {
         void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent);
-        event System.Action<IRobot> RobotSpawned;
         float SpawnProgress { get; }
         void SetPaused(bool isPaused);
     }

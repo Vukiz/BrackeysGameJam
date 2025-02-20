@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3790766145355015137}
   - component: {fileID: 8269816598120195602}
+  - component: {fileID: 1307521203200987977}
   m_Layer: 0
   m_Name: FactoryWeld
   m_TagString: Untagged
@@ -30,6 +31,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5760402985658797406}
   - {fileID: 172592224425218115}
   - {fileID: 1967931689354215652}
   - {fileID: 6450186519360339216}
@@ -51,6 +53,85 @@ MonoBehaviour:
   _workType: 0
   _waypointTransform: {fileID: 0}
   _robotSpawnPoint: {fileID: 3790766145355015137}
+  _robotLaunchPoint: {fileID: 5760402985658797406}
+  _doorsAnimator: {fileID: 1307521203200987977}
+  _launchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!95 &1307521203200987977
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155053454506478788}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bf1b9598cecf1467789920d1df298447, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &3433176735263813232
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5760402985658797406}
+  m_Layer: 0
+  m_Name: RobotLaunchPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5760402985658797406
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433176735263813232}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.005, y: 0.041, z: 1.193}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3790766145355015137}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &427721893645219752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -99,14 +180,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5619591730544914384, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 499423175283158370, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
+      propertyPath: m_Name
+      value: DoorLeft
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
       propertyPath: m_Name
-      value: Factory.Welder
+      value: Factory
       objectReference: {fileID: 0}
     - target: {fileID: 2185921764532662122, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 9a9676fd71933433990e5de1bf87938a, type: 2}
+    - target: {fileID: 5020082188848267831, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9152383580761263262, guid: fe5485f37c2a44f4cbf9aa8196b140c0, type: 3}
+      propertyPath: m_Name
+      value: DoorRight
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
