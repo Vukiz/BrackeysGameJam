@@ -17,3 +17,9 @@ MonoBehaviour:
     VFXPrefab: {fileID: 2433282508537954060, guid: 52062c70bd9fd42cbab4823b4b03c47a, type: 3}
   - VFXType: 1
     VFXPrefab: {fileID: 7066383503767350334, guid: 9ca036866effc49c0ba3f14589e3a2ce, type: 3}
+  - VFXType: 2
+    VFXPrefab: {fileID: 2963563778644900728, guid: d49e91b9d8a394928945695e07bc4d80, type: 3}
+  - VFXType: 3
+    VFXPrefab: {fileID: 6766498319746489844, guid: a6870c9f201b04edb9dbd93de690d6d3, type: 3}
+  - VFXType: 4
+    VFXPrefab: {fileID: 5427984642711944035, guid: 1b8d4ebb24e3946c1955570f6e693862, type: 3}

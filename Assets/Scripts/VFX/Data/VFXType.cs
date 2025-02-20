@@ -3,6 +3,9 @@ namespace VFX.Data
     public enum VFXType
     {
         Explosion,
-        Poof
+        Poof,
+        RobotJobComplete,
+        OrderComplete,
+        RobotSelfDestruct,
     }
 }

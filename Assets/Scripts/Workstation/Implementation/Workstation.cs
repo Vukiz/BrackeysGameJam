@@ -78,7 +78,7 @@ namespace Workstation.Implementation
 
         private void OnOrderCompleted(IOrder order)
         {
-            // TODO Order Completed VFX
+            _vfxManager.SpawnVFX(VFXType.OrderComplete, _sushiBelt.OrderPosition);
         }
 
         private void OnOrderReceived(IOrder order)

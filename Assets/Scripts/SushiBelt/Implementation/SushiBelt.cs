@@ -15,12 +15,14 @@ namespace SushiBelt.Implementation
         public event Action<IOrder> OrderReceived;
         public event Action<IOrder> OrderCompleted;
         public event Action<IOrder> OrderExpired;
+
         public void Cleanup()
         {
             Dispose();
         }
 
         public IOrder CurrentOrder { get; private set; }
+        public Vector3 OrderPosition => _currentOrderGameObject.transform.position;
         private OrderView _currentOrderGameObject;
 
         private SushiBeltView _sushiBeltView;
@@ -110,7 +112,7 @@ namespace SushiBelt.Implementation
         {
             UnsubscribeOrder();
             _sushiBeltView.Destroyed -= Dispose;
-            if(_currentOrderGameObject != null)
+            if (_currentOrderGameObject != null)
             {
                 Object.Destroy(_currentOrderGameObject.gameObject);
             }

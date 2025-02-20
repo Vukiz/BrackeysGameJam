@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.Views;
@@ -10,12 +11,15 @@ using Orders.Infrastructure;
 using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
+using VFX.Data;
+using VFX.Infrastructure;
 using Object = UnityEngine.Object;
 
 namespace Factories.Implementation
 {
     public class Robot : IRobot, IDisposable
     {
+        private readonly IVFXManager _vfxManager;
         private RobotView _view;
         private RobotData _data;
         private CancellationTokenSource _cancellationTokenSource;
@@ -30,6 +34,10 @@ namespace Factories.Implementation
 
         public event Action<IRobot> RobotDestroyRequested;
 
+        public Robot(IVFXManager vfxManager)
+        {
+            _vfxManager = vfxManager;
+        }
         public void Initialize(RobotView view, RobotData data)
         {
             _view = view;
@@ -70,6 +78,7 @@ namespace Factories.Implementation
         {
             order.ReceiveWork(WorkType);
             Debug.Log($"Robot {this} completed order {order}");
+            _vfxManager.SpawnVFX(VFXType.RobotJobComplete, Position);
             RobotDestroyRequested?.Invoke(this);
         }
 
@@ -86,37 +95,29 @@ namespace Factories.Implementation
 
         public void StopSelfDestructionTimer()
         {
+            _isSelfDestructionTimerStarted = false;
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
         }
 
-        public void Destroy()
+        public async void Destroy()
         {
+            // Robot jumps off the ground a little bit and lays on its back
+            var sequence = DOTween.Sequence();
+            sequence.Append(_view.transform.DOLocalJump(_view.transform.localPosition, 0.5f, 1, 0.5f));
+            sequence.Join(_view.transform.DOLocalRotate(new Vector3(0, 0, 180), 0.5f));
+            await sequence.Play();
             Object.Destroy(_view.gameObject);
         }
 
         private async UniTask StartSelfDestructionTimerInternal()
         {
-            try
+            await UniTask.Delay(TimeSpan.FromSeconds(_data.SelfDestructionTimerDuration));
+            if (_isSelfDestructionTimerStarted && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
-                var remainingTime = 0f;
-                _cancellationTokenSource?.Cancel();
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = new CancellationTokenSource();
-                while (remainingTime < _data.SelfDestructionTimerDuration)
-                {
-                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-                    remainingTime += Time.deltaTime;
-                    await UniTask.Yield(_cancellationTokenSource.Token);
-                }
-                
+                _vfxManager.SpawnVFX(VFXType.RobotSelfDestruct, Position);
                 RobotDestroyRequested?.Invoke(this);
-                Debug.Log("Robot commited self destruction");
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
             }
         }
         
