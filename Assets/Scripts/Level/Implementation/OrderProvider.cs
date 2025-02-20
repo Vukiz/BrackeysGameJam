@@ -149,6 +149,13 @@ namespace Level.Implementation
             return IsLevelCompleted();
         }
 
+        public void Reset()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+        }
+
         private void OnOrderExpired(IOrder order)
         {
             _expiredOrders.Add(order);

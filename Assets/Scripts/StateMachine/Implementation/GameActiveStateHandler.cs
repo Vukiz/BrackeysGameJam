@@ -54,12 +54,14 @@ namespace StateMachine.Implementation
         {
             _factoryAvailabilityTracker.IsPaused = true;
             _vfxManager.SpawnVFX(VFXType.Explosion, robot.Position);
+            _orderProvider.Reset();
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
             RequestStateChange(GameState.GameEnded);
         }
 
         private void OnLevelCompleted()
         {
+            _collisionsTracker.Reset();
             RequestStateChange(GameState.GameEnded);
         }
 

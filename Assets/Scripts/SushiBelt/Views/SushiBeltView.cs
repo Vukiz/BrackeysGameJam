@@ -1,3 +1,4 @@
+using System;
 using Orders.Views;
 using UnityEngine;
 
@@ -14,5 +15,12 @@ namespace SushiBelt.Views
         public Transform EndPoint => _endPoint;
         public Transform TargetPoint => _targetPoint;
         public OrderView OrderViewPrefab => _orderViewPrefab;
+
+        public event Action Destroyed;
+
+        private void OnDestroy()
+        {
+            Destroyed?.Invoke();
+        }
     }
 }

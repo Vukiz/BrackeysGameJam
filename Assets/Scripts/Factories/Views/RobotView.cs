@@ -20,7 +20,7 @@ namespace Factories.Views
             LookAt(position);
             return transform.DOMove(position, duration)
                 .SetEase(Ease.Linear)
-                .WithCancellation(token);
+                .ToUniTask(TweenCancelBehaviour.KillAndCancelAwait, token);
         }
 
         private void LookAt(Vector3 position)

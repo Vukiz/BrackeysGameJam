@@ -16,6 +16,8 @@ namespace Factories.Infrastructure
         void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);
         
         void CompleteOrder(IOrder order);
+        void StartSelfDestructionTimer();
+        void StopSelfDestructionTimer();
 
         event Action CollisionDetected;
         event Action<IRobot> RobotDestroyRequested;

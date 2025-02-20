@@ -12,7 +12,7 @@ namespace Workstation.Implementation
     public class Slot : ISlot
     {
         public bool IsOccupied { get; private set; }
-        public event Action Occupied;
+        public event Action<ISlot> Occupied;
         public event Action<IRobot, IRobot, ISlot> RobotsCollided;
         
         private SlotView _slotView;
@@ -28,7 +28,8 @@ namespace Workstation.Implementation
         {
             OccupiedBy = robot;
             IsOccupied = true;
-            Occupied?.Invoke();
+            robot.RobotDestroyRequested += OnRobotDestroyed;
+            Occupied?.Invoke(this);
         }
 
         public Vector3 Position => _slotView.transform.position;
@@ -55,6 +56,12 @@ namespace Workstation.Implementation
         public void AddNeighbour(IWaypoint waypoint)
         {
             
+        }
+
+        private void OnRobotDestroyed(IRobot robot)
+        {
+            robot.RobotDestroyRequested -= OnRobotDestroyed;
+            Reset();
         }
     }
 }

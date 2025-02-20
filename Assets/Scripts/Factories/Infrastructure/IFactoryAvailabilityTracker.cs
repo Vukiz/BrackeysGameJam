@@ -11,6 +11,7 @@ namespace Factories.Infrastructure
         bool IsPaused { set; }
         void Initialize(List<FactorySlotView> factorySlots, Transform factoriesParent, Transform robotsParent);
         void RegisterSushiBeltForTracking(ISushiBelt sushiBelt);
+        void Reset();
         // subscribe to all sushibelts  and allow user to place a factory into an empty factory slot
     }
 }

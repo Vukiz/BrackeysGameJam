@@ -88,6 +88,14 @@ namespace Factories.Implementation
             sushiBelt.OrderReceived += OnOrderReceived;
         }
 
+        public void Reset()
+        {
+            _sushiBelts.Clear();
+            _coveredWorkTypes.Clear();
+            _requiredFactoriesQueue.Clear();
+            Unsubscribe();
+        }
+
         public void Dispose()
         {
             Unsubscribe();

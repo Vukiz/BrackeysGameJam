@@ -12,7 +12,7 @@ namespace Workstation.Infrastructure
 
         void Reset();
 
-        event Action Occupied;
+        event Action<ISlot> Occupied;
         event Action<IRobot, IRobot, ISlot> RobotsCollided;
     }
 }

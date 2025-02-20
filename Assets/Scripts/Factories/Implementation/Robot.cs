@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.Views;
@@ -19,6 +20,7 @@ namespace Factories.Implementation
         private RobotData _data;
         private CancellationTokenSource _cancellationTokenSource;
         private IWaypoint _nextWaypoint;
+        private bool _isSelfDestructionTimerStarted;
 
         public WorkType WorkType => _data.WorkType;
         public Vector3 Position => _view.transform.position;
@@ -71,9 +73,51 @@ namespace Factories.Implementation
             RobotDestroyRequested?.Invoke(this);
         }
 
+        public void StartSelfDestructionTimer()
+        {
+            if (_isSelfDestructionTimerStarted)
+            {
+                return;
+            }
+            
+            _isSelfDestructionTimerStarted = true;
+            StartSelfDestructionTimerInternal().Forget();
+        }
+
+        public void StopSelfDestructionTimer()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+        }
+
         public void Destroy()
         {
             Object.Destroy(_view.gameObject);
+        }
+
+        private async UniTask StartSelfDestructionTimerInternal()
+        {
+            try
+            {
+                var remainingTime = 0f;
+                _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource?.Dispose();
+                _cancellationTokenSource = new CancellationTokenSource();
+                while (remainingTime < _data.SelfDestructionTimerDuration)
+                {
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    remainingTime += Time.deltaTime;
+                    await UniTask.Yield(_cancellationTokenSource.Token);
+                }
+                
+                RobotDestroyRequested?.Invoke(this);
+                Debug.Log("Robot commited self destruction");
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
         }
         
         public void Dispose()

@@ -64,6 +64,7 @@ namespace SushiBelt.Implementation
         public void SetView(SushiBeltView sushiBeltView)
         {
             _sushiBeltView = sushiBeltView;
+            _sushiBeltView.Destroyed += Dispose;
         }
 
         private void OnOrderCompleted()
@@ -108,6 +109,7 @@ namespace SushiBelt.Implementation
         public void Dispose()
         {
             UnsubscribeOrder();
+            _sushiBeltView.Destroyed -= Dispose;
             if(_currentOrderGameObject != null)
             {
                 Object.Destroy(_currentOrderGameObject.gameObject);

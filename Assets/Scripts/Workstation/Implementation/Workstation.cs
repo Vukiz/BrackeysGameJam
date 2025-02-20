@@ -65,10 +65,11 @@ namespace Workstation.Implementation
             _sushiBelt.OrderCompleted += OnOrderCompleted; // TODO Unsubscribe from all events?
         }
 
-        private void OnSlotOccupied()
+        private void OnSlotOccupied(ISlot slot)
         {
             if (_sushiBelt.CurrentOrder == null)
             {
+                slot.OccupiedBy.StartSelfDestructionTimer();
                 return;
             }
 
@@ -99,8 +100,12 @@ namespace Workstation.Implementation
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
                     occupiedBy.CompleteOrder(order);
+                    occupiedBy.StopSelfDestructionTimer();
                     slot.Reset();
+                    continue;
                 }
+                
+                slot.OccupiedBy.StartSelfDestructionTimer();
             }
         }
 
