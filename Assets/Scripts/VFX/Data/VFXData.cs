@@ -7,6 +7,6 @@ namespace VFX.Data
     public class VFXData
     {
         public VFXType VFXType;
-        public ParticleSystem VFXPrefab;
+        public GameObject VFXPrefab;
     }
 }

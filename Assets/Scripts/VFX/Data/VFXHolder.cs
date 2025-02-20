@@ -9,9 +9,7 @@ namespace VFX.Data
     {
         [SerializeField] private List<VFXData> _vfxData;
 
-        public List<VFXData> VFXDatas => _vfxData.ToList();
-
-        public ParticleSystem GetVFXByType(VFXType vfxType)
+        public GameObject GetVFXByType(VFXType vfxType)
         {
             return _vfxData.FirstOrDefault(vfx => vfx.VFXType == vfxType)?.VFXPrefab;
         }
