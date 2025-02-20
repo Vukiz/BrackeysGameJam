@@ -8,6 +8,7 @@ namespace Workstation.Infrastructure
 {
     public interface IWorkstation : IWaypoint
     {
+        void Cleanup();
         event Action<IRobot> RobotReachedStationWithNoEmptySlots;
         void SetView(WorkstationView workstationView, ISushiBelt sushiBelt);
     }

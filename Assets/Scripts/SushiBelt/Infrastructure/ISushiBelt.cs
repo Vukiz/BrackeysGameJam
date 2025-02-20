@@ -1,4 +1,3 @@
-using Orders;
 using Orders.Infrastructure;
 using SushiBelt.Views;
 
@@ -12,5 +11,6 @@ namespace SushiBelt.Infrastructure
         event System.Action<IOrder> OrderReceived; // Workstation works this
         event System.Action<IOrder> OrderCompleted; // Provider tracks this
         event System.Action<IOrder> OrderExpired; // Provider tracks this
+        void Cleanup();
     }
 }

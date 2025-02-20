@@ -10,11 +10,16 @@ using Object = UnityEngine.Object;
 
 namespace SushiBelt.Implementation
 {
-    public class SushiBelt : ISushiBelt
+    public class SushiBelt : ISushiBelt, IDisposable
     {
         public event Action<IOrder> OrderReceived;
         public event Action<IOrder> OrderCompleted;
         public event Action<IOrder> OrderExpired;
+        public void Cleanup()
+        {
+            Dispose();
+        }
+
         public IOrder CurrentOrder { get; private set; }
         private OrderView _currentOrderGameObject;
 
@@ -28,7 +33,7 @@ namespace SushiBelt.Implementation
             order.OrderCompleted += OnOrderCompleted;
             order.TimerExpired += OnOrderExpired;
             OrderReceived?.Invoke(order);
-            
+
             MoveOrderToTarget();
         }
 
@@ -39,7 +44,7 @@ namespace SushiBelt.Implementation
             _currentOrderGameObject.transform.localScale = new Vector3(1, 1, 1);
             SetupOrderView(_currentOrderGameObject, order);
         }
-        
+
         private void SetupOrderView(OrderView orderView, IOrder order)
         {
             foreach (var workType in order.NeededTypes)
@@ -50,7 +55,7 @@ namespace SushiBelt.Implementation
                 }
             }
         }
-        
+
         private void MoveOrderToTarget()
         {
             _currentOrderGameObject.transform.DOMove(_sushiBeltView.TargetPoint.position, 1f).SetEase(Ease.Linear);
@@ -69,7 +74,7 @@ namespace SushiBelt.Implementation
             MoveAwayOrder().Forget();
             OrderCompleted?.Invoke(order);
         }
-        
+
 
         private void OnOrderExpired()
         {
@@ -83,18 +88,30 @@ namespace SushiBelt.Implementation
         private void UnsubscribeOrder()
         {
             var order = CurrentOrder;
+            if (order == null)
+            {
+                return;
+            }
+
             order.OrderCompleted -= OnOrderCompleted;
             order.TimerExpired -= OnOrderExpired;
         }
-        
+
         private async UniTaskVoid MoveAwayOrder()
         {
-            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear).OnComplete(() =>
-            {
-               Object.Destroy(_currentOrderGameObject.gameObject);
-            });
+            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear)
+                .OnComplete(() => { Object.Destroy(_currentOrderGameObject.gameObject); });
             Debug.Log("Order Completed and moved away from the sushi belt.");
             CurrentOrder = null;
+        }
+
+        public void Dispose()
+        {
+            UnsubscribeOrder();
+            if(_currentOrderGameObject != null)
+            {
+                Object.Destroy(_currentOrderGameObject.gameObject);
+            }
         }
     }
 }

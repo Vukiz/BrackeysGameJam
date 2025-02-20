@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Factories.Infrastructure;
 using Level.Implementation;
-using Orders;
 using Orders.Infrastructure;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
@@ -33,6 +32,18 @@ namespace Workstation.Implementation
         {
             _collisionsTracker = collisionsTracker;
             _vfxManager = vfxManager;
+        }
+        
+        public void Cleanup()
+        {
+            foreach (var slot in _slots)
+            {
+                slot.Occupied -= OnSlotOccupied;
+                slot.RobotsCollided -= OnRobotsCollided;
+            }
+            _sushiBelt.OrderReceived -= OnOrderReceived;
+            _sushiBelt.OrderCompleted -= OnOrderCompleted;
+            _sushiBelt.Cleanup();
         }
 
         public void SetView(WorkstationView workstationView, ISushiBelt sushiBelt)

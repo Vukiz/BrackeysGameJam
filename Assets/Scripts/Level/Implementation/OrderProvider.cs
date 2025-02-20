@@ -5,7 +5,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Level.Data;
 using Level.Infrastructure;
-using Orders;
 using Orders.Data;
 using Orders.Implementation;
 using Orders.Infrastructure;
@@ -38,7 +37,7 @@ namespace Level.Implementation
         
         private CancellationTokenSource _cancellationTokenSource;
         
-        public void Initialize(List<IOrder> orders, List<RandomOrdersSettings> levelDataRandomOrdersSettings)
+        private void Cleanup()
         {
             foreach (var sushiBelt in _sushiBelts)
             {
@@ -52,7 +51,11 @@ namespace Level.Implementation
             _ordersToComplete.Clear();
             _completedOrders.Clear();
             _expiredOrders.Clear();
-            
+        }
+        
+        public void Initialize(List<IOrder> orders, List<RandomOrdersSettings> levelDataRandomOrdersSettings)
+        {
+            Cleanup();
             
             if (orders?.Count == 0 && levelDataRandomOrdersSettings == null)
             {

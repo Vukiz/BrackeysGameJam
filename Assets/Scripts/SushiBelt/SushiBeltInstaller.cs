@@ -1,4 +1,3 @@
-using SushiBelt.Infrastructure;
 using Zenject;
 
 namespace SushiBelt
@@ -7,7 +6,7 @@ namespace SushiBelt
     {
         public override void InstallBindings()
         {
-            Container.Bind<ISushiBelt>().To<Implementation.SushiBelt>().AsTransient();
+            Container.BindInterfacesTo<Implementation.SushiBelt>().AsTransient();
         }
     }
 }

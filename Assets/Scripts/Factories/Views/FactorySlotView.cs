@@ -29,7 +29,10 @@ namespace Factories.Views
         public void SetInteractable(bool isInteractable)
         {
             _isInteractable = isInteractable;
-            _slotActiveFX.SetActive(isInteractable);
+            if(_slotActiveFX != null)
+            {
+                _slotActiveFX.SetActive(isInteractable);
+            }
         }
     }
 }

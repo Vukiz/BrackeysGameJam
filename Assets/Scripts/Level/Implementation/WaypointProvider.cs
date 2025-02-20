@@ -9,6 +9,11 @@ namespace Level.Implementation
     {
         private readonly Dictionary<IWaypointView, IWaypoint> _waypoints = new();
 
+        public void Cleanup()
+        {
+            _waypoints.Clear();
+        }
+
         public void RegisterWaypoint(IWaypointView waypointView, IWaypoint waypoint)
         {
             if (_waypoints.TryAdd(waypointView, waypoint))

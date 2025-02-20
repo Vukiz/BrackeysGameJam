@@ -6,7 +6,6 @@ using Level.Data;
 using Level.Infrastructure;
 using Level.Views;
 using Rails.Implementation;
-using Orders;
 using Orders.Implementation;
 using Orders.Infrastructure;
 using Rails.Infrastructure;
@@ -27,6 +26,8 @@ namespace Level.Implementation
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         private readonly IOrderProvider _orderProvider;
         private readonly ICollisionsTracker _collisionsTracker;
+
+        private readonly List<IWorkstation> _workstations = new();
 
         public LevelConfigurator(
             DiContainer container,
@@ -50,11 +51,12 @@ namespace Level.Implementation
             var levelData = _levelsHolder.Levels[number];
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
             _collisionsTracker.Reset();
+            _waypointProvider.Cleanup();
             SetupFactoryAvailabilityTracker(levelView);
             SetupOrders(levelData.Orders, levelData.RandomOrdersSettings);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
-            
+
             _collisionsTracker.TrackCollisions();
             _orderProvider.StartProcessingOrders().Forget();
 
@@ -88,14 +90,21 @@ namespace Level.Implementation
 
         private void SetupWorkstations(LevelView levelView)
         {
+            foreach (var workstation in _workstations)
+            {
+                workstation.Cleanup();
+            }
+
+            _workstations.Clear(); // Cleanup workstations and associated sushi belts
             foreach (var workstationView in levelView.WorkstationViews)
             {
                 var sushiBelt = _container.Resolve<ISushiBelt>();
                 sushiBelt.SetView(workstationView.SushiBeltView);
                 _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
-                _orderProvider.RegisterSushiBelt(sushiBelt);
+                _orderProvider.RegisterSushiBelt(sushiBelt); // was cleaned up in initialization
                 var workstation = _container.Resolve<IWorkstation>();
                 workstation.SetView(workstationView, sushiBelt);
+                _workstations.Add(workstation);
                 _waypointProvider.RegisterWaypoint(workstationView, workstation);
                 _collisionsTracker.RegisterWorkstation(workstation);
             }
@@ -123,16 +132,17 @@ namespace Level.Implementation
             }
         }
 
-        private void CreateRail(IWaypoint from, IWaypoint to, GameObject railPrefab, Transform parent, List<(IWaypoint from, IWaypoint to)> existingRails)
+        private void CreateRail(IWaypoint from, IWaypoint to, GameObject railPrefab, Transform parent,
+            List<(IWaypoint from, IWaypoint to)> existingRails)
         {
             var existingPair = existingRails.FirstOrDefault(rail =>
                 (rail.from == from && rail.to == to) || (rail.from == to && rail.to == from));
 
             if (existingPair != default)
             {
-                return;    
+                return;
             }
-            
+
             var rail = new GameObject
             {
                 name = "Rail",

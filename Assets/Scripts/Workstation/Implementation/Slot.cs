@@ -13,11 +13,11 @@ namespace Workstation.Implementation
     {
         public bool IsOccupied { get; private set; }
         public event Action Occupied;
+        public event Action<IRobot, IRobot, ISlot> RobotsCollided;
         
         private SlotView _slotView;
         public IRobot OccupiedBy { get; private set; }
 
-        public event Action<IRobot, IRobot, ISlot> RobotsCollided;
 
         public void SetView(SlotView slotView)
         {
