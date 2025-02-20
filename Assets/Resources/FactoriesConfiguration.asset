@@ -19,13 +19,13 @@ MonoBehaviour:
   _robotData:
   - _workType: 0
     _speed: 4
-    _selfDestructionTimerDuration: 7
+    _selfDestructionTimerDuration: 10
   - _workType: 1
     _speed: 4
-    _selfDestructionTimerDuration: 7
+    _selfDestructionTimerDuration: 10
   - _workType: 2
     _speed: 4
-    _selfDestructionTimerDuration: 7
+    _selfDestructionTimerDuration: 10
   _factoryViews:
   - {fileID: 8269816598120195602, guid: 547d957f7d74f411d8dc5a69e029efd7, type: 3}
   - {fileID: 8269816598120195602, guid: 67d37f6198ab99b4f98f5afa8c1d75ae, type: 3}

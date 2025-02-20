@@ -23,7 +23,7 @@ namespace Factories.Views
                 .ToUniTask(TweenCancelBehaviour.KillAndCancelAwait, token);
         }
 
-        private void LookAt(Vector3 position)
+        public void LookAt(Vector3 position)
         {
             position = new Vector3(position.x, transform.position.y, position.z);
             var directionToTarget = (position - transform.position).normalized;

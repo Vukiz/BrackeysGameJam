@@ -79,6 +79,7 @@ namespace Factories.Implementation
             // move closer to the order and jump
             var sequence = DOTween.Sequence();
             var halfwayToTarget = (sushiBeltOrderPosition - Position) / 2 + Position;
+            _view.LookAt(sushiBeltOrderPosition);
             sequence.Append(_view.transform.DOMove(halfwayToTarget, 0.5f));
             sequence.Append(_view.transform.DOJump(halfwayToTarget , 0.5f, 1, 0.5f));
             await sequence.Play();
