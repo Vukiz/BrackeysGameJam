@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using StateMachine.Data;
-using StateMachine.Infrastructure;
 using StateMachine.Views;
 
 namespace StateMachine.Implementation

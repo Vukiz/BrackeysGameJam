@@ -20,7 +20,6 @@ namespace Factories.Infrastructure
         void StartSelfDestructionTimer();
         void StopSelfDestructionTimer();
 
-        event Action CollisionDetected;
         event Action<IRobot, DestroyReason> RobotDestroyRequested;
         void Destroy(DestroyReason destroyReason);
     }

@@ -43,18 +43,14 @@ namespace SushiBelt.Implementation
         {
             _currentOrderGameObject = Object.Instantiate(_sushiBeltView.OrderViewPrefab);
             _currentOrderGameObject.transform.position = _sushiBeltView.StartPoint.position;
-            _currentOrderGameObject.transform.localScale = new Vector3(1, 1, 1);
             SetupOrderView(_currentOrderGameObject, order);
         }
 
         private void SetupOrderView(OrderView orderView, IOrder order)
         {
-            foreach (var workType in order.NeededTypes)
+            foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
             {
-                foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
-                {
-                    orderViewWorkTypeToObjectPair.Object.SetActive(orderViewWorkTypeToObjectPair.WorkType == workType);
-                }
+                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType));
             }
         }
 

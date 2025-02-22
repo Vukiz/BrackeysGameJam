@@ -4,16 +4,19 @@ using StateMachine.Views;
 
 namespace StateMachine.Implementation
 {
-    public class GameStartHandler : GameStateHandlerBase
+    public class GameStartStateHandler : GameStateHandlerBase
     {
         private readonly CanvasView _canvasView;
+        private readonly IGameLevelDataModel _gameLevelDataModel;
         public override GameState State => GameState.GameStart;
 
-        public GameStartHandler(
-            CanvasView canvasView
+        public GameStartStateHandler(
+            CanvasView canvasView,
+            IGameLevelDataModel gameLevelDataModel
         )
         {
             _canvasView = canvasView;
+            _gameLevelDataModel = gameLevelDataModel;
         }
 
         public override void OnStateEnter()
@@ -28,7 +31,13 @@ namespace StateMachine.Implementation
         {
             _canvasView.GameStartView.StartButton.onClick.RemoveListener(OnStartButtonClick);
             await _canvasView.LoaderView.Show();
-            RequestStateChange(GameState.GameActive);
+            if (_gameLevelDataModel.IsTutorialFinished)
+            {
+                RequestStateChange(GameState.GameActive);
+                return;
+            }
+
+            RequestStateChange(GameState.GameTutorial);
         }
 
         public override void OnStateExit()

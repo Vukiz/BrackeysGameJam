@@ -5,10 +5,8 @@ using DG.Tweening;
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.Views;
-using Orders;
 using Orders.Data;
 using Orders.Infrastructure;
-using Rails;
 using Rails.Infrastructure;
 using UnityEngine;
 using VFX.Data;
@@ -29,8 +27,6 @@ namespace Factories.Implementation
         public WorkType WorkType => _data.WorkType;
         public Vector3 Position => _view.transform.position;
         public bool IsTrackingRequired { get; set; }
-
-        public event Action CollisionDetected;
 
         public event Action<IRobot,DestroyReason> RobotDestroyRequested;
 

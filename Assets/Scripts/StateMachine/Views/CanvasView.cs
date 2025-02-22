@@ -1,3 +1,4 @@
+using Tutorial.Views;
 using UnityEngine;
 
 namespace StateMachine.Views
@@ -9,11 +10,13 @@ namespace StateMachine.Views
         [SerializeField] private GameStartView _gameStartView;
         [SerializeField] private ThanksForPlayingView _thanksForPlayingView;
         [SerializeField] private LoaderView _loaderView;
-        
+        [SerializeField] private TutorialCanvasView _tutorialCanvasView;
+
         public GameActiveView GameActiveView => _gameActiveView;
         public GameEndView GameEndView => _gameEndView;
         public GameStartView GameStartView => _gameStartView;
         public ThanksForPlayingView ThanksForPlayingView => _thanksForPlayingView;
         public LoaderView LoaderView => _loaderView;
+        public TutorialCanvasView TutorialCanvasView => _tutorialCanvasView;
     }
 }

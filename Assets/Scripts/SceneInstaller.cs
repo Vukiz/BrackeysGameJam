@@ -5,6 +5,7 @@ using Rails;
 using StateMachine;
 using StateMachine.Views;
 using SushiBelt;
+using Tutorial;
 using UnityEngine;
 using VFX;
 using Workstation;
@@ -27,5 +28,6 @@ public class SceneInstaller : MonoInstaller
         LevelInstaller.Install(Container);
         StateMachineInstaller.Install(Container);
         VFXInstaller.Install(Container);
+        TutorialInstaller.Install(Container);
     }
 }        

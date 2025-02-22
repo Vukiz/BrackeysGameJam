@@ -4,6 +4,7 @@ using Factories.Infrastructure;
 using Level.Infrastructure;
 using Level.Views;
 using StateMachine.Data;
+using StateMachine.Infrastructure;
 using StateMachine.Views;
 using VFX.Data;
 using VFX.Infrastructure;
@@ -19,6 +20,7 @@ namespace StateMachine.Implementation
         private readonly ICollisionsTracker _collisionsTracker;
         private readonly IVFXManager _vfxManager;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
+        private readonly IGameLevelDataModel _gameLevelDataModel;
         public override GameState State => GameState.GameActive;
 
         private LevelView _levelView;
@@ -29,7 +31,8 @@ namespace StateMachine.Implementation
             IOrderProvider orderProvider,
             ICollisionsTracker collisionsTracker,
             IVFXManager vfxManager,
-            IFactoryAvailabilityTracker factoryAvailabilityTracker
+            IFactoryAvailabilityTracker factoryAvailabilityTracker,
+            IGameLevelDataModel gameLevelDataModel
         )
         {
             _canvasView = canvasView;
@@ -38,13 +41,14 @@ namespace StateMachine.Implementation
             _collisionsTracker = collisionsTracker;
             _vfxManager = vfxManager;
             _factoryAvailabilityTracker = factoryAvailabilityTracker;
+            _gameLevelDataModel = gameLevelDataModel;
         }
 
         public override async void OnStateEnter()
         {
             _canvasView.GameActiveView.ExitButton.onClick.AddListener(OnExitButtonClicked);
             await _canvasView.GameActiveView.Show();
-            _levelView = _levelConfigurator.SpawnLevel(0);
+            _levelView = _levelConfigurator.SpawnLevel(_gameLevelDataModel.CurrentLevelIndex);
             await _canvasView.LoaderView.Hide();
             _orderProvider.LevelCompleted += OnLevelCompleted;
             _collisionsTracker.RobotCollisionDetected += OnRobotCollisionDetected;
