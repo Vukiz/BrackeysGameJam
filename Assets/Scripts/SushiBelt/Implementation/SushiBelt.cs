@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Orders.Data;
 using Orders.Infrastructure;
 using Orders.Views;
 using SushiBelt.Infrastructure;
@@ -43,6 +45,7 @@ namespace SushiBelt.Implementation
         {
             _currentOrderGameObject = Object.Instantiate(_sushiBeltView.OrderViewPrefab);
             _currentOrderGameObject.transform.position = _sushiBeltView.StartPoint.position;
+            _currentOrderGameObject.transform.rotation = _sushiBeltView.transform.rotation;
             SetupOrderView(_currentOrderGameObject, order);
         }
 
@@ -50,7 +53,8 @@ namespace SushiBelt.Implementation
         {
             foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
             {
-                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType), order.Duration);
+                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType));
+                orderViewWorkTypeToObjectPair.Object.AnimateOutline(order.Duration);
             }
         }
 
@@ -64,6 +68,11 @@ namespace SushiBelt.Implementation
         {
             _sushiBeltView = sushiBeltView;
             _sushiBeltView.Destroyed += Dispose;
+        }
+
+        public void HideWorkType(WorkType workType)
+        {
+            _currentOrderGameObject.WorkTypeToObjectPairs.FirstOrDefault(x => x.WorkType == workType)?.Object.Hide();
         }
 
         private void OnOrderCompleted()

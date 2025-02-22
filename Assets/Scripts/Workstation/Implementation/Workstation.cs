@@ -108,6 +108,7 @@ namespace Workstation.Implementation
                 {
                     occupiedBy.StopSelfDestructionTimer();
                     occupiedBy.CompleteOrder(order, _sushiBelt.OrderPosition);
+                    _sushiBelt.HideWorkType(occupiedBy.WorkType);
                     continue;
                 }
                 
