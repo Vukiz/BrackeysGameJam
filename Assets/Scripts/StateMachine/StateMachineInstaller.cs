@@ -14,6 +14,7 @@ namespace StateMachine
             Container.BindInterfacesTo<GameThanksForPlayingStateHandler>().AsSingle();
             Container.BindInterfacesTo<GameTutorialStateHandler>().AsSingle();
             Container.BindInterfacesTo<GameLevelDataModel>().AsSingle();
+            Container.BindInterfacesTo<GameEndDataModel>().AsSingle();
         }
     }
 }

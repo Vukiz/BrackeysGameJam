@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
+using Level.Data;
 using Level.Infrastructure;
 using StateMachine.Data;
+using StateMachine.Infrastructure;
 using StateMachine.Views;
 
 namespace StateMachine.Implementation
@@ -8,32 +11,43 @@ namespace StateMachine.Implementation
     {
         private readonly CanvasView _canvasView;
         private readonly IOrderProvider _orderProvider;
+        private readonly IGameEndDataModel _gameEndDataModel;
+        private readonly LevelsHolder _levelsHolder;
+        private readonly IGameLevelDataModel _gameLevelDataModel;
         public override GameState State => GameState.GameEnded;
 
         public GameEndedStateHandler(
             CanvasView canvasView,
-            IOrderProvider orderProvider
+            IOrderProvider orderProvider,
+            IGameEndDataModel gameEndDataModel,
+            LevelsHolder levelsHolder,
+            IGameLevelDataModel gameLevelDataModel
         )
         {
             _canvasView = canvasView;
             _orderProvider = orderProvider;
+            _gameEndDataModel = gameEndDataModel;
+            _levelsHolder = levelsHolder;
+            _gameLevelDataModel = gameLevelDataModel;
         }
 
         public override async void OnStateEnter()
         {
-            var isGameWon = _orderProvider.IsLevelWon();
+            _canvasView.GameEndView.RetryButton.onClick.AddListener(OnRetryButtonClicked);
+            var isGameWon = _gameEndDataModel.GameEndType == GameEndType.Win;
             if (isGameWon)
             {
-                SetupWinScreen();
+                await SetupWinScreen();
             }
             else
             {
-                SetupLoseScreen();
+                await SetupLoseScreen();
             }
-            await _canvasView.GameEndView.Show();
-            var stars = GetReachedStars();
-            await _canvasView.GameEndView.StarsContainer.PlayStarsAnimation(stars);
-            _canvasView.GameEndView.NextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);
+        }
+
+        private void OnRetryButtonClicked()
+        {
+            RequestStateChange(GameState.GameActive);
         }
 
         private int GetReachedStars()
@@ -53,39 +67,50 @@ namespace StateMachine.Implementation
             }
         }
 
-        private void SetupLoseScreen()
+        private async UniTask SetupLoseScreen()
         {
+            _canvasView.GameEndView.RetryButton.gameObject.SetActive(true);
+            _canvasView.GameEndView.NextLevelButton.gameObject.SetActive(false);
             _canvasView.GameEndView.ButtonText.text = "Retry!";
             _canvasView.GameEndView.TitleText.text = "Level Failed!";
+            _canvasView.GameEndView.StarsContainer.gameObject.SetActive(false);
+            _canvasView.GameEndView.NoStarsForYouText.gameObject.SetActive(true);
+            
+
+            await _canvasView.GameEndView.Show();
         }
 
-        private void SetupWinScreen()
+        private async UniTask SetupWinScreen()
         {
-            if (IsLastLevel())
-            {
-                _canvasView.GameEndView.ButtonText.text = "The End...?";
-                _canvasView.GameEndView.TitleText.text = "Level Complete!";
-            }
-            else
-            {
-                _canvasView.GameEndView.ButtonText.text = "Next!";
-                _canvasView.GameEndView.TitleText.text = "Level Complete!";
-            }
+            _canvasView.GameEndView.NoStarsForYouText.gameObject.SetActive(false);
+            _canvasView.GameEndView.RetryButton.gameObject.SetActive(true);
+            _canvasView.GameEndView.NextLevelButton.gameObject.SetActive(true);
+            _canvasView.GameEndView.TitleText.text = "Level Complete!";
+            _canvasView.GameEndView.ButtonText.text = IsLastLevel() ? "The End...?" : "Next!";
+
+            _canvasView.GameEndView.StarsContainer.gameObject.SetActive(true);
+            await _canvasView.GameEndView.Show();
+            var stars = GetReachedStars();
+            await _canvasView.GameEndView.StarsContainer.PlayStarsAnimation(stars);
+            
+            _canvasView.GameEndView.NextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);
         }
-        
+
         private bool IsLastLevel()
         {
-            return true; // TODO check if this is the last level
+            return _gameLevelDataModel.CurrentLevelIndex >= _levelsHolder.Levels.Count - 1;
         }
 
         private void OnNextLevelButtonClicked()
         {
+            _gameLevelDataModel.CurrentLevelIndex++;
             _canvasView.GameEndView.NextLevelButton.onClick.RemoveListener(OnNextLevelButtonClicked);
             RequestStateChange(IsLastLevel() ? GameState.GameThanksForPlaying : GameState.GameActive);
         }
 
         public override void OnStateExit()
         {
+            _canvasView.GameEndView.NextLevelButton.onClick.RemoveListener(OnNextLevelButtonClicked);
             _canvasView.GameEndView.Hide();
         }
     }

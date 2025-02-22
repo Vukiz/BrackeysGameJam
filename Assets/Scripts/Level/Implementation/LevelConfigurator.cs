@@ -48,7 +48,12 @@ namespace Level.Implementation
 
         public LevelView SpawnLevel(int number)
         {
-            var levelData = _levelsHolder.Levels[number];
+            if (number < 0)
+            {
+                number = 0;
+            }
+
+            var levelData = _levelsHolder.Levels[Mathf.Min(number, _levelsHolder.Levels.Count - 1)];
             var levelView = _container.InstantiatePrefabForComponent<LevelView>(levelData.LevelViewPrefab);
             _collisionsTracker.Reset();
             _waypointProvider.Cleanup();

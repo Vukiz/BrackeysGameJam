@@ -144,11 +144,6 @@ namespace Level.Implementation
             return _completedOrders.Count;
         }
 
-        public bool IsLevelWon()
-        {
-            return IsLevelCompleted();
-        }
-
         public void Reset()
         {
             _cancellationTokenSource?.Cancel();

@@ -21,6 +21,7 @@ namespace StateMachine.Implementation
         private readonly IVFXManager _vfxManager;
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         private readonly IGameLevelDataModel _gameLevelDataModel;
+        private readonly IGameEndDataModel _gameEndDataModel;
         public override GameState State => GameState.GameActive;
 
         private LevelView _levelView;
@@ -32,7 +33,8 @@ namespace StateMachine.Implementation
             ICollisionsTracker collisionsTracker,
             IVFXManager vfxManager,
             IFactoryAvailabilityTracker factoryAvailabilityTracker,
-            IGameLevelDataModel gameLevelDataModel
+            IGameLevelDataModel gameLevelDataModel,
+            IGameEndDataModel gameEndDataModel
         )
         {
             _canvasView = canvasView;
@@ -42,6 +44,7 @@ namespace StateMachine.Implementation
             _vfxManager = vfxManager;
             _factoryAvailabilityTracker = factoryAvailabilityTracker;
             _gameLevelDataModel = gameLevelDataModel;
+            _gameEndDataModel = gameEndDataModel;
         }
 
         public override async void OnStateEnter()
@@ -51,21 +54,23 @@ namespace StateMachine.Implementation
             _levelView = _levelConfigurator.SpawnLevel(_gameLevelDataModel.CurrentLevelIndex);
             await _canvasView.LoaderView.Hide();
             _orderProvider.LevelCompleted += OnLevelCompleted;
-            _collisionsTracker.RobotCollisionDetected += OnRobotCollisionDetected;
+            _collisionsTracker.RobotCollisionDetected += OnLevelFailed;
         }
 
-        private async void OnRobotCollisionDetected(IRobot robot)
+        private async void OnLevelFailed(IRobot robot)
         {
             _factoryAvailabilityTracker.IsPaused = true;
             _vfxManager.SpawnVFX(VFXType.Explosion, robot.Position);
             _orderProvider.Reset();
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            _gameEndDataModel.GameEndType = GameEndType.Lose;
             RequestStateChange(GameState.GameEnded);
         }
 
         private void OnLevelCompleted()
         {
             _collisionsTracker.Reset();
+            _gameEndDataModel.GameEndType = GameEndType.Win;
             RequestStateChange(GameState.GameEnded);
         }
 
@@ -85,7 +90,7 @@ namespace StateMachine.Implementation
         private void Unsubscribe()
         {
             _orderProvider.LevelCompleted -= OnLevelCompleted;
-            _collisionsTracker.RobotCollisionDetected -= OnRobotCollisionDetected;
+            _collisionsTracker.RobotCollisionDetected -= OnLevelFailed;
         }
     }
 }

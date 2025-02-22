@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Level.Data;
@@ -17,7 +16,6 @@ namespace Level.Infrastructure
         
         int  GetFailedOrdersCount();
         int  GetCompletedOrdersCount();
-        bool IsLevelWon();
         void Reset();
     }
 }
