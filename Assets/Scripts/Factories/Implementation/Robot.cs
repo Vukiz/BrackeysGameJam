@@ -94,6 +94,7 @@ namespace Factories.Implementation
             
             _isSelfDestructionTimerStarted = true;
             StartSelfDestructionTimerInternal().Forget();
+            _view.AnimateOverheat(_data.SelfDestructionTimerDuration);
         }
 
         public void StopSelfDestructionTimer()
@@ -109,18 +110,25 @@ namespace Factories.Implementation
             if (destroyReason != DestroyReason.OrderCompleted)
             {
                 // Robot jumps off the ground a little bit and lays on its back
+                _view.DisableOutline();
                 var sequence = DOTween.Sequence();
                 sequence.Append(_view.transform.DOLocalJump(_view.transform.localPosition, 0.5f, 1, 0.5f));
                 sequence.Join(_view.transform.DOLocalRotate(new Vector3(0, 0, 180), 0.5f));
                 await sequence.Play();
             }
+
+            if (!_view)
+            {
+                return;
+            }
+            
             Object.Destroy(_view.gameObject);
         }
 
         private async UniTask StartSelfDestructionTimerInternal()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(_data.SelfDestructionTimerDuration));
-            if (_isSelfDestructionTimerStarted && !_cancellationTokenSource.Token.IsCancellationRequested)
+            if (_isSelfDestructionTimerStarted && (!_cancellationTokenSource?.Token.IsCancellationRequested ?? false))
             {
                 _vfxManager.SpawnVFX(VFXType.RobotSelfDestruct, Position);
                 Debug.Log($"Robot {this} self-destructed.");

@@ -25,6 +25,13 @@ namespace Factories.Views
 
         public event Action Destroyed;
 
+        public void LookAt(Vector3 position)
+        {
+            position = new Vector3(position.x, transform.position.y, position.z);
+            var direction = (position - transform.position).normalized;
+            transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+        }
+
         private void OnDestroy()
         {
             Destroyed?.Invoke();

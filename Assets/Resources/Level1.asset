@@ -14,16 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Orders: []
   RandomOrdersSettings:
-  - OrdersCount: 2
+  - OrdersCount: 3
     TimeLimitSecondsMin: 25
     TimeLimitSecondsMax: 40
     WorkTypes: 01000000
-  - OrdersCount: 4
-    TimeLimitSecondsMin: 25
-    TimeLimitSecondsMax: 40
-    WorkTypes: 0100000002000000
-  - OrdersCount: 5
-    TimeLimitSecondsMin: 25
-    TimeLimitSecondsMax: 40
-    WorkTypes: 010000000200000000000000
-  LevelViewPrefab: {fileID: 6665435657315364018, guid: b4adb66dec8684b42904bcbbaf5142e8, type: 3}
+  LevelViewPrefab: {fileID: 6665435657315364018, guid: 9f420a16aabcf874e809349c150bbc88, type: 3}

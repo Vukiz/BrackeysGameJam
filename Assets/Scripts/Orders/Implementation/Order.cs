@@ -14,11 +14,13 @@ namespace Orders.Implementation
         public event Action OrderPartiallyCompleted;
         public List<WorkType> NeededTypes { get; }
         public Status Status { get; private set; }
+        public float Duration { get; private set; }
 
         public Order(List<WorkType> neededTypes, float timeToComplete)
         {
             NeededTypes = neededTypes;
             Status = Status.Incomplete;
+            Duration = timeToComplete;
             StartTimer(timeToComplete).Forget();
         }
 

@@ -40,6 +40,7 @@ namespace Factories.Implementation
             StartCycle().Forget();
             _view.SignalGlow.Initialize(this);
             _view.Destroyed += Dispose;
+            _view.LookAt(next.Position);
         }
 
         public void SetPaused(bool isPaused)

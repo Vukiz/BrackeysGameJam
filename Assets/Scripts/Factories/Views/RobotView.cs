@@ -1,19 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Orders.Data;
 using UnityEngine;
+using VFX.Implementation;
 
 namespace Factories.Views
 {
     public class RobotView : MonoBehaviour
     {
         [SerializeField] private WorkType _workType;
+        [SerializeField] private Outliner _outliner;
+        
+        private Vector3 _initialScale;
 
         public WorkType WorkType => _workType;
 
         public event Action Destroyed;
+
+        private void Awake()
+        {
+            _initialScale = transform.localScale;
+        }
 
         public UniTask MoveTo(Vector3 position, float duration, CancellationToken token)
         {
@@ -31,6 +41,16 @@ namespace Factories.Views
                 directionToTarget,
                 Vector3.up
             );
+        }
+
+        public void AnimateOverheat(float duration)
+        {
+            _outliner.AnimateOutline(duration);
+        }
+
+        public void DisableOutline()
+        {
+            _outliner.DisableOutline();
         }
 
         private void OnDestroy()

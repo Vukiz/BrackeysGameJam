@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tutorialViewPrefab: {fileID: 4669227350007295813, guid: 7bfe0c17f5dff449b9c40c598642b30f, type: 3}
   _levels:
+  - {fileID: 11400000, guid: dc841d8ad1ba47844b8ea7b3dccc965f, type: 2}
+  - {fileID: 11400000, guid: 31bcce1bdd4d49a4ea86856d33cc3f6a, type: 2}
   - {fileID: 11400000, guid: 2c43eeaca73d04195bb6b1ec594fe519, type: 2}

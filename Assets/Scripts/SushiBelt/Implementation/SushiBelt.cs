@@ -50,7 +50,7 @@ namespace SushiBelt.Implementation
         {
             foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
             {
-                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType));
+                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType), order.Duration);
             }
         }
 
@@ -99,6 +99,7 @@ namespace SushiBelt.Implementation
 
         private async UniTaskVoid MoveAwayOrder()
         {
+            _currentOrderGameObject.DisableOutline();
             await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear)
                 .OnComplete(() => { Object.Destroy(_currentOrderGameObject.gameObject); });
             Debug.Log("Order Completed and moved away from the sushi belt.");

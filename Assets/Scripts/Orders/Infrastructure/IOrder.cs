@@ -7,6 +7,7 @@ namespace Orders.Infrastructure
     {
         List<WorkType> NeededTypes { get; }
         Status Status { get; }
+        float Duration { get; }
         
         void ReceiveWork(WorkType workType);
 
