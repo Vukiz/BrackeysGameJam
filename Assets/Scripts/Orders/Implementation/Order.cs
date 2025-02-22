@@ -23,8 +23,17 @@ namespace Orders.Implementation
             Duration = timeToComplete;
             StartTimer(timeToComplete).Forget();
         }
-
+        
         public void ReceiveWork(WorkType workType)
+        {
+            if (!NeededTypes.Contains(workType))
+            {
+                return;
+            }
+
+            NeededTypes.Remove(workType);
+        }
+        public void CheckWorkStatus()
         {
             if (Status == Status.Complete)
             {
@@ -32,18 +41,14 @@ namespace Orders.Implementation
                 return;
             }
 
-            if (NeededTypes.Contains(workType))
+            if (NeededTypes.Count != 0)
             {
-                NeededTypes.Remove(workType);
-                if (NeededTypes.Count != 0)
-                {
-                    OrderPartiallyCompleted?.Invoke();
-                    return;
-                }
-
-                Status = Status.Complete;
-                OrderCompleted?.Invoke();
+                OrderPartiallyCompleted?.Invoke();
+                return;
             }
+
+            Status = Status.Complete;
+            OrderCompleted?.Invoke();
         }
 
         private async UniTaskVoid StartTimer(float timeToComplete)

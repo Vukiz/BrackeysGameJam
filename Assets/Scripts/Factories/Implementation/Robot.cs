@@ -78,6 +78,7 @@ namespace Factories.Implementation
 
         public async void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition)
         {
+            order.ReceiveWork(WorkType);
             // move closer to the order and jump
             var sequence = DOTween.Sequence();
             var halfwayToTarget = (sushiBeltOrderPosition - Position) / 2 + Position;
@@ -85,7 +86,7 @@ namespace Factories.Implementation
             sequence.Append(_view.transform.DOMove(halfwayToTarget, 0.5f));
             sequence.Append(_view.transform.DOJump(halfwayToTarget , 0.5f, 1, 0.5f));
             await sequence.Play();
-            order.ReceiveWork(WorkType);
+            order.CheckWorkStatus();
             Debug.Log($"Robot {this} completed order {order}");
             _vfxManager.SpawnVFX(VFXType.RobotJobComplete, Position);
             RobotDestroyRequested?.Invoke(this, DestroyReason.OrderCompleted);
