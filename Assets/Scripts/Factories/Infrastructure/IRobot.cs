@@ -10,18 +10,19 @@ namespace Factories.Infrastructure
 {
     public interface IRobot
     {
+        event Action<IRobot, DestroyReason> RobotDestroyRequested;
+
+        float SelfDestructionTimerDuration { set; }
         WorkType WorkType { get; }
         Vector3 Position { get; }
         Transform Transform { get; }
         bool IsTrackingRequired { get; set; }
-        
+
         void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);
-        
         void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition);
         void StartSelfDestructionTimer();
         void StopSelfDestructionTimer();
 
-        event Action<IRobot, DestroyReason> RobotDestroyRequested;
         void Destroy(DestroyReason destroyReason);
     }
 }

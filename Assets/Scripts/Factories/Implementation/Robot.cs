@@ -19,12 +19,16 @@ namespace Factories.Implementation
     {
         private readonly IVFXManager _vfxManager;
         private RobotView _view;
-        private RobotData _data;
         private CancellationTokenSource _cancellationTokenSource;
         private IWaypoint _nextWaypoint;
-        private bool _isSelfDestructionTimerStarted;
 
-        public WorkType WorkType => _data.WorkType;
+        public float SelfDestructionTimerDuration { get; set; }
+
+        private bool _isSelfDestructionTimerStarted;
+        private float _speed;
+
+        public WorkType WorkType => _view.WorkType;
+
         public Vector3 Position => _view.transform.position;
         public Transform Transform => _view.transform;
         public bool IsTrackingRequired { get; set; }
@@ -38,7 +42,8 @@ namespace Factories.Implementation
         public void Initialize(RobotView view, RobotData data)
         {
             _view = view;
-            _data = data;
+            SelfDestructionTimerDuration = data.SelfDestructionTimerDuration;
+            _speed = data.Speed;
             _view.Destroyed += Dispose;
         }
 
@@ -53,11 +58,11 @@ namespace Factories.Implementation
                 var token = _cancellationTokenSource.Token;
                 if (intermediateWaypoint != null)
                 {
-                    duration = (intermediateWaypoint.Position - _view.transform.position).magnitude / _data.Speed;
+                    duration = (intermediateWaypoint.Position - _view.transform.position).magnitude / _speed;
                     await _view.MoveTo(intermediateWaypoint.Position, duration, token);
                 }
 
-                duration = (waypoint.Position - _view.transform.position).magnitude / _data.Speed;
+                duration = (waypoint.Position - _view.transform.position).magnitude / _speed;
                 await _view.MoveTo(waypoint.Position, duration, token);
                 waypoint.Reach(this);
             }
@@ -88,14 +93,14 @@ namespace Factories.Implementation
 
         public void StartSelfDestructionTimer()
         {
-            if (_isSelfDestructionTimerStarted)
+            if (_isSelfDestructionTimerStarted || SelfDestructionTimerDuration <= 0)
             {
                 return;
             }
             
             _isSelfDestructionTimerStarted = true;
             StartSelfDestructionTimerInternal().Forget();
-            _view.AnimateOverheat(_data.SelfDestructionTimerDuration);
+            _view.AnimateOverheat(SelfDestructionTimerDuration);
         }
 
         public void StopSelfDestructionTimer()
@@ -128,7 +133,7 @@ namespace Factories.Implementation
 
         private async UniTask StartSelfDestructionTimerInternal()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(_data.SelfDestructionTimerDuration));
+            await UniTask.Delay(TimeSpan.FromSeconds(SelfDestructionTimerDuration));
             if (_isSelfDestructionTimerStarted && (!_cancellationTokenSource?.Token.IsCancellationRequested ?? false))
             {
                 _vfxManager.SpawnVFX(VFXType.RobotSelfDestruct, Position);

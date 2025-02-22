@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Factories.Implementation;
+using Factories.Infrastructure;
 using Level.Implementation;
 using Orders.Data;
+using Orders.Implementation;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
 using Tutorial.Infrastructure;
@@ -12,7 +14,6 @@ using Workstation.Infrastructure;
 using Workstation.Views;
 using Zenject;
 using IFactory = Factories.Infrastructure.IFactory;
-using UnityEngine;
 
 namespace Tutorial.Implementation
 {
@@ -32,6 +33,10 @@ namespace Tutorial.Implementation
 
         private IRailSwitch _railSwitch;
 
+        private IRobot _robot1;
+        private IRobot _robot2;
+        private IRobot _robot3;
+
         public DemonstrationSequence(
             CameraProvider cameraProvider,
             FactoryProvider factoryProvider,
@@ -47,7 +52,31 @@ namespace Tutorial.Implementation
                 IntroduceWorkstation,
                 IntroduceFactory,
                 IntroduceRobotSpawn,
+                IntroduceOrders,
             });
+        }
+
+        private async UniTask IntroduceOrders(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        {
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Orders will appear at workstations, showing which robot types are needed. " +
+                "Usually each order has a timer - get the right robots to the workstation before time runs out!" +
+                "\n\n<color=#FFD700>Don't worry if you miss some orders, they'll just move along the belt.</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+
+            await _cameraProvider.FocusOn(_workstation1.Position, 6f);
+
+            var order = new Order(
+                new List<WorkType> { _factory1.WorkType }, 
+                0f // No time limit
+            );
+
+            _workstation1.AddOrderToSushiBelt(order);
+            await UniTask.Delay(TimeSpan.FromSeconds(2f));
+
+            await tutorialCanvasView.NextButton.OnClickAsync();
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
+            await _cameraProvider.ResetToOriginalPosition();
         }
 
         private async UniTask IntroduceRobotSpawn(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
@@ -58,13 +87,16 @@ namespace Tutorial.Implementation
                 "\n\n<color=#FFD700>Keep an eye on them - robots don't last forever!</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
-            var robot = await _factory1.SpawnRobot();
+            _robot1 = await _factory1.SpawnRobot();
+            _robot1.SelfDestructionTimerDuration = 0f;
 
-             _cameraProvider.StartTracking(robot.Transform).Forget();
+             _cameraProvider.StartTracking(_robot1.Transform).Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
-            var robot2 = await _factory1.SpawnRobot();
+            _robot2 = await _factory1.SpawnRobot();
+            _robot2.SelfDestructionTimerDuration = 0f;
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
-            var robot3 = await _factory1.SpawnRobot();
+            _robot3 = await _factory1.SpawnRobot();
+            _robot3.SelfDestructionTimerDuration = 0f; // don't let the robots self explode
             await _cameraProvider.ResetToOriginalPosition();
 
             await tutorialCanvasView.NextButton.OnClickAsync();

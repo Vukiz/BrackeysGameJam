@@ -48,6 +48,11 @@ namespace Orders.Implementation
 
         private async UniTaskVoid StartTimer(float timeToComplete)
         {
+            if (timeToComplete <= 0)
+            {
+                return;
+            }
+
             await UniTask.Delay(TimeSpan.FromSeconds(timeToComplete));
             TimerExpired?.Invoke();
         }

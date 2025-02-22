@@ -5,6 +5,7 @@ using DG.Tweening;
 using Factories.Data;
 using Factories.Infrastructure;
 using Factories.Views;
+using Orders.Data;
 using Rails.Infrastructure;
 using UnityEngine;
 using IFactory = Factories.Infrastructure.IFactory;
@@ -24,6 +25,8 @@ namespace Factories.Implementation
         private IWaypoint _next;
         private static readonly int OpenDoors = Animator.StringToHash("OpenDoors");
         public float SpawnProgress => _timeSinceLastSpawn / _data.SpawnCooldown;
+        public WorkType WorkType => _data.WorkType;
+
         public Factory(RobotProvider robotProvider)
         {
             _robotProvider = robotProvider;

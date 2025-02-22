@@ -10,7 +10,7 @@ namespace Orders.Views
         public void SetActive(bool isActive, float duration)
         {
             gameObject.SetActive(isActive);
-            if (isActive)
+            if (isActive && duration > 0f)
             {
                 _outliner.AnimateOutline(duration);
             }

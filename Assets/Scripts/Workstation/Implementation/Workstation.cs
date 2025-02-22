@@ -4,6 +4,7 @@ using System.Linq;
 using Factories.Data;
 using Factories.Infrastructure;
 using Level.Implementation;
+using Orders.Implementation;
 using Orders.Infrastructure;
 using Rails.Infrastructure;
 using SushiBelt.Infrastructure;
@@ -34,7 +35,12 @@ namespace Workstation.Implementation
             _collisionsTracker = collisionsTracker;
             _vfxManager = vfxManager;
         }
-        
+
+        public void AddOrderToSushiBelt(Order order)
+        {
+            _sushiBelt.SubmitOrder(order);
+        }
+
         public void Cleanup()
         {
             foreach (var slot in _slots)
