@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0101e1c901ace4187b3701b32ebac944, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  _isTutorialFinished: 0
+  _isTutorialFinished: 1
   _currentLevelIndex: 0

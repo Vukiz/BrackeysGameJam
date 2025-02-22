@@ -184,6 +184,19 @@ namespace Tutorial.Implementation
 
         private async UniTask IntroduceFactory(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Time to build your first factory! Look for the glowing spots - that's where you can place them. " +
+                "You will be able to place a new factory type when you get an order requiring a new robot type." +
+                "\n\n<color=#FFD700>Click the highlighted spot to place your first factory!</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+            var slotSelectedTaskCompletionSource = new UniTaskCompletionSource();
+            tutorialView.FactorySlot1.SlotSelected += _ => slotSelectedTaskCompletionSource.TrySetResult();
+            tutorialView.FactorySlot1.SetInteractable(true);
+
+            await _cameraProvider.FocusOn(tutorialView.FactorySlot1.transform.position, 6f);
+            await slotSelectedTaskCompletionSource.Task;
+            tutorialView.FactorySlot1.SetInteractable(false);
+            
             var railSwitchView = tutorialView.Switch;
             _railSwitch = _container.Resolve<IRailSwitch>();
             _railSwitch.SetView(railSwitchView);
