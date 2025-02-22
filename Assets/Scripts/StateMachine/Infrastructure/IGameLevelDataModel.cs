@@ -4,5 +4,6 @@ namespace StateMachine.Infrastructure
     {
         public bool IsTutorialFinished { get; set; }
         public int CurrentLevelIndex { get; set; }
+        void ResetSaveFile();
     }
 }

@@ -24,7 +24,17 @@ namespace StateMachine.Implementation
             var canvasViewGameStartView = _canvasView.GameStartView;
             canvasViewGameStartView.gameObject.SetActive(true);
             canvasViewGameStartView.StartButton.onClick.AddListener(OnStartButtonClick);
+            canvasViewGameStartView.ResetButton.gameObject.SetActive(_gameLevelDataModel.IsTutorialFinished);
+            canvasViewGameStartView.ResetButton.onClick.AddListener(ResetSaveFile);
             canvasViewGameStartView.Show();
+        }
+
+        private void ResetSaveFile()
+        {
+            _gameLevelDataModel.ResetSaveFile();
+            
+            var canvasViewGameStartView = _canvasView.GameStartView;
+            canvasViewGameStartView.ResetButton.gameObject.SetActive(false);
         }
 
         private async void OnStartButtonClick()
@@ -43,6 +53,7 @@ namespace StateMachine.Implementation
         public override void OnStateExit()
         {
             var canvasViewGameStartView = _canvasView.GameStartView;
+            canvasViewGameStartView.ResetButton.onClick.RemoveListener(ResetSaveFile);
             canvasViewGameStartView.Hide();
             canvasViewGameStartView.gameObject.SetActive(false);
         }

@@ -23,5 +23,11 @@ namespace StateMachine.Implementation
             get => _configuration.CurrentLevelIndex;
             set => _configuration.CurrentLevelIndex = value;
         }
+
+        public void ResetSaveFile()
+        {
+            IsTutorialFinished = false;
+            CurrentLevelIndex = 0;
+        }
     }
 }
