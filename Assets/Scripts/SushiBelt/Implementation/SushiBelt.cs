@@ -109,6 +109,7 @@ namespace SushiBelt.Implementation
         private async UniTaskVoid MoveAwayOrder()
         {
             _currentOrderGameObject.DisableOutline();
+            _currentOrderGameObject.transform.DOScale(1.5f, 1f).SetEase(Ease.Linear);
             await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear)
                 .OnComplete(() => { Object.Destroy(_currentOrderGameObject.gameObject); });
             Debug.Log("Order Completed and moved away from the sushi belt.");
