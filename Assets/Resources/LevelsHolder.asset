@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2d14cf75454f6d99e96e2883317a66, type: 3}
   m_Name: LevelsHolder
   m_EditorClassIdentifier: 
+  _tutorialViewPrefab: {fileID: 4669227350007295813, guid: 7bfe0c17f5dff449b9c40c598642b30f, type: 3}
   _levels:
-  - {fileID: 11400000, guid: 827d3108ac3174ce7bf0f02d13407cfb, type: 2}
   - {fileID: 11400000, guid: 2c43eeaca73d04195bb6b1ec594fe519, type: 2}

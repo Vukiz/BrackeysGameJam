@@ -1,3 +1,4 @@
+using Tutorial.Implementation;
 using Zenject;
 
 namespace Tutorial
@@ -6,6 +7,7 @@ namespace Tutorial
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<DemonstrationSequence>().AsSingle();
             
         }
     }

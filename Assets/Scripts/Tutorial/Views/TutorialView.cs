@@ -11,5 +11,6 @@ namespace Tutorial.Views
         [SerializeField] private FactoryView _factoryView;
          
         public WorkstationView WorkstationView => _workstationView;
+        public FactoryView FactoryView => _factoryView;
     }
 }
