@@ -1,20 +1,27 @@
+using StateMachine.Data;
 using StateMachine.Infrastructure;
-using UnityEngine;
 
 namespace StateMachine.Implementation
 {
     public class GameLevelDataModel : IGameLevelDataModel
     {
+        private readonly GameLevelConfiguration _configuration;
+
+        public GameLevelDataModel(GameLevelConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public bool IsTutorialFinished
         {
-            get => PlayerPrefs.GetInt("IsTutorialFinished", 0) == 1;
-            set => PlayerPrefs.SetInt("IsTutorialFinished", value ? 1 : 0);
+            get => _configuration.IsTutorialFinished;
+            set => _configuration.IsTutorialFinished = value;
         }
 
         public int CurrentLevelIndex
         {
-            get => PlayerPrefs.GetInt("CurrentLevelIndex", 0);
-            set => PlayerPrefs.SetInt("CurrentLevelIndex", value);
+            get => _configuration.CurrentLevelIndex;
+            set => _configuration.CurrentLevelIndex = value;
         }
     }
 }

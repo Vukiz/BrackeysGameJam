@@ -10,7 +10,6 @@ namespace Factories.Views
     {
         [SerializeField] private SignalGlow _signalGlow;
         [SerializeField] private WorkType _workType;
-        [SerializeField] private Transform _waypointTransform;
         [SerializeField] private Transform _robotSpawnPoint;
         [SerializeField] private Transform _robotLaunchPoint;
         [SerializeField] private Animator _doorsAnimator;

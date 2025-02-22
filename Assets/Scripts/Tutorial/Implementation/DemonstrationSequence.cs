@@ -17,7 +17,11 @@ namespace Tutorial.Implementation
         {
             _cameraProvider = cameraProvider;
 
-            _demonstrations.Add(ShowWorkstationTutorial);
+            _demonstrations.AddRange(new List<Demonstration>
+            {
+                IntroduceWorkstation,
+                IntroduceFactory,
+            });
         }
 
         public async UniTask Demonstrate(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
@@ -28,9 +32,10 @@ namespace Tutorial.Implementation
             }
         }
 
-        private async UniTask ShowWorkstationTutorial(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        private async UniTask IntroduceWorkstation(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
-            tutorialCanvasView.TutorialDialogView.SetText("Welcome to your first workstation! This is where the magic happens... " +
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Welcome to your first workstation! This is where the magic happens... " +
                 "or catastrophic failures. Orders will appear here, and our enthusiastic robots will attempt to complete them. " +
                 "\n\n<color=#FFD700>Each workstation has 3 slots for robots.</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
@@ -43,5 +48,18 @@ namespace Tutorial.Implementation
             await _cameraProvider.ResetToOriginalPosition();
         }
 
+        private async UniTask IntroduceFactory(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        {
+            tutorialCanvasView.TutorialDialogView.SetText("These lovely buildings are your robot factories! " +
+            "They'll automatically produce robots because someone lost the manual controls. " +
+            "\n\nKeep an eye on the production signal to see when your robots are ready to be deployed."); 
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+
+            await _cameraProvider.FocusOn(tutorialView.FactoryView.transform.position, 6f);
+
+            await tutorialCanvasView.NextButton.OnClickAsync();
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
+            await _cameraProvider.ResetToOriginalPosition();
+        }
     }
 }
