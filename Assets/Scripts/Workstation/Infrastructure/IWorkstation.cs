@@ -12,6 +12,7 @@ namespace Workstation.Infrastructure
         void AddOrderToSushiBelt(Order order);
         void Cleanup();
         event Action<IRobot> RobotReachedStationWithNoEmptySlots;
+        event Action SlotRemoved;
         void SetView(WorkstationView workstationView, ISushiBelt sushiBelt);
     }
 }

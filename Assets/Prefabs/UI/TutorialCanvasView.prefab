@@ -440,6 +440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _nextButton: {fileID: 7397479399262021043}
   _tutorialDialogView: {fileID: 1798394541830623539}
+  _clickToContinue: {fileID: 8865843840627266056}
 --- !u!1 &9175166908732587527
 GameObject:
   m_ObjectHideFlags: 0

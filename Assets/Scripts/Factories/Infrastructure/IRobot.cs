@@ -1,6 +1,5 @@
 using System;
 using Factories.Data;
-using Orders;
 using Orders.Data;
 using Orders.Infrastructure;
 using Rails.Infrastructure;

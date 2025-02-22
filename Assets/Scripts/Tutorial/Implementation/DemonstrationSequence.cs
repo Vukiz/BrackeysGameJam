@@ -53,7 +53,61 @@ namespace Tutorial.Implementation
                 IntroduceFactory,
                 IntroduceRobotSpawn,
                 IntroduceOrders,
+                DemonstrateWorkstationOverflow,
+                IntroduceSwitch,
             });
+        }
+
+        private async UniTask IntroduceSwitch(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        {
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Switches are your best friends for traffic control! Click them to redirect robots between workstations." +
+                "\n\nUse switches wisely to prevent workstation overflow and keep your factory running smoothly!" +
+                "\n\n<color=#FFD700>Try it now - click the switch to rotate it!</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+
+            await _cameraProvider.FocusOn(_railSwitch.Position, 6f);
+            tutorialCanvasView.NextButton.gameObject.SetActive(false);
+            _railSwitch.SetInteractable(true);
+            var rotateCompletionSource = new UniTaskCompletionSource();
+            _railSwitch.Rotated += () =>
+            {
+                rotateCompletionSource.TrySetResult();
+            };
+
+            await rotateCompletionSource.Task;
+            tutorialCanvasView.NextButton.gameObject.SetActive(true);
+            await _cameraProvider.ResetToOriginalPosition();
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Great job! Now you know how to control the flow of robots. " +
+                "Keep an eye on the workstations and switch between them to keep the orders flowing!");
+            _robot1 = await _factory1.SpawnRobot();
+            _robot1.SelfDestructionTimerDuration = 0f;
+            await tutorialCanvasView.WaitForNextButtonClick();
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
+        }
+
+        private async UniTask DemonstrateWorkstationOverflow(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        {
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Be careful with workstation capacity! If all slots are full, any new robot will cause an explosion and destroy the slot." +
+                "\n\n<color=#FFD700>Warning: If all slots are destroyed, it's game over!</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+
+            var robot = await _factory1.SpawnRobot();
+            robot.SelfDestructionTimerDuration = 0f;
+            var robot2 = await _factory1.SpawnRobot();
+            robot2.SelfDestructionTimerDuration = 0f;
+            UniTaskCompletionSource robotExploded = new();
+            _workstation1.SlotRemoved += () => robotExploded.TrySetResult();
+
+            await _cameraProvider.FocusOn(robot.Position, 6f);
+            _cameraProvider.StartTracking(robot.Transform).Forget();
+            await robotExploded.Task;
+            
+            await tutorialCanvasView.WaitForNextButtonClick();
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
+            await _cameraProvider.ResetToOriginalPosition();
         }
 
         private async UniTask IntroduceOrders(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
@@ -74,7 +128,7 @@ namespace Tutorial.Implementation
             _workstation1.AddOrderToSushiBelt(order);
             await UniTask.Delay(TimeSpan.FromSeconds(2f));
 
-            await tutorialCanvasView.NextButton.OnClickAsync();
+            await tutorialCanvasView.WaitForNextButtonClick();
             tutorialCanvasView.TutorialDialogView.SetActive(false);
             await _cameraProvider.ResetToOriginalPosition();
         }
@@ -99,7 +153,7 @@ namespace Tutorial.Implementation
             _robot3.SelfDestructionTimerDuration = 0f; // don't let the robots self explode
             await _cameraProvider.ResetToOriginalPosition();
 
-            await tutorialCanvasView.NextButton.OnClickAsync();
+            await tutorialCanvasView.WaitForNextButtonClick();
             tutorialCanvasView.TutorialDialogView.SetActive(false);
         }
 
@@ -123,7 +177,7 @@ namespace Tutorial.Implementation
 
             await _cameraProvider.FocusOn(tutorialView.WorkstationView1.Position, 6f);
 
-            await tutorialCanvasView.NextButton.OnClickAsync();
+            await tutorialCanvasView.WaitForNextButtonClick();
             tutorialCanvasView.TutorialDialogView.SetActive(false);
             await _cameraProvider.ResetToOriginalPosition();
         }
@@ -133,6 +187,7 @@ namespace Tutorial.Implementation
             var railSwitchView = tutorialView.Switch;
             _railSwitch = _container.Resolve<IRailSwitch>();
             _railSwitch.SetView(railSwitchView);
+            _railSwitch.SetInteractable(false);
 
             _railSwitch.AddNeighbour(_workstation1);
             _railSwitch.AddNeighbour(_workstation2);
@@ -151,7 +206,7 @@ namespace Tutorial.Implementation
 
             await _cameraProvider.FocusOn(tutorialView.FactorySlot1.transform.position, 6f);
 
-            await tutorialCanvasView.NextButton.OnClickAsync();
+            await tutorialCanvasView.WaitForNextButtonClick();
             tutorialCanvasView.TutorialDialogView.SetActive(false);
         }
 

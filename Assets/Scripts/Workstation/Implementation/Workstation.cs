@@ -26,6 +26,7 @@ namespace Workstation.Implementation
         private WorkstationView _workstationView;
 
         public event Action<IRobot> RobotReachedStationWithNoEmptySlots;
+        public event Action SlotRemoved;
 
         public Workstation(
             CollisionsTracker collisionsTracker,
@@ -161,6 +162,7 @@ namespace Workstation.Implementation
             }
             else
             {
+                SlotRemoved?.Invoke();
                 _vfxManager.SpawnVFX(VFXType.Explosion,
                     robot.Position); // since we are not ending the game when slot is destroyed but only if there are no slots
             }
