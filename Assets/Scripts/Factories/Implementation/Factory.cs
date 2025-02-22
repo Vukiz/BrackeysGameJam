@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Factories.Data;
+using Factories.Infrastructure;
 using Factories.Views;
 using Rails.Infrastructure;
 using UnityEngine;
@@ -68,7 +69,7 @@ namespace Factories.Implementation
             }
         }
 
-        public async UniTaskVoid SpawnRobot()
+        public async UniTask<IRobot> SpawnRobot()
         {
             var (robot, robotView) = _robotProvider.Create(_data.WorkType, _view.RobotSpawnPoint.position, _robotsParent);
             _view.DoorsAnimator.SetTrigger(OpenDoors);
@@ -76,6 +77,7 @@ namespace Factories.Implementation
                 .SetEase(_view.LaunchCurve)
                 .WithCancellation(_cancellationTokenSource.Token);
             robot.SetNextWaypoint(_next);
+            return robot;
         }
 
         public void Dispose()

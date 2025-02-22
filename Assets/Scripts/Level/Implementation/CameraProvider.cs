@@ -66,9 +66,15 @@ namespace Level.Implementation
                         return;
                     }
 
-                    // Maintain the same distance while tracking
+                    // Calculate target position while maintaining the same distance
                     var targetPosition = _trackedTarget.position - MainCamera.transform.forward * CameraDistance;
-                    MainCamera.transform.position = targetPosition;
+                    
+                    // Smoothly move towards the target position
+                    MainCamera.transform.position = Vector3.Lerp(
+                        MainCamera.transform.position,
+                        targetPosition,
+                        Time.deltaTime * 5f // Adjust this multiplier to control smoothing speed
+                    );
                     
                     await UniTask.Yield(PlayerLoopTiming.FixedUpdate, _trackingCts.Token);
                 }

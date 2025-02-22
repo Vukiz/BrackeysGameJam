@@ -12,6 +12,7 @@ namespace Factories.Infrastructure
     {
         WorkType WorkType { get; }
         Vector3 Position { get; }
+        Transform Transform { get; }
         bool IsTrackingRequired { get; set; }
         
         void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);

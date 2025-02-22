@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Factories.Implementation;
@@ -11,6 +12,7 @@ using Workstation.Infrastructure;
 using Workstation.Views;
 using Zenject;
 using IFactory = Factories.Infrastructure.IFactory;
+using UnityEngine;
 
 namespace Tutorial.Implementation
 {
@@ -22,7 +24,7 @@ namespace Tutorial.Implementation
         private readonly FactoryProvider _factoryProvider;
         private readonly DiContainer _container;
         private readonly List<Demonstration> _demonstrations = new();
-        
+
         private IFactory _factory1;
         private IFactory _factory2;
         private IWorkstation _workstation1;
@@ -48,10 +50,25 @@ namespace Tutorial.Implementation
             });
         }
 
-        private UniTask IntroduceRobotSpawn(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        private async UniTask IntroduceRobotSpawn(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
-            
-            return UniTask.CompletedTask;
+            tutorialCanvasView.TutorialDialogView.SetText(
+                "Time to meet your workforce! Each factory produces robots with specific skills - they'll rush to workstations " +
+                "to complete matching orders before their time runs out. Once they finish their job, they'll disappear in a flash of glory!" +
+                "\n\n<color=#FFD700>Keep an eye on them - robots don't last forever!</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
+
+            var robot = await _factory1.SpawnRobot();
+
+             _cameraProvider.StartTracking(robot.Transform).Forget();
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            var robot2 = await _factory1.SpawnRobot();
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            var robot3 = await _factory1.SpawnRobot();
+            await _cameraProvider.ResetToOriginalPosition();
+
+            await tutorialCanvasView.NextButton.OnClickAsync();
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
         }
 
         public async UniTask Demonstrate(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
@@ -84,17 +101,17 @@ namespace Tutorial.Implementation
             var railSwitchView = tutorialView.Switch;
             _railSwitch = _container.Resolve<IRailSwitch>();
             _railSwitch.SetView(railSwitchView);
-            
+
             _railSwitch.AddNeighbour(_workstation1);
             _railSwitch.AddNeighbour(_workstation2);
-            
+
             _factory1 = _factoryProvider.Create(
-                WorkType.Paint, 
+                WorkType.Paint,
                 tutorialView.FactorySlot1.transform.position,
-                _railSwitch, 
-                tutorialView.transform, 
+                _railSwitch,
+                tutorialView.transform,
                 tutorialView.transform);
-            
+
             tutorialCanvasView.TutorialDialogView.SetText("These lovely buildings are your robot factories! " +
                                                           "They'll automatically produce robots because someone lost the manual controls. " +
                                                           "\n\nKeep an eye on the production signal to see when your robots are ready to be deployed.");
@@ -104,7 +121,6 @@ namespace Tutorial.Implementation
 
             await tutorialCanvasView.NextButton.OnClickAsync();
             tutorialCanvasView.TutorialDialogView.SetActive(false);
-            await _cameraProvider.ResetToOriginalPosition();
         }
 
         private IWorkstation CreateWorkStation(WorkstationView workstationView)
@@ -113,7 +129,7 @@ namespace Tutorial.Implementation
             sushiBelt.SetView(workstationView.SushiBeltView);
             var workstation = _container.Resolve<IWorkstation>();
             workstation.SetView(workstationView, sushiBelt);
-            
+
             return workstation;
         }
     }

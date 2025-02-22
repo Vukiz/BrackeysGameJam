@@ -9,7 +9,7 @@ namespace Factories.Infrastructure
     public interface IFactory
     {
         UniTask StartCycle();
-        UniTaskVoid SpawnRobot();
+        UniTask<IRobot> SpawnRobot();
         void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent);
         float SpawnProgress { get; }
     }

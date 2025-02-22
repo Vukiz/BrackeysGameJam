@@ -26,6 +26,7 @@ namespace Factories.Implementation
 
         public WorkType WorkType => _data.WorkType;
         public Vector3 Position => _view.transform.position;
+        public Transform Transform => _view.transform;
         public bool IsTrackingRequired { get; set; }
 
         public event Action<IRobot,DestroyReason> RobotDestroyRequested;
