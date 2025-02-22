@@ -114,7 +114,7 @@ namespace Level.Implementation
         {
             foreach (var railSwitchView in levelView.RailSwitchViews)
             {
-                var railSwitch = _container.Resolve<RailSwitch>();
+                var railSwitch = _container.Resolve<IRailSwitch>();
                 railSwitch.SetView(railSwitchView);
                 _waypointProvider.RegisterWaypoint(railSwitchView, railSwitch);
             }

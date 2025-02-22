@@ -13,25 +13,23 @@ namespace Factories.Implementation
     {
         private readonly DiContainer _container;
         private readonly FactoriesConfiguration _factoriesConfiguration;
-        private readonly IWaypointProvider _waypointProvider;
 
         public FactoryProvider(
-            DiContainer container, 
-            FactoriesConfiguration factoriesConfiguration,
-            IWaypointProvider waypointProvider)
+            DiContainer container,
+            FactoriesConfiguration factoriesConfiguration
+        )
         {
             _container = container;
             _factoriesConfiguration = factoriesConfiguration;
-            _waypointProvider = waypointProvider;
         }
 
-        public IFactory Create(WorkType workType, Vector3 position, IWaypointView nextWaypointView, Transform factoryParent, Transform robotsParent)
+        public IFactory Create(WorkType workType, Vector3 position, IWaypoint nextWaypoint, Transform factoryParent,
+            Transform robotsParent)
         {
             var prefab = _factoriesConfiguration.GetFactoryView(workType);
             var view = _container.InstantiatePrefabForComponent<FactoryView>(prefab, factoryParent);
             view.transform.position = position;
             var data = _factoriesConfiguration.GetFactoryData(workType);
-            var nextWaypoint = _waypointProvider.GetWaypoint(nextWaypointView);
             var factory = _container.Resolve<IFactory>();
             factory.Initialize(view, data, nextWaypoint, robotsParent);
             return factory;

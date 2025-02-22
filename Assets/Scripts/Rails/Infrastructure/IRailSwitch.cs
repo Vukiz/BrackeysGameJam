@@ -1,7 +1,9 @@
+using Rails.Views;
+
 namespace Rails.Infrastructure
 {
     public interface IRailSwitch : IWaypoint
     {
-        void Rotate();
+        void SetView(RailSwitchView view);
     }
 }

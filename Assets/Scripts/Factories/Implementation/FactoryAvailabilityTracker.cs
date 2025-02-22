@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Factories.Infrastructure;
 using Factories.Views;
+using Level.Infrastructure;
 using Orders.Data;
 using Orders.Infrastructure;
 using SushiBelt.Infrastructure;
@@ -14,6 +16,7 @@ namespace Factories.Implementation
     public class FactoryAvailabilityTracker : IFactoryAvailabilityTracker, IDisposable, ITickable
     {
         private readonly FactoryProvider _factoryProvider;
+        private readonly IWaypointProvider _waypointProvider;
         private readonly List<ISushiBelt> _sushiBelts = new();
         private readonly Queue<WorkType> _requiredFactoriesQueue = new();
         private List<FactorySlotView> _availableFactorySlots = new();
@@ -24,10 +27,12 @@ namespace Factories.Implementation
         private readonly HashSet<WorkType> _coveredWorkTypes = new();
 
         public FactoryAvailabilityTracker(
-            FactoryProvider factoryProvider
+            FactoryProvider factoryProvider,
+            IWaypointProvider waypointProvider
         )
         {
             _factoryProvider = factoryProvider;
+            _waypointProvider = waypointProvider;
         }
 
         public bool IsPaused { set; private get; }
@@ -70,13 +75,15 @@ namespace Factories.Implementation
             _availableFactorySlots.Remove(_selectedFactorySlotView);
             _selectedFactorySlotView.SetInteractable(false);
             _selectedFactorySlotView.SlotSelected -= OnSlotSelected;
+            var nextWaypoint = _waypointProvider.GetWaypoint(_selectedFactorySlotView.NextWaypointView);
+
             var factory = _factoryProvider.Create(workType,
                 _selectedFactorySlotView.transform.position,
-                _selectedFactorySlotView.NextWaypointView,
+                nextWaypoint,
                 _factoriesParent,
                 _robotsParent
             );
-            factory.SetPaused(false);
+            factory.StartCycle().Forget();
 
             _selectedFactorySlotView = null;
             SetFactorySlotsInteractable(false);
