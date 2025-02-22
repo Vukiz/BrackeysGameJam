@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7207009536200844096
 RectTransform:
   m_ObjectHideFlags: 0
@@ -66,13 +66,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer
-    Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello
+  m_text: Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hellmer Hello
     Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer
-    Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello
-    Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer
-    Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello Newcomer Hello
-    Newcomer Hello Newcomer Hello Newcomer Hello Ne
+    Hello Newcomer Hello Newcomer Hello Ne
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3da729cf1bb574a76bf2acc34c76461a, type: 2}
   m_sharedMaterial: {fileID: -267521823682423108, guid: 3da729cf1bb574a76bf2acc34c76461a, type: 2}
@@ -99,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -215,7 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.89411765, g: 0.8627451, b: 0.8235294, a: 0.6}
+  m_Color: {r: 0.89411765, g: 0.8627451, b: 0.8235294, a: 0.9019608}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

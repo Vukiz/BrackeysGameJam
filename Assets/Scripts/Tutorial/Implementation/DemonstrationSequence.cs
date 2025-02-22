@@ -20,7 +20,6 @@ namespace Tutorial.Implementation
             _demonstrations.Add(ShowWorkstationTutorial);
         }
 
-
         public async UniTask Demonstrate(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             foreach (var demonstration in _demonstrations)
@@ -31,15 +30,16 @@ namespace Tutorial.Implementation
 
         private async UniTask ShowWorkstationTutorial(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
-            tutorialCanvasView.TutorialDialogView.SetActive(true);
             tutorialCanvasView.TutorialDialogView.SetText("Welcome to your first workstation! This is where the magic happens... " +
                 "or catastrophic failures. Orders will appear here, and our enthusiastic robots will attempt to complete them. " +
                 "\n\n<color=#FFD700>Each workstation has 3 slots for robots.</color>");
+            tutorialCanvasView.TutorialDialogView.SetActive(true);
 
-            await _cameraProvider.FocusOn(tutorialView.WorkstationView.transform.position);
+            // var hardcodedPosition = new UnityEngine.Vector3(-12, 10, 22);
+            await _cameraProvider.FocusOn(tutorialView.WorkstationView.Position, 6f);
 
             await tutorialCanvasView.NextButton.OnClickAsync();
-
+            tutorialCanvasView.TutorialDialogView.SetActive(false);
             await _cameraProvider.ResetToOriginalPosition();
         }
 

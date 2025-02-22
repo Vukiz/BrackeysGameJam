@@ -20,7 +20,8 @@ namespace Level.Implementation
 
         public async UniTask FocusOn(Vector3 target, float zoomSize = 3f)
         {
-            Vector3 targetPosition = new(target.x, target.y, _originalPosition.z);
+            // allign with target position but move backwards alongside camera forward vector to keep the same distance
+            var targetPosition = target - MainCamera.transform.forward * 30f;
 
             var sequence = DOTween.Sequence();
             sequence.Join(MainCamera.transform.DOMove(targetPosition, MovementDuration));
