@@ -12,6 +12,7 @@ namespace StateMachine.Views
         [SerializeField] private Image _star1;
         [SerializeField] private Image _star2;
         [SerializeField] private Image _star3;
+        [SerializeField] private AudioSource _audioSource;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -27,6 +28,7 @@ namespace StateMachine.Views
             // Fill up the stars one by one with slight delay between each reached star using dotween
             for (var i = 0; i < reachedStars; i++)
             {
+                _audioSource.Play();
                 switch (i)
                 {
                     case 0:
