@@ -132,7 +132,7 @@ namespace Level.Implementation
                 {
                     var waypoint = _waypointProvider.GetWaypoint(waypointView);
                     railSwitch.AddNeighbour(waypoint);
-                    CreateRail(railSwitch, waypoint, levelView.RailPrefab, levelView.RailsParent, rails);
+                   // CreateRail(railSwitch, waypoint, levelView.RailPrefab, levelView.RailsParent, rails);
                 }
             }
         }
