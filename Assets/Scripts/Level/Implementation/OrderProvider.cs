@@ -28,6 +28,8 @@ namespace Level.Implementation
             }
         };
         public event Action LevelCompleted;
+        public event Action OrderCompleted;
+        public event Action OrderExpired;
 
         private readonly List<ISushiBelt> _sushiBelts = new();
         private readonly Queue<IOrder> _ordersToComplete = new();
@@ -151,9 +153,15 @@ namespace Level.Implementation
             _cancellationTokenSource = null;
         }
 
+        public int GetOrdersCount()
+        {
+            return _totalOrdersCount;
+        }
+
         private void OnOrderExpired(IOrder order)
         {
             _expiredOrders.Add(order);
+            OrderExpired?.Invoke();
 
             if (IsLevelCompleted())
             {
@@ -164,6 +172,7 @@ namespace Level.Implementation
         private void OnOrderCompleted(IOrder order)
         {
             _completedOrders.Add(order);
+            OrderCompleted?.Invoke();
 
             if (IsLevelCompleted())
             {

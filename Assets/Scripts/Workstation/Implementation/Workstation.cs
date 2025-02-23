@@ -97,7 +97,7 @@ namespace Workstation.Implementation
 
         private async void TryCompleteOrder(IOrder order)
         {
-            foreach (var slot in _slots)
+            foreach (var slot in _slots.ToList())
             {
                 if (!slot.IsOccupied)
                 {

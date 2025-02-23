@@ -9,6 +9,8 @@ namespace Level.Infrastructure
     public interface IOrderProvider
     {
         event System.Action LevelCompleted;
+        event System.Action OrderCompleted;
+        event System.Action OrderExpired;
         void Initialize(List<IOrder> orders, List<RandomOrdersSettings> levelDataRandomOrdersSettings);
         void RegisterSushiBelt(ISushiBelt sushiBelt);
         
@@ -17,5 +19,6 @@ namespace Level.Infrastructure
         int  GetFailedOrdersCount();
         int  GetCompletedOrdersCount();
         void Reset();
+        int GetOrdersCount();
     }
 }

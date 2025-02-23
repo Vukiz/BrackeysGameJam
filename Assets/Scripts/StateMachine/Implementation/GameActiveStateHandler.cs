@@ -53,8 +53,20 @@ namespace StateMachine.Implementation
             await _canvasView.GameActiveView.Show();
             _levelView = _levelConfigurator.SpawnLevel(_gameLevelDataModel.CurrentLevelIndex);
             await _canvasView.LoaderView.Hide();
+            _canvasView.GameActiveView.OrdersSlider.maxValue = _orderProvider.GetOrdersCount();
+            _canvasView.GameActiveView.FailedOrdersSlider.maxValue = _orderProvider.GetOrdersCount();
+            _orderProvider.OrderCompleted += OnOrderCompleted;
+            _orderProvider.OrderExpired += OnOrderCompleted;
+            OnOrderCompleted();
             _orderProvider.LevelCompleted += OnLevelCompleted;
             _collisionsTracker.RobotCollisionDetected += OnLevelFailed;
+        }
+
+        private void OnOrderCompleted()
+        {
+            _canvasView.GameActiveView.OrdersSlider.value = _orderProvider.GetCompletedOrdersCount();
+            _canvasView.GameActiveView.FailedOrdersSlider.value = _orderProvider.GetFailedOrdersCount();
+            _canvasView.GameActiveView.OrdersText.text = $"Orders left: {_orderProvider.GetOrdersCount() - _orderProvider.GetCompletedOrdersCount() - _orderProvider.GetFailedOrdersCount()}";
         }
 
         private async void OnLevelFailed(IRobot robot)
@@ -92,6 +104,9 @@ namespace StateMachine.Implementation
         {
             _orderProvider.LevelCompleted -= OnLevelCompleted;
             _collisionsTracker.RobotCollisionDetected -= OnLevelFailed;
+            
+            _orderProvider.OrderCompleted -= OnOrderCompleted;
+            _orderProvider.OrderExpired -= OnOrderCompleted;
         }
     }
 }
