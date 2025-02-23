@@ -98,7 +98,7 @@ namespace StateMachine.Implementation
 
         private bool IsLastLevel()
         {
-            return _gameLevelDataModel.CurrentLevelIndex >= _levelsHolder.Levels.Count - 1;
+            return _gameLevelDataModel.CurrentLevelIndex > _levelsHolder.Levels.Count - 1;
         }
 
         private void OnNextLevelButtonClicked()
