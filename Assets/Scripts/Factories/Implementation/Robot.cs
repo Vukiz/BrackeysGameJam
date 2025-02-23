@@ -76,7 +76,7 @@ namespace Factories.Implementation
             }
         }
 
-        public async void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition)
+        public async UniTask CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition)
         {
             order.ReceiveWork(WorkType);
             // move closer to the order and jump

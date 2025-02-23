@@ -11,7 +11,6 @@ namespace Orders.Implementation
     {
         public event Action TimerExpired;
         public event Action OrderCompleted;
-        public event Action OrderPartiallyCompleted;
         public List<WorkType> NeededTypes { get; }
         public Status Status { get; private set; }
         public float Duration { get; private set; }
@@ -43,7 +42,6 @@ namespace Orders.Implementation
 
             if (NeededTypes.Count != 0)
             {
-                OrderPartiallyCompleted?.Invoke();
                 return;
             }
 

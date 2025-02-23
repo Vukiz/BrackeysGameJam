@@ -69,6 +69,7 @@ namespace StateMachine.Implementation
 
         private void OnLevelCompleted()
         {
+            _orderProvider.Reset();
             _collisionsTracker.Reset();
             _gameEndDataModel.GameEndType = GameEndType.Win;
             RequestStateChange(GameState.GameEnded);

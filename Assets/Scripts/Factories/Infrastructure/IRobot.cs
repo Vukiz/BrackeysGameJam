@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Factories.Data;
 using Orders.Data;
 using Orders.Infrastructure;
@@ -18,7 +19,7 @@ namespace Factories.Infrastructure
         bool IsTrackingRequired { get; set; }
 
         void SetNextWaypoint(IWaypoint waypoint, IIntermediateWaypoint intermediateWaypoint = null);
-        void CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition);
+        UniTask CompleteOrder(IOrder order, Vector3 sushiBeltOrderPosition);
         void StartSelfDestructionTimer();
         void StopSelfDestructionTimer();
 

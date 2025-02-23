@@ -1,5 +1,3 @@
-using System;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VFX.Implementation;
 
@@ -8,15 +6,12 @@ namespace Orders.Views
     public class ObjectView : MonoBehaviour
     {
         [SerializeField] private Outliner _outliner;
+        [SerializeField] private GameObject _completedObject;
+        [SerializeField] private GameObject _notCompletedObject;
 
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);
-        }
-
-        public void Hide()
-        {
-            HideInternal().Forget();
         }
 
         public void AnimateOutline(float duration)
@@ -34,15 +29,10 @@ namespace Orders.Views
             _outliner.DisableOutline();
         }
 
-        private async UniTask HideInternal()
+        public void SetObjectCompleted(bool isCompleted)
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(1f));
-            if (!gameObject)
-            {
-                return;
-            }
-            
-            gameObject.SetActive(false);
+            _completedObject.SetActive(isCompleted);
+            _notCompletedObject.SetActive(!isCompleted);
         }
     }
 }

@@ -53,8 +53,10 @@ namespace SushiBelt.Implementation
         {
             foreach (var orderViewWorkTypeToObjectPair in orderView.WorkTypeToObjectPairs)
             {
-                orderViewWorkTypeToObjectPair.Object.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType));
-                orderViewWorkTypeToObjectPair.Object.AnimateOutline(order.Duration);
+                var objectView = orderViewWorkTypeToObjectPair.Object;
+                objectView.SetObjectCompleted(false);
+                objectView.SetActive(order.NeededTypes.Contains(orderViewWorkTypeToObjectPair.WorkType));
+                objectView.AnimateOutline(order.Duration);
             }
         }
 
@@ -70,27 +72,27 @@ namespace SushiBelt.Implementation
             _sushiBeltView.Destroyed += Dispose;
         }
 
-        public void HideWorkType(WorkType workType)
+        public void MarkWorkTypeCompleted(WorkType workType)
         {
-            _currentOrderGameObject.WorkTypeToObjectPairs.FirstOrDefault(x => x.WorkType == workType)?.Object.Hide();
+            _currentOrderGameObject.WorkTypeToObjectPairs.FirstOrDefault(x => x.WorkType == workType)?.Object.SetObjectCompleted(true);
         }
 
-        private void OnOrderCompleted()
+        private async void OnOrderCompleted()
         {
             var order = CurrentOrder;
             UnsubscribeOrder();
 
-            MoveAwayOrder().Forget();
+            await MoveAwayOrder();
             OrderCompleted?.Invoke(order);
         }
 
 
-        private void OnOrderExpired()
+        private async void OnOrderExpired()
         {
             var order = CurrentOrder;
             UnsubscribeOrder();
 
-            MoveAwayOrder().Forget();
+            await MoveAwayOrder();
             OrderExpired?.Invoke(order);
         }
 
@@ -106,12 +108,12 @@ namespace SushiBelt.Implementation
             order.TimerExpired -= OnOrderExpired;
         }
 
-        private async UniTaskVoid MoveAwayOrder()
+        private async UniTask MoveAwayOrder()
         {
             _currentOrderGameObject.DisableOutline();
             _currentOrderGameObject.transform.DOScale(1.5f, 1f).SetEase(Ease.Linear);
-            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear)
-                .OnComplete(() => { Object.Destroy(_currentOrderGameObject.gameObject); });
+            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear);
+            Object.Destroy(_currentOrderGameObject.gameObject);
             Debug.Log("Order Completed and moved away from the sushi belt.");
             CurrentOrder = null;
         }

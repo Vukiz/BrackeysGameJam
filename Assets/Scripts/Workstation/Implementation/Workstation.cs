@@ -49,6 +49,7 @@ namespace Workstation.Implementation
                 slot.Occupied -= OnSlotOccupied;
                 slot.RobotsCollided -= OnRobotsCollided;
             }
+
             _sushiBelt.OrderReceived -= OnOrderReceived;
             _sushiBelt.OrderCompleted -= OnOrderCompleted;
             _sushiBelt.Cleanup();
@@ -94,7 +95,7 @@ namespace Workstation.Implementation
             TryCompleteOrder(order);
         }
 
-        private void TryCompleteOrder(IOrder order)
+        private async void TryCompleteOrder(IOrder order)
         {
             foreach (var slot in _slots)
             {
@@ -108,11 +109,11 @@ namespace Workstation.Implementation
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
                     occupiedBy.StopSelfDestructionTimer();
-                    occupiedBy.CompleteOrder(order, _sushiBelt.OrderPosition);
-                    _sushiBelt.HideWorkType(occupiedBy.WorkType);
+                    await occupiedBy.CompleteOrder(order, _sushiBelt.OrderPosition);
+                    _sushiBelt.MarkWorkTypeCompleted(occupiedBy.WorkType);
                     continue;
                 }
-                
+
                 slot.OccupiedBy.StartSelfDestructionTimer();
             }
         }
