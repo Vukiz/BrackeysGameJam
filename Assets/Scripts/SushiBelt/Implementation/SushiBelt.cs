@@ -69,6 +69,7 @@ namespace SushiBelt.Implementation
 
         public void SetView(SushiBeltView sushiBeltView)
         {
+            Dispose();
             _sushiBeltView = sushiBeltView;
             _sushiBeltView.Destroyed += Dispose;
         }
@@ -85,8 +86,10 @@ namespace SushiBelt.Implementation
 
             await MoveAwayOrder();
             OrderCompleted?.Invoke(order);
+            Object.Destroy(_currentOrderGameObject.gameObject);
+            CurrentOrder = null;
+            _currentOrderGameObject = null;
         }
-
 
         private async void OnOrderExpired()
         {
@@ -95,6 +98,9 @@ namespace SushiBelt.Implementation
 
             await MoveAwayOrder();
             OrderExpired?.Invoke(order);
+            Object.Destroy(_currentOrderGameObject.gameObject);
+            CurrentOrder = null;
+            _currentOrderGameObject = null;
         }
 
         private void UnsubscribeOrder()
@@ -114,9 +120,7 @@ namespace SushiBelt.Implementation
             _currentOrderGameObject.DisableOutline();
             _currentOrderGameObject.transform.DOScale(1.5f, 1f).SetEase(Ease.Linear);
             await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear);
-            Object.Destroy(_currentOrderGameObject.gameObject);
             Debug.Log("Order Completed and moved away from the sushi belt.");
-            CurrentOrder = null;
         }
 
         public void Dispose()
@@ -125,11 +129,13 @@ namespace SushiBelt.Implementation
             if (_sushiBeltView != null)
             {
                 _sushiBeltView.Destroyed -= Dispose;
+                _sushiBeltView = null;
             }
 
             if (_currentOrderGameObject != null)
             {
                 Object.Destroy(_currentOrderGameObject.gameObject);
+                _currentOrderGameObject = null;
             }
         }
     }
