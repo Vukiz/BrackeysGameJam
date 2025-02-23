@@ -76,7 +76,7 @@ namespace Level.Implementation
                         Time.deltaTime * 5f // Adjust this multiplier to control smoothing speed
                     );
                     
-                    await UniTask.Yield(PlayerLoopTiming.FixedUpdate, _trackingCts.Token);
+                    await UniTask.Yield(PlayerLoopTiming.LastUpdate, _trackingCts.Token);
                 }
             }
             catch (OperationCanceledException)
