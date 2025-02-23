@@ -15,6 +15,8 @@ namespace Level.Implementation
 {
     public class OrderProvider : IOrderProvider
     {
+        private readonly ILevelDataModel _levelDataModel;
+
         private readonly RandomOrdersSettings _defaultRandomOrdersSettings = new()
         {
             OrdersCount = 10,
@@ -27,41 +29,46 @@ namespace Level.Implementation
                 WorkType.Wield
             }
         };
+
         public event Action LevelCompleted;
         public event Action OrderCompleted;
         public event Action OrderExpired;
 
-        private readonly List<ISushiBelt> _sushiBelts = new();
         private readonly Queue<IOrder> _ordersToComplete = new();
         private readonly List<IOrder> _completedOrders = new();
         private readonly List<IOrder> _expiredOrders = new();
         private int _totalOrdersCount;
-        
-        private CancellationTokenSource _cancellationTokenSource;
-        
+
+        private CancellationTokenSource _cancellationTokenSource = new();
+
+        public OrderProvider(ILevelDataModel levelDataModel)
+        {
+            _levelDataModel = levelDataModel;
+        }
+
         private void Cleanup()
         {
-            foreach (var sushiBelt in _sushiBelts)
+            foreach (var sushiBelt in _levelDataModel.Workstations.Select(w => w.SushiBelt))
             {
                 sushiBelt.OrderCompleted -= OnOrderCompleted;
                 sushiBelt.OrderExpired -= OnOrderExpired;
             }
 
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
-            _sushiBelts.Clear();
             _ordersToComplete.Clear();
             _completedOrders.Clear();
             _expiredOrders.Clear();
         }
-        
+
         public void Initialize(List<IOrder> orders, List<RandomOrdersSettings> levelDataRandomOrdersSettings)
         {
             Cleanup();
-            
+
             if (orders?.Count == 0 && levelDataRandomOrdersSettings == null)
             {
-                levelDataRandomOrdersSettings = new List<RandomOrdersSettings> {_defaultRandomOrdersSettings};
+                levelDataRandomOrdersSettings = new List<RandomOrdersSettings> { _defaultRandomOrdersSettings };
             }
 
             if (orders?.Count == 0)
@@ -82,7 +89,7 @@ namespace Level.Implementation
         {
             foreach (var randomOrderSettings in levelDataTotalOrdersCount)
             {
-                for(var i = 0; i < randomOrderSettings.OrdersCount; i++)
+                for (var i = 0; i < randomOrderSettings.OrdersCount; i++)
                 {
                     // put a 1..3 unique worktypes from available types to the order
                     var workTypes = new List<WorkType>();
@@ -94,7 +101,7 @@ namespace Level.Implementation
                         workTypes.Add(uniqueWorkTypes[randomIndex]);
                         uniqueWorkTypes.RemoveAt(randomIndex);
                     }
-                    
+
                     var timeLimitSeconds = UnityEngine.Random.Range(randomOrderSettings.TimeLimitSecondsMin,
                         randomOrderSettings.TimeLimitSecondsMax);
                     yield return new Order(workTypes, timeLimitSeconds);
@@ -106,27 +113,27 @@ namespace Level.Implementation
         {
             sushiBelt.OrderCompleted += OnOrderCompleted;
             sushiBelt.OrderExpired += OnOrderExpired;
-            _sushiBelts.Add(sushiBelt);
         }
 
         public async UniTaskVoid StartProcessingOrders()
         {
             while (!_cancellationTokenSource.IsCancellationRequested && _ordersToComplete.Count > 0)
             {
-                await UniTask.Delay(GetNextOrderDelay(), cancellationToken: _cancellationTokenSource.Token); 
+                await UniTask.Delay(GetNextOrderDelay(), cancellationToken: _cancellationTokenSource.Token);
                 var sushiBelt = GetRandomEmptySushiBelt();
                 sushiBelt?.SubmitOrder(_ordersToComplete.Dequeue());
             }
         }
-        
+
         private TimeSpan GetNextOrderDelay()
         {
-            return TimeSpan.FromSeconds(UnityEngine.Random.Range(1, 3));// TODO refactor this logic to be fun
+            return TimeSpan.FromSeconds(UnityEngine.Random.Range(1, 3)); // TODO refactor this logic to be fun
         }
 
         private ISushiBelt GetRandomEmptySushiBelt()
         {
-            var emptySushiBelts = _sushiBelts.Where(s => s.CurrentOrder == null).ToList();
+            var emptySushiBelts = _levelDataModel.Workstations.Select(w => w.SushiBelt)
+                .Where(s => s.CurrentOrder == null).ToList();
             if (emptySushiBelts.Count == 0)
             {
                 return null;
@@ -148,9 +155,7 @@ namespace Level.Implementation
 
         public void Reset()
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
+            Cleanup();
         }
 
         public int GetOrdersCount()

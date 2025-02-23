@@ -8,6 +8,7 @@ namespace Level
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<LevelDataModel>().AsSingle();
             Container.BindInterfacesTo<WaypointProvider>().AsSingle();
             Container.Bind<CameraProvider>().AsSingle();
             Container.BindInterfacesTo<InputTracker>()

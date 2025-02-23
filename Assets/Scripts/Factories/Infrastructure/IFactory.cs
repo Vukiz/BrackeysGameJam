@@ -14,5 +14,6 @@ namespace Factories.Infrastructure
         void Initialize(FactoryView view, FactoryData data, IWaypoint next, Transform robotsParent);
         float SpawnProgress { get; }
         WorkType WorkType { get; }
+        void Cleanup();
     }
 }

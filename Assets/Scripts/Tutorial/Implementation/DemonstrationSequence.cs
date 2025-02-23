@@ -27,7 +27,6 @@ namespace Tutorial.Implementation
         private readonly List<Demonstration> _demonstrations = new();
 
         private IFactory _factory1;
-        private IFactory _factory2;
         private IWorkstation _workstation1;
         private IWorkstation _workstation2;
 
@@ -55,7 +54,17 @@ namespace Tutorial.Implementation
                 IntroduceOrders,
                 DemonstrateWorkstationOverflow,
                 IntroduceSwitch,
+                Cleanup
             });
+        }
+
+        private UniTask Cleanup(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
+        {
+            _workstation1.Cleanup();
+            _workstation2.Cleanup();
+            _factory1.Cleanup();
+            
+            return UniTask.CompletedTask;
         }
 
         private async UniTask IntroduceSwitch(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)

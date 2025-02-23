@@ -26,8 +26,7 @@ namespace Level.Implementation
         private readonly IFactoryAvailabilityTracker _factoryAvailabilityTracker;
         private readonly IOrderProvider _orderProvider;
         private readonly ICollisionsTracker _collisionsTracker;
-
-        private readonly List<IWorkstation> _workstations = new();
+        private readonly ILevelDataModel _levelDataModel;
 
         public LevelConfigurator(
             DiContainer container,
@@ -35,7 +34,8 @@ namespace Level.Implementation
             IWaypointProvider waypointProvider,
             IFactoryAvailabilityTracker factoryAvailabilityTracker,
             IOrderProvider orderProvider,
-            ICollisionsTracker collisionsTracker
+            ICollisionsTracker collisionsTracker,
+            ILevelDataModel levelDataModel
         )
         {
             _container = container;
@@ -44,6 +44,7 @@ namespace Level.Implementation
             _factoryAvailabilityTracker = factoryAvailabilityTracker;
             _orderProvider = orderProvider;
             _collisionsTracker = collisionsTracker;
+            _levelDataModel = levelDataModel;
         }
 
         public LevelView SpawnLevel(int number)
@@ -58,9 +59,9 @@ namespace Level.Implementation
             _collisionsTracker.Reset();
             _waypointProvider.Cleanup();
             SetupFactoryAvailabilityTracker(levelView);
-            SetupOrders(levelData.Orders, levelData.RandomOrdersSettings);
             SetupWorkstations(levelView);
             SetupRailSwitches(levelView);
+            SetupOrders(levelData.Orders, levelData.RandomOrdersSettings);
 
             _collisionsTracker.TrackCollisions();
             _orderProvider.StartProcessingOrders().Forget();
@@ -77,6 +78,10 @@ namespace Level.Implementation
                 .ToList();
 
             _orderProvider.Initialize(orders, levelDataRandomOrdersSettings);
+            foreach (var workstation in _levelDataModel.Workstations)
+            {
+                _orderProvider.RegisterSushiBelt(workstation.SushiBelt);
+            }
         }
 
         private void SetupFactoryAvailabilityTracker(LevelView levelView)
@@ -86,7 +91,6 @@ namespace Level.Implementation
                 var factorySlot = _container.Resolve<FactorySlot>();
                 factorySlot.Initialize(factorySlotView);
                 _waypointProvider.RegisterWaypoint(factorySlotView, factorySlot);
-                _collisionsTracker.RegisterFactorySlot(factorySlot);
             }
 
             _factoryAvailabilityTracker.Initialize(levelView.FactorySlots, levelView.FactoriesParent,
@@ -95,23 +99,21 @@ namespace Level.Implementation
 
         private void SetupWorkstations(LevelView levelView)
         {
-            foreach (var workstation in _workstations)
+            foreach (var workstation in _levelDataModel.Workstations)
             {
                 workstation.Cleanup();
             }
+            _levelDataModel.Workstations.Clear();
 
-            _workstations.Clear(); // Cleanup workstations and associated sushi belts
             foreach (var workstationView in levelView.WorkstationViews)
             {
                 var sushiBelt = _container.Resolve<ISushiBelt>();
                 sushiBelt.SetView(workstationView.SushiBeltView);
                 _factoryAvailabilityTracker.RegisterSushiBeltForTracking(sushiBelt);
-                _orderProvider.RegisterSushiBelt(sushiBelt); // was cleaned up in initialization
                 var workstation = _container.Resolve<IWorkstation>();
                 workstation.SetView(workstationView, sushiBelt);
-                _workstations.Add(workstation);
+                _levelDataModel.Workstations.Add(workstation);
                 _waypointProvider.RegisterWaypoint(workstationView, workstation);
-                _collisionsTracker.RegisterWorkstation(workstation);
             }
         }
 

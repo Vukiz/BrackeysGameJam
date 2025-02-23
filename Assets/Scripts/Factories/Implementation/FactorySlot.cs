@@ -10,7 +10,7 @@ namespace Factories.Implementation
     {
         private FactorySlotView _view;
 
-        public Action<IRobot> RobotReachedSlot;
+        public event Action<IRobot> RobotReachedSlot;
 
         public void Initialize(FactorySlotView view)
         {

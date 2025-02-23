@@ -22,7 +22,6 @@ namespace Workstation.Implementation
         private readonly IVFXManager _vfxManager;
 
         private List<ISlot> _slots;
-        private ISushiBelt _sushiBelt;
         private WorkstationView _workstationView;
 
         public event Action<IRobot> RobotReachedStationWithNoEmptySlots;
@@ -39,7 +38,7 @@ namespace Workstation.Implementation
 
         public void AddOrderToSushiBelt(Order order)
         {
-            _sushiBelt.SubmitOrder(order);
+            SushiBelt.SubmitOrder(order);
         }
 
         public void Cleanup()
@@ -50,9 +49,9 @@ namespace Workstation.Implementation
                 slot.RobotsCollided -= OnRobotsCollided;
             }
 
-            _sushiBelt.OrderReceived -= OnOrderReceived;
-            _sushiBelt.OrderCompleted -= OnOrderCompleted;
-            _sushiBelt.Cleanup();
+            SushiBelt.OrderReceived -= OnOrderReceived;
+            SushiBelt.OrderCompleted -= OnOrderCompleted;
+            SushiBelt.Cleanup();
         }
 
         public void SetView(WorkstationView workstationView, ISushiBelt sushiBelt)
@@ -69,25 +68,27 @@ namespace Workstation.Implementation
             }
 
             sushiBelt.SetView(workstationView.SushiBeltView);
-            _sushiBelt = sushiBelt;
-            _sushiBelt.OrderReceived += OnOrderReceived;
-            _sushiBelt.OrderCompleted += OnOrderCompleted; // TODO Unsubscribe from all events?
+            SushiBelt = sushiBelt;
+            SushiBelt.OrderReceived += OnOrderReceived;
+            SushiBelt.OrderCompleted += OnOrderCompleted; // TODO Unsubscribe from all events?
         }
+
+        public ISushiBelt SushiBelt { get; private set; }
 
         private void OnSlotOccupied(ISlot slot)
         {
-            if (_sushiBelt.CurrentOrder == null)
+            if (SushiBelt.CurrentOrder == null)
             {
                 slot.OccupiedBy.StartSelfDestructionTimer();
                 return;
             }
 
-            TryCompleteOrder(_sushiBelt.CurrentOrder);
+            TryCompleteOrder(SushiBelt.CurrentOrder);
         }
 
         private void OnOrderCompleted(IOrder order)
         {
-            _vfxManager.SpawnVFX(VFXType.OrderComplete, _sushiBelt.OrderPosition);
+            _vfxManager.SpawnVFX(VFXType.OrderComplete, SushiBelt.OrderPosition);
         }
 
         private void OnOrderReceived(IOrder order)
@@ -109,8 +110,8 @@ namespace Workstation.Implementation
                 if (neededTypes.Contains(occupiedBy.WorkType))
                 {
                     occupiedBy.StopSelfDestructionTimer();
-                    await occupiedBy.CompleteOrder(order, _sushiBelt.OrderPosition);
-                    _sushiBelt.MarkWorkTypeCompleted(occupiedBy.WorkType);
+                    await occupiedBy.CompleteOrder(order, SushiBelt.OrderPosition);
+                    SushiBelt.MarkWorkTypeCompleted(occupiedBy.WorkType);
                     continue;
                 }
 

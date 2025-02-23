@@ -2,30 +2,46 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Factories.Implementation;
 using Factories.Infrastructure;
 using Level.Infrastructure;
 using UnityEngine;
 using System.Linq;
-using VFX.Data;
-using VFX.Infrastructure;
-using Workstation.Infrastructure;
 
 namespace Level.Implementation
 {
     public class CollisionsTracker : ICollisionsTracker, IDisposable
     {
+        private readonly ILevelDataModel _levelDataModel;
         private const float CollisionRadius = 0.1f;
 
-        private readonly List<FactorySlot> _factorySlots = new();
         private readonly List<IRobot> _robots = new();
-        private readonly List<IWorkstation> _workstations = new();
         private CancellationTokenSource _cancellationTokenSource = new();
         public event Action<IRobot> RobotCollisionDetected;
 
+        public CollisionsTracker(
+            ILevelDataModel levelDataModel
+            )
+        {
+            _levelDataModel = levelDataModel;
+        }
         public void TrackCollisions()
         {
+            Reset();
+            Setup();
             CheckForCollisions().Forget();
+        }
+
+        private void Setup()
+        {
+            foreach (var factorySlot in _levelDataModel.FactorySlots)
+            {
+                factorySlot.RobotReachedSlot += FinishGame;
+            }
+
+            foreach (var workstation in _levelDataModel.Workstations)
+            {
+                workstation.RobotReachedStationWithNoEmptySlots += FinishGame;
+            }
         }
 
         public void Reset()
@@ -36,19 +52,17 @@ namespace Level.Implementation
                 robot.IsTrackingRequired = false;
             }
 
-            foreach (var factorySlot in _factorySlots)
+            foreach (var factorySlot in _levelDataModel.FactorySlots)
             {
                 factorySlot.RobotReachedSlot -= FinishGame;
             }
 
-            foreach (var workstation in _workstations)
+            foreach (var workstation in _levelDataModel.Workstations)
             {
                 workstation.RobotReachedStationWithNoEmptySlots -= FinishGame;
             }
 
-            _factorySlots.Clear();
             _robots.Clear();
-            _workstations.Clear();
         }
 
         public void Dispose()
@@ -58,24 +72,12 @@ namespace Level.Implementation
             _cancellationTokenSource = null;
         }
 
-        public void RegisterFactorySlot(FactorySlot factorySlot)
-        {
-            _factorySlots.Add(factorySlot);
-            factorySlot.RobotReachedSlot += FinishGame;
-        }
-
         public void RegisterRobot(IRobot robot)
         {
             robot.IsTrackingRequired = true;
             _robots.Add(robot);
         }
-
-        public void RegisterWorkstation(IWorkstation workstation)
-        {
-            _workstations.Add(workstation);
-            workstation.RobotReachedStationWithNoEmptySlots += FinishGame;
-        }
-
+        
         public void RemoveRobot(IRobot robot)
         {
             robot.IsTrackingRequired = false;

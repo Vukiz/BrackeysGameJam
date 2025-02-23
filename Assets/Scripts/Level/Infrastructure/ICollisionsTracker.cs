@@ -1,7 +1,5 @@
 using System;
-using Factories.Implementation;
 using Factories.Infrastructure;
-using Workstation.Infrastructure;
 
 namespace Level.Infrastructure
 {
@@ -9,9 +7,7 @@ namespace Level.Infrastructure
     {
         void TrackCollisions();
         void Reset();
-        void RegisterFactorySlot(FactorySlot factorySlot);
         void RegisterRobot(IRobot robot);
-        void RegisterWorkstation(IWorkstation workstation);
         void RemoveRobot(IRobot robot);
         
         event Action<IRobot> RobotCollisionDetected; 

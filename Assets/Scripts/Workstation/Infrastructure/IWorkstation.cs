@@ -14,5 +14,6 @@ namespace Workstation.Infrastructure
         event Action<IRobot> RobotReachedStationWithNoEmptySlots;
         event Action SlotRemoved;
         void SetView(WorkstationView workstationView, ISushiBelt sushiBelt);
+        ISushiBelt SushiBelt { get; }
     }
 }

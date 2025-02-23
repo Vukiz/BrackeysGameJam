@@ -29,14 +29,20 @@ namespace SushiBelt.Implementation
 
         private SushiBeltView _sushiBeltView;
 
+        public void SetView(SushiBeltView sushiBeltView)
+        {
+            Dispose();
+            _sushiBeltView = sushiBeltView;
+            _sushiBeltView.Destroyed += Dispose;
+        }
+
         public async void SubmitOrder(IOrder order)
         {
             Debug.Log($"Order received on the sushi belt. {order.NeededTypes.Count} types needed.");
             CreateOrder(order);
-
+            CurrentOrder = order;
             await MoveOrderToTarget();
             order.StartTimer();
-            CurrentOrder = order;
             order.OrderCompleted += OnOrderCompleted;
             order.TimerExpired += OnOrderExpired;
             OrderReceived?.Invoke(order);
@@ -44,10 +50,11 @@ namespace SushiBelt.Implementation
 
         private void CreateOrder(IOrder order)
         {
-            _currentOrderGameObject = Object.Instantiate(_sushiBeltView.OrderViewPrefab);
-            _currentOrderGameObject.transform.position = _sushiBeltView.StartPoint.position;
-            _currentOrderGameObject.transform.rotation = _sushiBeltView.transform.rotation;
-            SetupOrderView(_currentOrderGameObject, order);
+            var go = Object.Instantiate(_sushiBeltView.OrderViewPrefab);
+            go.transform.position = _sushiBeltView.StartPoint.position;
+            go.transform.rotation = _sushiBeltView.transform.rotation;
+            SetupOrderView(go, order);
+            _currentOrderGameObject = go;
         }
 
         private void SetupOrderView(OrderView orderView, IOrder order)
@@ -67,16 +74,10 @@ namespace SushiBelt.Implementation
                 .SetEase(Ease.Linear);
         }
 
-        public void SetView(SushiBeltView sushiBeltView)
-        {
-            Dispose();
-            _sushiBeltView = sushiBeltView;
-            _sushiBeltView.Destroyed += Dispose;
-        }
-
         public void MarkWorkTypeCompleted(WorkType workType)
         {
-            _currentOrderGameObject.WorkTypeToObjectPairs.FirstOrDefault(x => x.WorkType == workType)?.Object.SetObjectCompleted(true);
+            _currentOrderGameObject?.WorkTypeToObjectPairs.FirstOrDefault(x => x.WorkType == workType)?.Object?
+                .SetObjectCompleted(true);
         }
 
         private async void OnOrderCompleted()
@@ -86,9 +87,7 @@ namespace SushiBelt.Implementation
 
             await MoveAwayOrder();
             OrderCompleted?.Invoke(order);
-            Object.Destroy(_currentOrderGameObject.gameObject);
-            CurrentOrder = null;
-            _currentOrderGameObject = null;
+            DestroyOrder();
         }
 
         private async void OnOrderExpired()
@@ -98,7 +97,16 @@ namespace SushiBelt.Implementation
 
             await MoveAwayOrder();
             OrderExpired?.Invoke(order);
-            Object.Destroy(_currentOrderGameObject.gameObject);
+            DestroyOrder();
+        }
+
+        private void DestroyOrder()
+        {
+            if (_currentOrderGameObject != null)
+            {
+                Object.Destroy(_currentOrderGameObject.gameObject);
+            }
+
             CurrentOrder = null;
             _currentOrderGameObject = null;
         }
@@ -117,14 +125,15 @@ namespace SushiBelt.Implementation
 
         private async UniTask MoveAwayOrder()
         {
-            if (!_currentOrderGameObject)
+            var order = _currentOrderGameObject;
+            if (!order)
             {
                 return;
             }
-            
-            _currentOrderGameObject.DisableOutline();
-            _currentOrderGameObject.transform.DOScale(1.5f, 1f).SetEase(Ease.Linear);
-            await _currentOrderGameObject.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear);
+
+            order.DisableOutline();
+            order.transform.DOScale(1.5f, 1f).SetEase(Ease.Linear);
+            await order.transform.DOMove(_sushiBeltView.EndPoint.position, 1f).SetEase(Ease.Linear);
             Debug.Log("Order Completed and moved away from the sushi belt.");
         }
 
@@ -137,11 +146,7 @@ namespace SushiBelt.Implementation
                 _sushiBeltView = null;
             }
 
-            if (_currentOrderGameObject != null)
-            {
-                Object.Destroy(_currentOrderGameObject.gameObject);
-                _currentOrderGameObject = null;
-            }
+            DestroyOrder();
         }
     }
 }
