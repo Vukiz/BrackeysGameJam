@@ -61,9 +61,8 @@ namespace Tutorial.Implementation
         private async UniTask IntroduceSwitch(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Switches are your best friends for traffic control! Click them to redirect robots between workstations." +
-                "\n\nUse switches wisely to prevent workstation overflow and keep your factory running smoothly!" +
-                "\n\n<color=#FFD700>Try it now - click the switch to rotate it!</color>");
+                "Switches help control traffic! Click them to redirect robots between workstations." +
+                "\n\n<color=#FFD700>Try it now - click the switch!</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
             await _cameraProvider.FocusOn(_railSwitch.Position, 6f);
@@ -79,8 +78,7 @@ namespace Tutorial.Implementation
             tutorialCanvasView.NextButton.gameObject.SetActive(true);
             await _cameraProvider.ResetToOriginalPosition();
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Great job! Now you know how to control the flow of robots. " +
-                "Keep an eye on the workstations and switch between them to keep the orders flowing!");
+                "Great! Now you can control robot flow. Keep an eye on workstation capacity!");
             _robot1 = await _factory1.SpawnRobot();
             _robot1.SelfDestructionTimerDuration = 0f;
             await tutorialCanvasView.WaitForNextButtonClick();
@@ -90,8 +88,8 @@ namespace Tutorial.Implementation
         private async UniTask DemonstrateWorkstationOverflow(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Be careful with workstation capacity! If all slots are full, any new robot will cause an explosion and destroy the slot." +
-                "\n\n<color=#FFD700>Warning: If all slots are destroyed, it's game over!</color>");
+                "Watch out for workstation overload! Full slots will explode with new robots." +
+                "\n\n<color=#FFD700>Warning: Game over if all slots are destroyed!</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
             var robot = await _factory1.SpawnRobot();
@@ -113,9 +111,8 @@ namespace Tutorial.Implementation
         private async UniTask IntroduceOrders(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Orders will appear at workstations, showing which robot types are needed. " +
-                "Usually each order has a timer - get the right robots to the workstation before time runs out!" +
-                "\n\n<color=#FFD700>Don't worry if you miss some orders, they'll just move along the belt.</color>");
+                "Orders appear at workstations showing required robots. Complete them before time runs out!" +
+                "\n\n<color=#FFD700>Missed orders will move along.</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
             await _cameraProvider.FocusOn(_workstation1.Position, 6f);
@@ -136,9 +133,8 @@ namespace Tutorial.Implementation
         private async UniTask IntroduceRobotSpawn(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Time to meet your workforce! Each factory produces robots with specific skills - they'll rush to workstations " +
-                "to complete matching orders before their time runs out. Once they finish their job, they'll disappear in a flash of glory!" +
-                "\n\n<color=#FFD700>Keep an eye on them - robots don't last forever!</color>");
+                "Meet your robots! They'll complete matching orders at workstations." +
+                "\n\n<color=#FFD700>Note: Robots have limited lifespan!</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
             _robot1 = await _factory1.SpawnRobot();
@@ -170,9 +166,8 @@ namespace Tutorial.Implementation
             _workstation1 = CreateWorkStation(tutorialView.WorkstationView1);
             _workstation2 = CreateWorkStation(tutorialView.WorkstationView2);
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Welcome to your first workstation! This is where the magic happens... " +
-                "or catastrophic failures. Orders will appear here, and our enthusiastic robots will attempt to complete them. " +
-                "\n\nEach workstation has 3 slots for robots.");
+                "Welcome to your workstation! Orders appear here for robots to complete." +
+                "\n\nEach workstation has 3 slots.");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
 
             await _cameraProvider.FocusOn(tutorialView.WorkstationView1.Position, 6f);
@@ -185,9 +180,8 @@ namespace Tutorial.Implementation
         private async UniTask IntroduceFactory(TutorialCanvasView tutorialCanvasView, TutorialView tutorialView)
         {
             tutorialCanvasView.TutorialDialogView.SetText(
-                "Time to build your first factory! Look for the glowing spots - that's where you can place them. " +
-                "You will be able to place a new factory type when you get an order requiring a new robot type." +
-                "\n\n<color=#FFD700>Click the highlighted spot to place your first factory!</color>");
+                "Time to build! Place factories on glowing spots. New types unlock with orders." +
+                "\n\n<color=#FFD700>Click the highlight to place your factory!</color>");
             tutorialCanvasView.TutorialDialogView.SetActive(true);
             var slotSelectedTaskCompletionSource = new UniTaskCompletionSource();
             tutorialView.FactorySlot1.SlotSelected += _ => slotSelectedTaskCompletionSource.TrySetResult();
