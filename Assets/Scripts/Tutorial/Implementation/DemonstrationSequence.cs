@@ -68,6 +68,7 @@ namespace Tutorial.Implementation
             await _cameraProvider.FocusOn(_railSwitch.Position, 6f);
             tutorialCanvasView.NextButton.gameObject.SetActive(false);
             _railSwitch.SetInteractable(true);
+            _railSwitch.SetOutlineEnabled(true);
             var rotateCompletionSource = new UniTaskCompletionSource();
             _railSwitch.Rotated += () =>
             {
@@ -76,6 +77,7 @@ namespace Tutorial.Implementation
 
             await rotateCompletionSource.Task;
             tutorialCanvasView.NextButton.gameObject.SetActive(true);
+            _railSwitch.SetOutlineEnabled(false);
             await _cameraProvider.ResetToOriginalPosition();
             tutorialCanvasView.TutorialDialogView.SetText(
                 "Great! Now you can control robot flow. Keep an eye on workstation capacity!");

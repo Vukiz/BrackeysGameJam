@@ -4,6 +4,7 @@ using Level.Infrastructure;
 using MoreMountains.Feedbacks;
 using Rails.Implementation;
 using UnityEngine;
+using VFX.Implementation;
 
 namespace Rails.Views
 {
@@ -11,6 +12,7 @@ namespace Rails.Views
     {
         [SerializeField] private List<WaypointView> _neighbourWaypoints;
         [SerializeField] private MMF_Player _player;
+        [SerializeField] private Outliner _outliner;
 
         public List<WaypointView> NeighbourWaypoints => _neighbourWaypoints;
 
@@ -21,6 +23,16 @@ namespace Rails.Views
             _player.PlayFeedbacks();
 
             InteractionRequired?.Invoke();
+        }
+
+        public void AnimateOutline()
+        {
+            _outliner.AnimateOutline(1f, 0.5f, false, false);
+        }
+
+        public void DisableOutline()
+        {
+            _outliner.DisableOutline();
         }
 
         private void OnDrawGizmos()

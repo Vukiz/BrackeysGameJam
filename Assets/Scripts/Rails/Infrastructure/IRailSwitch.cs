@@ -8,5 +8,6 @@ namespace Rails.Infrastructure
         void SetView(RailSwitchView view);
         event Action Rotated;
         void SetInteractable(bool isInteractable);
+        void SetOutlineEnabled(bool isEnabled);
     }
 }

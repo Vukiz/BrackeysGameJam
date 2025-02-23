@@ -45,6 +45,17 @@ namespace Rails.Implementation
             _neighbourWaypoints.Add(waypoint);
         }
 
+        public void SetOutlineEnabled(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                _view.AnimateOutline();
+                return;
+            }
+            
+            _view.DisableOutline();
+        }
+
         private void OnInteractionRequired()
         {
             if (!_isInteractable)

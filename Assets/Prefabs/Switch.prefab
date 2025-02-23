@@ -53,6 +53,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _player: {fileID: 7180862679614802334}
+  _outliner: {fileID: 8960195544543552884}
 --- !u!65 &5089671583104613791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -202,8 +203,50 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 145aee73f117b4fcbb0c10ad1faea589, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1917008158721303399}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 145aee73f117b4fcbb0c10ad1faea589, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8960195544543552884}
   m_SourcePrefab: {fileID: 100100000, guid: 145aee73f117b4fcbb0c10ad1faea589, type: 3}
+--- !u!1 &7275732920640845251 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 145aee73f117b4fcbb0c10ad1faea589, type: 3}
+  m_PrefabInstance: {fileID: 7510299227086686354}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1917008158721303399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7275732920640845251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 0}
+  outlineWidth: 1
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &8960195544543552884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7275732920640845251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20964ab04a6f4fd0b7477f09053302f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outline: {fileID: 1917008158721303399}
 --- !u!4 &8048856288930164601 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 145aee73f117b4fcbb0c10ad1faea589, type: 3}

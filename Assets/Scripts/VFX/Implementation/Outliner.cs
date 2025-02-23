@@ -10,7 +10,7 @@ namespace VFX.Implementation
 
         private bool _isOutlineEnabled;
 
-        public void AnimateOutline(float duration)
+        public void AnimateOutline(float duration, float initialInterval = 1f, bool shouldDecreaseInterval = true, bool shouldAnimateScale = true)
         {
             if (_isOutlineEnabled)
             {
@@ -18,7 +18,7 @@ namespace VFX.Implementation
             }
             
             _isOutlineEnabled = true;
-            AnimateOutlineInternal(duration).Forget();
+            AnimateOutlineInternal(duration, initialInterval, shouldDecreaseInterval, shouldAnimateScale).Forget();
         }
         
         public void DisableOutline()
@@ -29,22 +29,25 @@ namespace VFX.Implementation
             _outline.enabled = false;
         }
 
-        private async UniTask AnimateOutlineInternal(float duration)
+        private async UniTask AnimateOutlineInternal(float duration, float initialInterval, bool shouldDecreaseInterval, bool shouldAnimateScale)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(duration / 2));
-            var delay = 1f;
-            var delta = delay / duration * 2f;
+            var interval = initialInterval;
+            var delta = initialInterval / duration * 2f;
             while (delta > 0 && _outline && _outline.enabled)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(delay));
-                Highlight(true);
+                await UniTask.Delay(TimeSpan.FromSeconds(interval));
+                Highlight(true, shouldAnimateScale);
                 await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
-                Highlight(false);
-                delay = Mathf.Clamp(delay - delta, 0.1f, 1f);
+                Highlight(false, shouldAnimateScale);
+                if (shouldDecreaseInterval)
+                {
+                    interval = Mathf.Clamp(interval - delta, 0.1f, 1f);
+                }
             }
         }
         
-        private void Highlight(bool isHighlighted)
+        private void Highlight(bool isHighlighted, bool shouldAnimateScale)
         {
             if (!_outline)
             {
@@ -52,11 +55,14 @@ namespace VFX.Implementation
             }
             
             var alpha = isHighlighted ? 1f : 0f;
-            var scaleMultiplier = isHighlighted ? 1.1f : 1f;
             var color = _outline.OutlineColor;
             color.a = alpha;
             _outline.OutlineColor = color;
-            transform.localScale = Vector3.one * scaleMultiplier;
+            if (shouldAnimateScale)
+            {
+                var scaleMultiplier = isHighlighted ? 1.1f : 1f;
+                transform.localScale = Vector3.one * scaleMultiplier;
+            }
         }
     }
 }
