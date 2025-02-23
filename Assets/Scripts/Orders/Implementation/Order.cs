@@ -20,7 +20,6 @@ namespace Orders.Implementation
             NeededTypes = neededTypes;
             Status = Status.Incomplete;
             Duration = timeToComplete;
-            StartTimer(timeToComplete).Forget();
         }
         
         public void ReceiveWork(WorkType workType)
@@ -47,6 +46,11 @@ namespace Orders.Implementation
 
             Status = Status.Complete;
             OrderCompleted?.Invoke();
+        }
+
+        public void StartTimer()
+        {
+            StartTimer(Duration).Forget();
         }
 
         private async UniTaskVoid StartTimer(float timeToComplete)

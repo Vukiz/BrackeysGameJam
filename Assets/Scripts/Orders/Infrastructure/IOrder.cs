@@ -14,5 +14,6 @@ namespace Orders.Infrastructure
         event System.Action TimerExpired;
         event System.Action OrderCompleted;
         void CheckWorkStatus();
+        void StartTimer();
     }
 }

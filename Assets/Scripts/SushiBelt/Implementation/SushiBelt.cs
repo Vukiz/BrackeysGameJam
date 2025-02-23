@@ -35,6 +35,7 @@ namespace SushiBelt.Implementation
             CreateOrder(order);
 
             await MoveOrderToTarget();
+            order.StartTimer();
             CurrentOrder = order;
             order.OrderCompleted += OnOrderCompleted;
             order.TimerExpired += OnOrderExpired;
