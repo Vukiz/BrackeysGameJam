@@ -74,15 +74,18 @@ namespace StateMachine.Implementation
             _factoryAvailabilityTracker.IsPaused = true;
             _vfxManager.SpawnVFX(VFXType.Explosion, robot.Position);
             _orderProvider.Reset();
+            _canvasView.GameActiveView.LoseAudio.Play();
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
             _gameEndDataModel.GameEndType = GameEndType.Lose;
             RequestStateChange(GameState.GameEnded);
         }
 
-        private void OnLevelCompleted()
+        private async void OnLevelCompleted()
         {
             _orderProvider.Reset();
             _collisionsTracker.Reset();
+            _canvasView.GameActiveView.WinAudio.Play();
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
             _gameEndDataModel.GameEndType = GameEndType.Win;
             RequestStateChange(GameState.GameEnded);
         }
