@@ -47,6 +47,7 @@ namespace StateMachine.Implementation
 
         private void OnRetryButtonClicked()
         {
+            _canvasView.ClickAudioSource.Play();
             RequestStateChange(GameState.GameActive);
         }
 
@@ -103,6 +104,7 @@ namespace StateMachine.Implementation
 
         private void OnNextLevelButtonClicked()
         {
+            _canvasView.ClickAudioSource.Play();
             _gameLevelDataModel.CurrentLevelIndex++;
             _canvasView.GameEndView.NextLevelButton.onClick.RemoveListener(OnNextLevelButtonClicked);
             RequestStateChange(IsLastLevel() ? GameState.GameThanksForPlaying : GameState.GameActive);

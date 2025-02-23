@@ -25,6 +25,7 @@ namespace StateMachine.Implementation
 
         private void OnExitButtonClicked()
         {
+            _canvasView.ClickAudioSource.Play();
             _canvasView.ThanksForPlayingView.ExitButton.onClick.RemoveListener(OnExitButtonClicked);
             RequestStateChange(GameState.GameStart);
         }

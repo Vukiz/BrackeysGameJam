@@ -11,6 +11,7 @@ namespace Tutorial.Views
         [SerializeField] private Button _nextButton;
         [SerializeField] private TutorialDialogView _tutorialDialogView;
         [SerializeField] private TMP_Text _clickToContinue;
+        [SerializeField] private AudioSource _audioSource;
         
         public Button NextButton => _nextButton;
         public TutorialDialogView TutorialDialogView => _tutorialDialogView;
@@ -19,6 +20,7 @@ namespace Tutorial.Views
         {
             _clickToContinue.gameObject.SetActive(true);
             await _nextButton.OnClickAsync();
+            _audioSource.Play();
             _clickToContinue.gameObject.SetActive(false);
         }
     }

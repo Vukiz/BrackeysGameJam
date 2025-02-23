@@ -11,6 +11,7 @@ namespace StateMachine.Views
         [SerializeField] private ThanksForPlayingView _thanksForPlayingView;
         [SerializeField] private LoaderView _loaderView;
         [SerializeField] private TutorialCanvasView _tutorialCanvasView;
+        [SerializeField] private AudioSource _clickAudioSource;
 
         public GameActiveView GameActiveView => _gameActiveView;
         public GameEndView GameEndView => _gameEndView;
@@ -18,5 +19,6 @@ namespace StateMachine.Views
         public ThanksForPlayingView ThanksForPlayingView => _thanksForPlayingView;
         public LoaderView LoaderView => _loaderView;
         public TutorialCanvasView TutorialCanvasView => _tutorialCanvasView;
+        public AudioSource ClickAudioSource => _clickAudioSource;
     }
 }

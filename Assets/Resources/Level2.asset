@@ -18,4 +18,8 @@ MonoBehaviour:
     TimeLimitSecondsMin: 25
     TimeLimitSecondsMax: 40
     WorkTypes: 0100000000000000
+  - OrdersCount: 2
+    TimeLimitSecondsMin: 25
+    TimeLimitSecondsMax: 40
+    WorkTypes: 00000000
   LevelViewPrefab: {fileID: 6665435657315364018, guid: 8d80ad459e0d9bb448341179831ec440, type: 3}

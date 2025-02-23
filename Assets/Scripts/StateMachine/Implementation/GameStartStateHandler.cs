@@ -31,6 +31,7 @@ namespace StateMachine.Implementation
 
         private void ResetSaveFile()
         {
+            _canvasView.ClickAudioSource.Play();
             _gameLevelDataModel.ResetSaveFile();
             
             var canvasViewGameStartView = _canvasView.GameStartView;
@@ -39,6 +40,7 @@ namespace StateMachine.Implementation
 
         private async void OnStartButtonClick()
         {
+            _canvasView.ClickAudioSource.Play();
             _canvasView.GameStartView.StartButton.onClick.RemoveListener(OnStartButtonClick);
             await _canvasView.LoaderView.Show();
             if (_gameLevelDataModel.IsTutorialFinished)
